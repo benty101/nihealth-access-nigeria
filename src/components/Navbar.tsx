@@ -10,10 +10,11 @@ const Navbar = () => {
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'Insurance', path: '/insurance' },
+    { name: 'Find Hospitals', path: '/hospitals' },
     { name: 'Appointments', path: '/appointments' },
-    { name: 'Labs', path: '/labs' },
-    { name: 'Pharmacy', path: '/pharmacy' },
+    { name: 'Insurance', path: '/insurance' },
+    { name: 'Health Records', path: '/records' },
+    { name: 'Resources', path: '/resources' },
     { name: 'Premium', path: '/premium' },
   ];
 
@@ -29,7 +30,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.name}
