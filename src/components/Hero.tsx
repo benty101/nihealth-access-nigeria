@@ -14,7 +14,7 @@ const Hero = () => {
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Access quality healthcare across Nigeria. Compare insurance plans, book appointments, 
-            order medicines, and take control of your health journey with HealthNG.
+            order medicines, and take control of your health journey with MeddyPal.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
