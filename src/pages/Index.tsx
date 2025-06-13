@@ -1,15 +1,13 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import HealthDashboard from '@/components/HealthDashboard';
+import LandingPage from '@/components/LandingPage';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <Hero />
-      <HealthDashboard />
+      <LandingPage />
     </div>
   );
 };
