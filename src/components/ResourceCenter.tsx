@@ -1,34 +1,14 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Search, 
-  BookOpen, 
-  Video, 
-  Download, 
-  Calendar,
-  Users,
-  Heart,
-  Baby,
-  Shield,
-  AlertCircle,
-  CheckCircle,
-  Phone,
-  Clock,
-  MapPin,
-  Star,
-  FileText,
-  Stethoscope,
-  User,
-  Apple,
-  Activity,
-  Brain,
-  Trophy,
-  Gift
-} from 'lucide-react';
+import { Search, Apple, Shield, Brain, Activity, Heart, BookOpen, Users, Trophy } from 'lucide-react';
+import ResourceArticles from '@/components/resources/ResourceArticles';
+import ResourceVideos from '@/components/resources/ResourceVideos';
+import ResourceChecklists from '@/components/resources/ResourceChecklists';
+import ResourceHealthTips from '@/components/resources/ResourceHealthTips';
+import ResourceGamification from '@/components/resources/ResourceGamification';
+import ResourceExperts from '@/components/resources/ResourceExperts';
+import ResourceEmergency from '@/components/resources/ResourceEmergency';
 
 const ResourceCenter = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -474,45 +454,6 @@ const ResourceCenter = () => {
     }
   ];
 
-  const notifications = [
-    {
-      id: 1,
-      type: 'antenatal',
-      title: 'Antenatal Check-up Reminder',
-      message: 'Your 28-week check-up is scheduled for tomorrow at 10:00 AM',
-      time: '1 day',
-      priority: 'high',
-      actionRequired: true
-    },
-    {
-      id: 2,
-      type: 'medication',
-      title: 'Iron Supplement Reminder',
-      message: 'Time to take your iron tablets - maintaining healthy blood levels!',
-      time: '2 hours',
-      priority: 'medium',
-      actionRequired: true
-    },
-    {
-      id: 3,
-      type: 'wellness',
-      title: 'Wellness Check Milestone',
-      message: 'Congratulations! You\'ve completed 8 out of 10 recommended check-ups',
-      time: '3 hours',
-      priority: 'low',
-      actionRequired: false
-    },
-    {
-      id: 4,
-      type: 'vaccination',
-      title: 'Baby Vaccination Due',
-      message: 'Your baby\'s 6-week vaccination is due next week',
-      time: '5 days',
-      priority: 'high',
-      actionRequired: true
-    }
-  ];
-
   const gamificationMilestones = [
     {
       id: 1,
@@ -564,31 +505,6 @@ const ResourceCenter = () => {
     }
   ];
 
-  const filteredArticles = articles.filter(article =>
-    article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  const filteredVideos = videos.filter(video =>
-    video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    video.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredChecklists = checklists.filter(checklist =>
-    checklist.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    checklist.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    checklist.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredTips = healthTips.filter(tip =>
-    tip.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tip.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tip.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -626,401 +542,31 @@ const ResourceCenter = () => {
           </TabsList>
 
           <TabsContent value="articles" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredArticles.map((article) => (
-                <Card key={article.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge variant="secondary">{article.category}</Badge>
-                      {article.isPopular && (
-                        <Badge className="bg-emerald-100 text-emerald-700">Popular</Badge>
-                      )}
-                    </div>
-                    <CardTitle className="text-lg leading-tight">{article.title}</CardTitle>
-                    <p className="text-sm text-gray-600">{article.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {article.readTime}
-                        </span>
-                        <span className="flex items-center">
-                          <Star className="h-4 w-4 mr-1 text-yellow-400 fill-current" />
-                          {article.rating}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600">
-                        <User className="h-4 w-4 mr-1" />
-                        {article.author}
-                      </div>
-
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Download className="h-4 w-4 mr-1" />
-                        {article.downloads.toLocaleString()} downloads
-                      </div>
-
-                      <div className="flex flex-wrap gap-1">
-                        {article.tags.map((tag, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-
-                      <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700">
-                        <BookOpen className="h-4 w-4 mr-2" />
-                        Read Article
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <ResourceArticles articles={articles} searchTerm={searchTerm} />
           </TabsContent>
 
           <TabsContent value="videos" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredVideos.map((video) => (
-                <Card key={video.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge variant="secondary">{video.category}</Badge>
-                      {video.isPopular && (
-                        <Badge className="bg-emerald-100 text-emerald-700">Popular</Badge>
-                      )}
-                    </div>
-                    <CardTitle className="text-lg leading-tight">{video.title}</CardTitle>
-                    <p className="text-sm text-gray-600">{video.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {video.duration}
-                        </span>
-                        <span className="flex items-center">
-                          <Star className="h-4 w-4 mr-1 text-yellow-400 fill-current" />
-                          {video.rating}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600">
-                        <User className="h-4 w-4 mr-1" />
-                        {video.instructor}
-                      </div>
-
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Users className="h-4 w-4 mr-1" />
-                        {video.views.toLocaleString()} views
-                      </div>
-
-                      <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700">
-                        <Video className="h-4 w-4 mr-2" />
-                        Watch Video
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <ResourceVideos videos={videos} searchTerm={searchTerm} />
           </TabsContent>
 
           <TabsContent value="checklists" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredChecklists.map((checklist) => (
-                <Card key={checklist.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge variant="secondary">{checklist.category}</Badge>
-                      {checklist.isPopular && (
-                        <Badge className="bg-emerald-100 text-emerald-700">Popular</Badge>
-                      )}
-                    </div>
-                    <CardTitle className="text-lg leading-tight">{checklist.title}</CardTitle>
-                    <p className="text-sm text-gray-600">{checklist.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        {checklist.items} items
-                      </div>
-
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Download className="h-4 w-4 mr-1" />
-                        {checklist.downloads.toLocaleString()} downloads
-                      </div>
-
-                      <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Checklist
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <ResourceChecklists checklists={checklists} searchTerm={searchTerm} />
           </TabsContent>
 
           <TabsContent value="health-tips" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTips.map((tip) => {
-                const IconComponent = tip.icon;
-                return (
-                  <Card key={tip.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary">{tip.category}</Badge>
-                        {tip.isPopular && (
-                          <Badge className="bg-emerald-100 text-emerald-700">Popular</Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-full flex items-center justify-center">
-                          <IconComponent className="h-6 w-6 text-teal-600" />
-                        </div>
-                        <div className="flex-1">
-                          <CardTitle className="text-lg leading-tight">{tip.title}</CardTitle>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3">{tip.description}</p>
-                      <Badge variant="outline" className="text-xs">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {tip.region}
-                      </Badge>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <h4 className="font-medium text-gray-900 mb-2">Key Tips:</h4>
-                        <div className="space-y-2">
-                          {tip.tips.map((item, idx) => (
-                            <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
-                              <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                              <span>{item}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700">
-                          <BookOpen className="h-4 w-4 mr-2" />
-                          Learn More
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+            <ResourceHealthTips healthTips={healthTips} searchTerm={searchTerm} />
           </TabsContent>
 
           <TabsContent value="gamification" className="mt-6">
-            <div className="space-y-6">
-              <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg p-6 border border-teal-100">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Your Health Journey Progress</h3>
-                <p className="text-gray-600 mb-4">Track your milestones and earn points for healthy habits!</p>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Trophy className="h-5 w-5 text-yellow-500" />
-                    <span className="font-medium">Total Points: 175</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Gift className="h-5 w-5 text-purple-500" />
-                    <span className="font-medium">Achievements: 2/5</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {gamificationMilestones.map((milestone) => {
-                  const IconComponent = milestone.icon;
-                  return (
-                    <Card key={milestone.id} className={`transition-all ${milestone.achieved ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200' : 'hover:shadow-md'}`}>
-                      <CardHeader>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            milestone.achieved 
-                              ? 'bg-gradient-to-br from-emerald-500 to-teal-600' 
-                              : 'bg-gray-100'
-                          }`}>
-                            <IconComponent className={`h-6 w-6 ${milestone.achieved ? 'text-white' : 'text-gray-400'}`} />
-                          </div>
-                          <div className="text-right">
-                            <div className={`text-lg font-bold ${milestone.achieved ? 'text-emerald-600' : 'text-gray-500'}`}>
-                              {milestone.points} pts
-                            </div>
-                            <Badge variant={milestone.achieved ? "default" : "outline"} className={
-                              milestone.achieved 
-                                ? milestone.badge === 'gold' ? 'bg-yellow-500' : milestone.badge === 'silver' ? 'bg-gray-400' : 'bg-orange-500'
-                                : ''
-                            }>
-                              {milestone.badge}
-                            </Badge>
-                          </div>
-                        </div>
-                        <CardTitle className={`text-lg ${milestone.achieved ? 'text-emerald-900' : 'text-gray-900'}`}>
-                          {milestone.title}
-                        </CardTitle>
-                        <p className={`text-sm ${milestone.achieved ? 'text-emerald-700' : 'text-gray-600'}`}>
-                          {milestone.description}
-                        </p>
-                      </CardHeader>
-                      <CardContent>
-                        {milestone.achieved ? (
-                          <div className="flex items-center space-x-2 text-emerald-600">
-                            <CheckCircle className="h-5 w-5" />
-                            <span className="font-medium">Completed!</span>
-                          </div>
-                        ) : milestone.progress ? (
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>Progress</span>
-                              <span>{milestone.progress}/{milestone.id === 3 ? 20 : milestone.id === 4 ? 15 : 5}</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-teal-600 h-2 rounded-full transition-all" 
-                                style={{ 
-                                  width: `${(milestone.progress / (milestone.id === 3 ? 20 : milestone.id === 4 ? 15 : 5)) * 100}%` 
-                                }}
-                              ></div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-sm text-gray-500">
-                            Get started to unlock this milestone!
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+            <ResourceGamification milestones={gamificationMilestones} />
           </TabsContent>
 
           <TabsContent value="experts" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {experts.map((expert) => (
-                <Card key={expert.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-full flex items-center justify-center">
-                        <Stethoscope className="h-8 w-8 text-teal-600" />
-                      </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg">{expert.name}</CardTitle>
-                        <p className="text-sm text-gray-600">{expert.specialty}</p>
-                        <div className="flex items-center mt-1">
-                          <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                          <span className="text-sm">{expert.rating}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="text-sm text-gray-600">
-                        <strong>Hospital:</strong> {expert.hospital}
-                      </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {expert.location}
-                      </div>
-
-                      <div className="text-sm text-gray-600">
-                        <strong>Experience:</strong> {expert.experience}
-                      </div>
-
-                      <div className="text-sm text-gray-600">
-                        <strong>Consultations:</strong> {expert.consultations.toLocaleString()}+
-                      </div>
-
-                      <div className="text-sm text-gray-600">
-                        <strong>Languages:</strong> {expert.languages.join(', ')}
-                      </div>
-
-                      <div className="flex items-center text-sm text-emerald-600">
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        {expert.availability}
-                      </div>
-
-                      <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700">
-                        <Phone className="h-4 w-4 mr-2" />
-                        Book Consultation
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <ResourceExperts experts={experts} />
           </TabsContent>
 
           <TabsContent value="emergency" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {emergencyContacts.map((contact) => (
-                <Card key={contact.id} className="border-l-4 border-l-red-500">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                          <Phone className="h-6 w-6 text-red-600" />
-                        </div>
-                        <div>
-                          <CardTitle className="text-lg">{contact.name}</CardTitle>
-                          <Badge variant="outline" className="mt-1">
-                            {contact.type}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-red-600">{contact.number}</div>
-                        <div className="text-sm text-gray-500">{contact.available}</div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">{contact.description}</p>
-                    <Button className="w-full bg-red-600 hover:bg-red-700">
-                      <Phone className="h-4 w-4 mr-2" />
-                      Call Now
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <div className="mt-8 bg-red-50 border border-red-200 rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <AlertCircle className="h-6 w-6 text-red-600 mr-3" />
-                <h3 className="text-lg font-semibold text-red-900">Emergency Warning Signs</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-red-800">
-                <div>
-                  <h4 className="font-medium mb-2">During Pregnancy:</h4>
-                  <ul className="space-y-1">
-                    <li>• Severe abdominal pain</li>
-                    <li>• Heavy bleeding</li>
-                    <li>• Severe headaches</li>
-                    <li>• Vision changes</li>
-                    <li>• Decreased fetal movement</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">During Labor/After Birth:</h4>
-                  <ul className="space-y-1">
-                    <li>• Heavy bleeding</li>
-                    <li>• High fever</li>
-                    <li>• Severe abdominal pain</li>
-                    <li>• Difficulty breathing</li>
-                    <li>• Signs of infection</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            <ResourceEmergency emergencyContacts={emergencyContacts} />
           </TabsContent>
         </Tabs>
       </div>
