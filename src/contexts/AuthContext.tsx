@@ -43,15 +43,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLastActivity(Date.now());
   };
 
+  const clearAuthState = () => {
+    setUser(null);
+    setSession(null);
+    setLastActivity(Date.now());
+  };
+
   useEffect(() => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state change:', event, session?.user?.id);
-        setSession(session);
-        setUser(session?.user ?? null);
+        
+        if (event === 'SIGNED_OUT' || !session) {
+          clearAuthState();
+        } else {
+          setSession(session);
+          setUser(session?.user ?? null);
+          updateActivity();
+        }
+        
         setLoading(false);
-        updateActivity();
         
         // Secure logging of auth events
         secureLog('Auth state change', { 
@@ -65,12 +77,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session check:', session?.user?.id);
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+      
       if (session) {
+        setSession(session);
+        setUser(session?.user ?? null);
         updateActivity();
+      } else {
+        clearAuthState();
       }
+      
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -221,8 +237,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log('Attempting to sign out...');
       
       // Clear local state immediately to prevent UI issues
-      setUser(null);
-      setSession(null);
+      clearAuthState();
+      
+      // Clear all localStorage items related to auth
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('supabase.auth')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      // Clear sessionStorage as well
+      const sessionKeysToRemove = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('supabase.auth')) {
+          sessionKeysToRemove.push(key);
+        }
+      }
+      sessionKeysToRemove.forEach(key => sessionStorage.removeItem(key));
       
       // Attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut({ scope: 'global' });
@@ -232,11 +267,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Don't throw the error - we've already cleared local state
       }
       
-      // Clear any localStorage items related to auth
-      localStorage.removeItem('supabase.auth.token');
-      
       secureLog('User signed out');
-      console.log('Sign out completed');
+      console.log('Sign out completed - all auth state cleared');
     } catch (error) {
       console.warn('Signout error (but local state cleared):', error);
       secureLog('Signout error', { errorType: 'network_error' });
