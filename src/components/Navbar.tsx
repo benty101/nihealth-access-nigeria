@@ -8,13 +8,12 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { name: 'Hospital Directory', path: '/hospitals' },
+  const publicNavItems = [
+    { name: 'Hospitals', path: '/hospitals' },
     { name: 'Insurance', path: '/insurance' },
-    { name: 'Book Appointment', path: '/appointments' },
-    { name: 'Health Records', path: '/records' },
+    { name: 'Pharmacy', path: '/pharmacy' },
+    { name: 'Labs', path: '/labs' },
     { name: 'Resources', path: '/resources' },
-    { name: 'Premium', path: '/premium' },
   ];
 
   // Mock authentication state - in real app this would come from auth context
@@ -33,27 +32,32 @@ const Navbar = () => {
                 <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
                   MeddyPal
                 </span>
-                <span className="text-xs text-gray-500 -mt-1">Proudly Nigerian</span>
+                <span className="text-xs text-gray-500 -mt-1">Your Health Companion</span>
               </div>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  location.pathname === item.path
-                    ? 'text-teal-600 bg-teal-50 shadow-sm'
-                    : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-            {isAuthenticated && (
+          <div className="hidden md:flex items-center space-x-6">
+            {!isAuthenticated ? (
+              // Public navigation - for exploring services
+              <>
+                {publicNavItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      location.pathname === item.path
+                        ? 'text-teal-600 bg-teal-50 shadow-sm'
+                        : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </>
+            ) : (
+              // Authenticated navigation - dashboard focused
               <Link
                 to="/dashboard"
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -87,10 +91,10 @@ const Navbar = () => {
               <>
                 <Button variant="outline" size="sm" className="border-teal-200 text-teal-600 hover:bg-teal-50">
                   <User className="h-4 w-4 mr-2" />
-                  Login
+                  Sign In
                 </Button>
                 <Button size="sm" className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                  Join Free
+                  Get Started Free
                 </Button>
               </>
             )}
@@ -111,21 +115,22 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-teal-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
-                    location.pathname === item.path
-                      ? 'text-teal-600 bg-teal-50'
-                      : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              {isAuthenticated && (
+              {!isAuthenticated ? (
+                publicNavItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
+                      location.pathname === item.path
+                        ? 'text-teal-600 bg-teal-50'
+                        : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))
+              ) : (
                 <Link
                   to="/dashboard"
                   className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
@@ -138,6 +143,7 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               )}
+              
               <div className="pt-4 flex flex-col space-y-3">
                 {isAuthenticated ? (
                   <div className="flex items-center space-x-3 px-3 py-2">
@@ -150,10 +156,10 @@ const Navbar = () => {
                   <>
                     <Button variant="outline" size="sm" className="border-teal-200 text-teal-600 hover:bg-teal-50">
                       <User className="h-4 w-4 mr-2" />
-                      Login
+                      Sign In
                     </Button>
                     <Button size="sm" className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white">
-                      Join Free
+                      Get Started Free
                     </Button>
                   </>
                 )}
