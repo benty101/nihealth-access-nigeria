@@ -14,6 +14,7 @@ import Pharmacy from "./pages/Pharmacy";
 import Records from "./pages/Records";
 import Resources from "./pages/Resources";
 import Premium from "./pages/Premium";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hospitals" element={<Hospitals />} />
           <Route path="/insurance" element={<Insurance />} />

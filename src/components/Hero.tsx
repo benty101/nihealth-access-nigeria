@@ -2,11 +2,21 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Stethoscope, Pill, TestTube, CreditCard, Users, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   const handleGetStarted = () => {
     console.log('Get Started clicked');
-    // Navigate to signup/auth page
+    // Check if user has completed onboarding
+    const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+    
+    if (onboardingCompleted) {
+      navigate('/dashboard');
+    } else {
+      navigate('/onboarding');
+    }
   };
 
   const handleExploreServices = () => {
