@@ -23,7 +23,7 @@ const HealthDashboard = () => {
   const greeting = PersonalizationService.getPersonalizedGreeting(onboardingData);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <DashboardHeader onboardingData={onboardingData} greeting={greeting} />
 
@@ -31,14 +31,14 @@ const HealthDashboard = () => {
 
         <PersonalizedQuickActions quickActions={quickActions} />
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-          <div className="xl:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="lg:col-span-3 space-y-6">
             <HealthStats />
             <UpcomingAppointments />
             <RecentActivity />
           </div>
 
-          <div className="space-y-6">
+          <div className="lg:col-span-1 space-y-6">
             <HealthProfile onboardingData={onboardingData} />
             <HealthReminders />
             <QuickLinks />
