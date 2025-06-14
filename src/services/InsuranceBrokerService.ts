@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export interface InsuranceQuoteRequest {
@@ -28,6 +27,7 @@ export interface InsuranceQuote {
   features: string[];
   terms: string;
   status: 'pending' | 'approved' | 'declined';
+  apiSource: 'mycover' | 'curacel' | 'direct' | 'mock';
 }
 
 export interface Commission {
@@ -40,6 +40,7 @@ export interface Commission {
   dateEarned: string;
   datePaid?: string;
   policyNumber?: string;
+  apiSource: string;
 }
 
 export interface InsurerAPI {
@@ -52,35 +53,280 @@ export interface InsurerAPI {
   contactEmail: string;
   contactPhone: string;
   apiDocumentation: string;
+  apiSource: 'mycover' | 'curacel' | 'direct';
+}
+
+// MyCover.ai API Types
+interface MyCoverQuoteRequest {
+  product_type: 'health';
+  customer: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    age: number;
+    gender: string;
+    state: string;
+  };
+  coverage_amount: number;
+  plan_type: string;
+}
+
+interface MyCoverQuoteResponse {
+  quote_id: string;
+  insurer: string;
+  premium: number;
+  coverage: number;
+  valid_until: string;
+  features: string[];
+  commission_rate?: number;
+}
+
+// Curacel API Types
+interface CuracelHMOResponse {
+  id: string;
+  name: string;
+  plans: Array<{
+    id: string;
+    name: string;
+    premium: number;
+    coverage: number;
+    features: string[];
+  }>;
 }
 
 class InsuranceBrokerService {
-  // API Integration Framework
-  async getQuoteFromInsurer(insurerId: string, request: InsuranceQuoteRequest): Promise<InsuranceQuote | null> {
+  private readonly MYCOVER_API_BASE = 'https://api.mycover.ai/v1';
+  private readonly CURACEL_API_BASE = 'https://api.health.curacel.co/api/v1';
+
+  // MyCover.ai Integration
+  async getMyCoverQuote(request: InsuranceQuoteRequest): Promise<InsuranceQuote[]> {
     try {
-      // This will be replaced with actual API calls when you get insurer API access
-      console.log(`Getting quote from ${insurerId}:`, request);
+      const apiKey = await this.getApiKey('MYCOVER_API_KEY');
+      if (!apiKey) {
+        console.log('MyCover API key not configured, using mock data');
+        return [];
+      }
+
+      const [firstName, ...lastNameParts] = request.personalInfo.fullName.split(' ');
+      const lastName = lastNameParts.join(' ') || firstName;
+
+      const myCoverRequest: MyCoverQuoteRequest = {
+        product_type: 'health',
+        customer: {
+          first_name: firstName,
+          last_name: lastName,
+          email: request.personalInfo.email,
+          phone: request.personalInfo.phone,
+          age: request.personalInfo.age,
+          gender: request.personalInfo.gender,
+          state: request.personalInfo.state
+        },
+        coverage_amount: request.coverageAmount,
+        plan_type: request.coverageType
+      };
+
+      const response = await fetch(`${this.MYCOVER_API_BASE}/quotes`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(myCoverRequest)
+      });
+
+      if (!response.ok) {
+        throw new Error(`MyCover API error: ${response.statusText}`);
+      }
+
+      const quotes: MyCoverQuoteResponse[] = await response.json();
       
-      // For now, return mock data but with proper structure for real integration
-      return this.generateMockQuote(insurerId, request);
+      return quotes.map(quote => ({
+        id: quote.quote_id,
+        insurerId: quote.insurer.toLowerCase().replace(/\s+/g, '-'),
+        insurerName: quote.insurer,
+        premium: quote.premium,
+        coverage: `₦${quote.coverage.toLocaleString()}`,
+        commission: quote.premium * (quote.commission_rate || 0.15),
+        commissionRate: quote.commission_rate || 0.15,
+        validUntil: quote.valid_until,
+        features: quote.features,
+        terms: '12 months coverage period',
+        status: 'pending' as const,
+        apiSource: 'mycover' as const
+      }));
+
     } catch (error) {
-      console.error(`Error getting quote from ${insurerId}:`, error);
-      return null;
+      console.error('MyCover API error:', error);
+      return [];
     }
   }
 
-  async getQuotesFromAllInsurers(request: InsuranceQuoteRequest): Promise<InsuranceQuote[]> {
-    const insurers = await this.getActiveInsurers();
-    const quotes: InsuranceQuote[] = [];
-
-    for (const insurer of insurers) {
-      const quote = await this.getQuoteFromInsurer(insurer.id, request);
-      if (quote) {
-        quotes.push(quote);
+  // Curacel Integration
+  async getCuracelHMOs(): Promise<InsurerAPI[]> {
+    try {
+      const apiKey = await this.getApiKey('CURACEL_API_KEY');
+      if (!apiKey) {
+        console.log('Curacel API key not configured');
+        return [];
       }
+
+      const response = await fetch(`${this.CURACEL_API_BASE}/hmos`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Curacel API error: ${response.statusText}`);
+      }
+
+      const hmos: CuracelHMOResponse[] = await response.json();
+      
+      return hmos.map(hmo => ({
+        id: hmo.id,
+        name: hmo.name,
+        apiEndpoint: `${this.CURACEL_API_BASE}/hmos/${hmo.id}`,
+        apiKey: '',
+        isActive: true,
+        commissionRate: 0.12, // Default commission rate
+        contactEmail: `partnerships@${hmo.name.toLowerCase().replace(/\s+/g, '')}.com`,
+        contactPhone: '+234-1-000-0000',
+        apiDocumentation: 'https://docs.curacel.co/',
+        apiSource: 'curacel' as const
+      }));
+
+    } catch (error) {
+      console.error('Curacel API error:', error);
+      return [];
+    }
+  }
+
+  async getCuracelQuotes(request: InsuranceQuoteRequest): Promise<InsuranceQuote[]> {
+    try {
+      const apiKey = await this.getApiKey('CURACEL_API_KEY');
+      if (!apiKey) {
+        console.log('Curacel API key not configured, using mock data');
+        return [];
+      }
+
+      // Get available HMOs first
+      const hmos = await this.getCuracelHMOs();
+      const quotes: InsuranceQuote[] = [];
+
+      // Get quotes from each HMO
+      for (const hmo of hmos.slice(0, 3)) { // Limit to first 3 for demo
+        try {
+          const response = await fetch(`${this.CURACEL_API_BASE}/hmos/${hmo.id}/quote`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              customer: request.personalInfo,
+              coverage_amount: request.coverageAmount,
+              plan_type: request.coverageType
+            })
+          });
+
+          if (response.ok) {
+            const quoteData = await response.json();
+            quotes.push({
+              id: crypto.randomUUID(),
+              insurerId: hmo.id,
+              insurerName: hmo.name,
+              premium: quoteData.premium || this.calculateMockPremium(request),
+              coverage: `₦${request.coverageAmount.toLocaleString()}`,
+              commission: (quoteData.premium || this.calculateMockPremium(request)) * hmo.commissionRate,
+              commissionRate: hmo.commissionRate,
+              validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              features: quoteData.features || ['Outpatient Care', 'Emergency Services', 'Prescription Coverage'],
+              terms: '12 months coverage period',
+              status: 'pending' as const,
+              apiSource: 'curacel' as const
+            });
+          }
+        } catch (error) {
+          console.error(`Error getting quote from ${hmo.name}:`, error);
+        }
+      }
+
+      return quotes;
+
+    } catch (error) {
+      console.error('Curacel quotes error:', error);
+      return [];
+    }
+  }
+
+  // Main quote aggregation method
+  async getQuotesFromAllInsurers(request: InsuranceQuoteRequest): Promise<InsuranceQuote[]> {
+    const allQuotes: InsuranceQuote[] = [];
+
+    try {
+      // Get quotes from MyCover.ai
+      const myCoverQuotes = await this.getMyCoverQuote(request);
+      allQuotes.push(...myCoverQuotes);
+
+      // Get quotes from Curacel
+      const curacelQuotes = await this.getCuracelQuotes(request);
+      allQuotes.push(...curacelQuotes);
+
+      // If no real API quotes, add mock data for demonstration
+      if (allQuotes.length === 0) {
+        console.log('No API quotes available, generating mock quotes');
+        const mockQuotes = await this.getMockQuotes(request);
+        allQuotes.push(...mockQuotes);
+      }
+
+    } catch (error) {
+      console.error('Error aggregating quotes:', error);
+      // Fallback to mock quotes
+      const mockQuotes = await this.getMockQuotes(request);
+      allQuotes.push(...mockQuotes);
     }
 
-    return quotes.sort((a, b) => a.premium - b.premium);
+    return allQuotes.sort((a, b) => a.premium - b.premium);
+  }
+
+  // Purchase policy through MyCover.ai
+  async purchasePolicy(quoteId: string, quote: InsuranceQuote, paymentDetails: any): Promise<{success: boolean, policyNumber?: string, error?: string}> {
+    try {
+      if (quote.apiSource === 'mycover') {
+        const apiKey = await this.getApiKey('MYCOVER_API_KEY');
+        if (!apiKey) {
+          return { success: false, error: 'MyCover API key not configured' };
+        }
+
+        const response = await fetch(`${this.MYCOVER_API_BASE}/products/${quote.insurerId}/purchase`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            quote_id: quoteId,
+            payment_details: paymentDetails
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          await this.trackCommission(quote, result.policy_number);
+          return { success: true, policyNumber: result.policy_number };
+        }
+      }
+
+      // For other sources, implement similar logic
+      return { success: false, error: 'Purchase not available for this quote source' };
+
+    } catch (error) {
+      console.error('Purchase error:', error);
+      return { success: false, error: 'Purchase failed' };
+    }
   }
 
   // Commission Tracking
@@ -93,16 +339,15 @@ class InsuranceBrokerService {
       rate: quote.commissionRate,
       status: 'pending',
       dateEarned: new Date().toISOString(),
-      policyNumber
+      policyNumber,
+      apiSource: quote.apiSource
     };
 
-    // Store in database (you'll need to create this table)
     console.log('Tracking commission:', commission);
     return commission;
   }
 
   async getCommissionSummary(timeframe: 'week' | 'month' | 'quarter' | 'year') {
-    // This would query your database for commission data
     return {
       totalEarned: 0,
       totalPending: 0,
@@ -114,42 +359,42 @@ class InsuranceBrokerService {
 
   // Insurer Management
   async getActiveInsurers(): Promise<InsurerAPI[]> {
-    // This would come from your database
-    return [
+    const staticInsurers: InsurerAPI[] = [
       {
-        id: 'aiico',
-        name: 'AIICO Insurance',
-        apiEndpoint: 'https://api.aiico.com.ng/v1',
-        apiKey: '', // To be set when you get API access
+        id: 'mycover-multiinsurer',
+        name: 'MyCover.ai (Multi-Insurer)',
+        apiEndpoint: 'https://api.mycover.ai/v1',
+        apiKey: '',
         isActive: false,
         commissionRate: 0.15,
-        contactEmail: 'partners@aiico.com.ng',
-        contactPhone: '+234-1-2701030',
-        apiDocumentation: 'https://developer.aiico.com.ng'
+        contactEmail: 'partners@mycover.ai',
+        contactPhone: '+234-1-000-0000',
+        apiDocumentation: 'https://docs.mycover.ai/api-reference',
+        apiSource: 'mycover'
       },
       {
-        id: 'axa',
-        name: 'AXA Mansard',
-        apiEndpoint: 'https://api.axamansard.com/v1',
+        id: 'curacel-hmos',
+        name: 'Curacel HMOs',
+        apiEndpoint: 'https://api.health.curacel.co/api/v1',
         apiKey: '',
         isActive: false,
         commissionRate: 0.12,
-        contactEmail: 'partnerships@axamansard.com',
-        contactPhone: '+234-1-2701807',
-        apiDocumentation: 'https://developer.axamansard.com'
-      },
-      {
-        id: 'leadway',
-        name: 'Leadway Assurance',
-        apiEndpoint: 'https://api.leadway.com.ng/v1',
-        apiKey: '',
-        isActive: false,
-        commissionRate: 0.18,
-        contactEmail: 'brokers@leadway.com.ng',
-        contactPhone: '+234-1-2800200',
-        apiDocumentation: 'https://developer.leadway.com.ng'
+        contactEmail: 'partnerships@curacel.co',
+        contactPhone: '+234-1-000-0000',
+        apiDocumentation: 'https://api.health.curacel.co/api/v1/hmos',
+        apiSource: 'curacel'
       }
     ];
+
+    try {
+      // Add dynamic Curacel HMOs
+      const curacelHMOs = await this.getCuracelHMOs();
+      staticInsurers.push(...curacelHMOs);
+    } catch (error) {
+      console.error('Error fetching Curacel HMOs:', error);
+    }
+
+    return staticInsurers;
   }
 
   // Real API Integration Methods (for when you get API access)
@@ -206,6 +451,44 @@ class InsuranceBrokerService {
       'leadway': 'Leadway Assurance'
     };
     return names[insurerId] || 'Unknown Insurer';
+  }
+
+  private async getApiKey(keyName: string): Promise<string | null> {
+    // In production, this would get the API key from Supabase secrets
+    // For now, return null to trigger mock data
+    return null;
+  }
+
+  private calculateMockPremium(request: InsuranceQuoteRequest): number {
+    const baseRate = 5000;
+    const ageMultiplier = request.personalInfo.age > 40 ? 1.3 : 1.0;
+    return Math.round(baseRate * ageMultiplier + (request.coverageAmount * 0.002));
+  }
+
+  private async getMockQuotes(request: InsuranceQuoteRequest): Promise<InsuranceQuote[]> {
+    const mockInsurers = [
+      { id: 'aiico', name: 'AIICO Insurance', rate: 0.15 },
+      { id: 'axa', name: 'AXA Mansard', rate: 0.12 },
+      { id: 'leadway', name: 'Leadway Assurance', rate: 0.18 }
+    ];
+
+    return mockInsurers.map(insurer => {
+      const premium = this.calculateMockPremium(request);
+      return {
+        id: crypto.randomUUID(),
+        insurerId: insurer.id,
+        insurerName: insurer.name,
+        premium,
+        coverage: `₦${request.coverageAmount.toLocaleString()}`,
+        commission: Math.round(premium * insurer.rate),
+        commissionRate: insurer.rate,
+        validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        features: ['Outpatient Care', 'Emergency Services', 'Prescription Coverage'],
+        terms: '12 months coverage period',
+        status: 'pending' as const,
+        apiSource: 'mock' as const
+      };
+    });
   }
 }
 
