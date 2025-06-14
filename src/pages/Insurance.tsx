@@ -208,6 +208,276 @@ const Insurance = () => {
       rating: 4.4,
       features: ['Royal Treatment', 'Comprehensive Maternity', 'Surgery', 'Emergency', 'Private Care'],
       popular: false
+    },
+    {
+      name: 'Reliance HMO',
+      type: 'Reliance Care',
+      monthlyPremium: '₦9,500',
+      coverage: '₦2,500,000',
+      rating: 4.2,
+      features: ['HMO Network', 'Maternity Care', 'Preventive Care', 'Emergency', 'Specialist Access'],
+      popular: true
+    },
+    {
+      name: 'Total Health Trust (THT)',
+      type: 'Premium HMO',
+      monthlyPremium: '₦12,500',
+      coverage: '₦4,000,000',
+      rating: 4.4,
+      features: ['Comprehensive HMO', 'Maternity Package', 'Wellness Programs', 'Emergency', 'Specialist Care'],
+      popular: false
+    },
+    {
+      name: 'HYGEIA HMO',
+      type: 'Hygeia Care Plus',
+      monthlyPremium: '₦14,500',
+      coverage: '₦5,000,000',
+      rating: 4.6,
+      features: ['Premium HMO', 'Excellent Maternity', 'Wellness', 'Emergency', 'Digital Health'],
+      popular: true
+    },
+    {
+      name: 'Clearline HMO',
+      type: 'Clearline Health',
+      monthlyPremium: '₦10,000',
+      coverage: '₦3,000,000',
+      rating: 4.1,
+      features: ['Clear Benefits', 'Maternity Care', 'Preventive', 'Emergency', 'Telemedicine'],
+      popular: false
+    },
+    {
+      name: 'Songhai Health Trust',
+      type: 'Songhai Premium',
+      monthlyPremium: '₦11,500',
+      coverage: '₦3,500,000',
+      rating: 4.0,
+      features: ['Trust Network', 'Maternity Benefits', 'Wellness', 'Emergency', 'Specialist'],
+      popular: false
+    },
+    {
+      name: 'RedCare HMO',
+      type: 'RedCare Plus',
+      monthlyPremium: '₦13,000',
+      coverage: '₦4,200,000',
+      rating: 4.2,
+      features: ['Red Care Network', 'Comprehensive Maternity', 'Wellness', 'Emergency', 'Digital'],
+      popular: false
+    },
+    {
+      name: 'Integrated Healthcare Services',
+      type: 'IHS Premium',
+      monthlyPremium: '₦16,000',
+      coverage: '₦6,000,000',
+      rating: 4.3,
+      features: ['Integrated Services', 'Premium Maternity', 'Wellness', 'Emergency', 'Specialist'],
+      popular: false
+    },
+    {
+      name: 'Prepaid Health Plans',
+      type: 'PHP Care',
+      monthlyPremium: '₦8,500',
+      coverage: '₦2,200,000',
+      rating: 3.9,
+      features: ['Prepaid Benefits', 'Basic Maternity', 'Primary Care', 'Emergency', 'Generic Drugs'],
+      popular: false
+    },
+    {
+      name: 'Novo Healthcare',
+      type: 'Novo Premium',
+      monthlyPremium: '₦12,000',
+      coverage: '₦3,800,000',
+      rating: 4.1,
+      features: ['Novo Network', 'Maternity Care', 'Preventive', 'Emergency', 'Wellness'],
+      popular: false
+    },
+    {
+      name: 'HealthPlus Limited',
+      type: 'HealthPlus Care',
+      monthlyPremium: '₦10,500',
+      coverage: '₦3,200,000',
+      rating: 4.0,
+      features: ['Health Plus Network', 'Maternity Package', 'Pharmacy', 'Emergency', 'Consultation'],
+      popular: false
+    },
+    {
+      name: 'Zuma HMO',
+      type: 'Zuma Health',
+      monthlyPremium: '₦9,000',
+      coverage: '₦2,800,000',
+      rating: 3.8,
+      features: ['Zuma Network', 'Basic Maternity', 'Primary Care', 'Emergency', 'Preventive'],
+      popular: false
+    },
+    {
+      name: 'Princeton Medicare',
+      type: 'Princeton Care',
+      monthlyPremium: '₦13,500',
+      coverage: '₦4,500,000',
+      rating: 4.2,
+      features: ['Princeton Network', 'Premium Maternity', 'Specialist', 'Emergency', 'Wellness'],
+      popular: false
+    },
+    {
+      name: 'Mediplan Healthcare',
+      type: 'Mediplan Plus',
+      monthlyPremium: '₦11,000',
+      coverage: '₦3,300,000',
+      rating: 3.9,
+      features: ['Mediplan Network', 'Maternity Benefits', 'Basic Care', 'Emergency', 'Pharmacy'],
+      popular: false
+    },
+    {
+      name: 'First Dominican Hospital HMO',
+      type: 'Dominican Care',
+      monthlyPremium: '₦15,500',
+      coverage: '₦5,500,000',
+      rating: 4.3,
+      features: ['Hospital Network', 'Excellent Maternity', 'Specialist', 'Emergency', 'Premium Care'],
+      popular: false
+    },
+    {
+      name: 'Metropolitan Health',
+      type: 'Metro Premium',
+      monthlyPremium: '₦14,000',
+      coverage: '₦4,800,000',
+      rating: 4.1,
+      features: ['Metro Network', 'Comprehensive Maternity', 'Urban Care', 'Emergency', 'Specialist'],
+      popular: false
+    },
+    {
+      name: 'Oceanic Health Management',
+      type: 'Oceanic Care',
+      monthlyPremium: '₦12,500',
+      coverage: '₦4,000,000',
+      rating: 4.0,
+      features: ['Oceanic Network', 'Maternity Package', 'Coastal Care', 'Emergency', 'Wellness'],
+      popular: false
+    },
+    {
+      name: 'Sapphire Health',
+      type: 'Sapphire Premium',
+      monthlyPremium: '₦17,000',
+      coverage: '₦6,500,000',
+      rating: 4.4,
+      features: ['Sapphire Network', 'Luxury Maternity', 'Premium Care', 'Emergency', 'Concierge'],
+      popular: false
+    },
+    {
+      name: 'Aviators Healthcare',
+      type: 'Aviators Plus',
+      monthlyPremium: '₦13,200',
+      coverage: '₦4,300,000',
+      rating: 4.1,
+      features: ['Aviation Network', 'Maternity Care', 'Travel Health', 'Emergency', 'Specialist'],
+      popular: false
+    },
+    {
+      name: 'Wellness HMO',
+      type: 'Wellness Care',
+      monthlyPremium: '₦10,800',
+      coverage: '₦3,400,000',
+      rating: 3.9,
+      features: ['Wellness Focus', 'Maternity Benefits', 'Preventive Care', 'Emergency', 'Nutrition'],
+      popular: false
+    },
+    {
+      name: 'Sterling Health HMO',
+      type: 'Sterling Premium',
+      monthlyPremium: '₦18,500',
+      coverage: '₦7,500,000',
+      rating: 4.5,
+      features: ['Sterling Network', 'Premium Maternity', 'Executive Care', 'Emergency', 'International'],
+      popular: true
+    },
+    {
+      name: 'Phoenix Health Plans',
+      type: 'Phoenix Care',
+      monthlyPremium: '₦11,800',
+      coverage: '₦3,600,000',
+      rating: 4.0,
+      features: ['Phoenix Network', 'Maternity Package', 'Renewal Care', 'Emergency', 'Pharmacy'],
+      popular: false
+    },
+    {
+      name: 'Anchor HMO',
+      type: 'Anchor Health',
+      monthlyPremium: '₦9,800',
+      coverage: '₦2,900,000',
+      rating: 3.8,
+      features: ['Anchor Network', 'Basic Maternity', 'Stable Care', 'Emergency', 'Primary Health'],
+      popular: false
+    },
+    {
+      name: 'Unity Health HMO',
+      type: 'Unity Care',
+      monthlyPremium: '₦12,200',
+      coverage: '₦3,900,000',
+      rating: 4.1,
+      features: ['Unity Network', 'Comprehensive Maternity', 'Community Care', 'Emergency', 'Wellness'],
+      popular: false
+    },
+    {
+      name: 'Capital Health HMO',
+      type: 'Capital Premium',
+      monthlyPremium: '₦16,500',
+      coverage: '₦6,200,000',
+      rating: 4.3,
+      features: ['Capital Network', 'Premium Maternity', 'Executive Health', 'Emergency', 'Specialist'],
+      popular: false
+    },
+    {
+      name: 'Premier Health Plans',
+      type: 'Premier Care',
+      monthlyPremium: '₦19,500',
+      coverage: '₦8,000,000',
+      rating: 4.4,
+      features: ['Premier Network', 'Luxury Maternity', 'VIP Care', 'Emergency', 'Concierge Medicine'],
+      popular: false
+    },
+    {
+      name: 'Optimal Health Care',
+      type: 'Optimal Plus',
+      monthlyPremium: '₦14,800',
+      coverage: '₦5,200,000',
+      rating: 4.2,
+      features: ['Optimal Network', 'Enhanced Maternity', 'Performance Health', 'Emergency', 'Wellness'],
+      popular: false
+    },
+    {
+      name: 'Liberty Health HMO',
+      type: 'Liberty Care',
+      monthlyPremium: '₦13,800',
+      coverage: '₦4,600,000',
+      rating: 4.1,
+      features: ['Liberty Network', 'Freedom Maternity', 'Flexible Care', 'Emergency', 'Choice Plans'],
+      popular: false
+    },
+    {
+      name: 'Victory Healthcare',
+      type: 'Victory Premium',
+      monthlyPremium: '₦15,200',
+      coverage: '₦5,800,000',
+      rating: 4.2,
+      features: ['Victory Network', 'Triumphant Maternity', 'Success Health', 'Emergency', 'Achievement Care'],
+      popular: false
+    },
+    {
+      name: 'Excellence Health Plans',
+      type: 'Excellence Care',
+      monthlyPremium: '₦17,800',
+      coverage: '₦7,200,000',
+      rating: 4.4,
+      features: ['Excellence Network', 'Superior Maternity', 'Quality Care', 'Emergency', 'Premium Service'],
+      popular: false
+    },
+    {
+      name: 'Crown Health HMO',
+      type: 'Crown Premium',
+      monthlyPremium: '₦20,500',
+      coverage: '₦8,800,000',
+      rating: 4.5,
+      features: ['Crown Network', 'Royal Maternity', 'Regal Care', 'Emergency', 'Sovereign Service'],
+      popular: true
     }
   ];
 
