@@ -1,17 +1,34 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Star, Users, Shield } from 'lucide-react';
+import { Search, Star, Users, Shield, Filter, Scale, ArrowUpDown } from 'lucide-react';
+import InsuranceFilters from '@/components/insurance/InsuranceFilters';
+import InsuranceComparison from '@/components/insurance/InsuranceComparison';
+import PaymentMethods from '@/components/insurance/PaymentMethods';
 
 const Insurance = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+  const [selectedForComparison, setSelectedForComparison] = useState<any[]>([]);
+  const [sortBy, setSortBy] = useState('popular');
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [showPayment, setShowPayment] = useState(false);
+
+  const [filters, setFilters] = useState({
+    priceRange: [1000, 50000],
+    coverage: 'all',
+    type: 'all',
+    features: [] as string[],
+    rating: 0
+  });
 
   const insurancePlans = [
     {
+      id: '1',
       name: 'AIICO Insurance',
       type: 'Premium Health',
       monthlyPremium: '₦15,000',
@@ -21,6 +38,7 @@ const Insurance = () => {
       popular: true
     },
     {
+      id: '2',
       name: 'Leadway Assurance',
       type: 'Family Health Plan',
       monthlyPremium: '₦25,000',
@@ -30,6 +48,7 @@ const Insurance = () => {
       popular: false
     },
     {
+      id: '3',
       name: 'AXA Mansard Health',
       type: 'Basic Health Cover',
       monthlyPremium: '₦8,000',
@@ -39,6 +58,7 @@ const Insurance = () => {
       popular: false
     },
     {
+      id: '4',
       name: 'NHIS (Government)',
       type: 'National Health Scheme',
       monthlyPremium: '₦3,000',
@@ -48,6 +68,7 @@ const Insurance = () => {
       popular: false
     },
     {
+      id: '5',
       name: 'Niger Insurance',
       type: 'Comprehensive Health',
       monthlyPremium: '₦18,000',
@@ -57,6 +78,7 @@ const Insurance = () => {
       popular: false
     },
     {
+      id: '6',
       name: 'Custodian Investment',
       type: 'Executive Health Plan',
       monthlyPremium: '₦35,000',
@@ -66,168 +88,7 @@ const Insurance = () => {
       popular: true
     },
     {
-      name: 'Cornerstone Insurance',
-      type: 'Standard Health',
-      monthlyPremium: '₦12,000',
-      coverage: '₦3,500,000',
-      rating: 4.0,
-      features: ['Standard Care', 'Emergency', 'Maternity', 'Outpatient', 'Prescription'],
-      popular: false
-    },
-    {
-      name: 'Sovereign Trust Insurance',
-      type: 'Premium Family',
-      monthlyPremium: '₦28,000',
-      coverage: '₦12,000,000',
-      rating: 4.4,
-      features: ['Family Package', 'Comprehensive Care', 'Maternity', 'Pediatric Care', 'Emergency'],
-      popular: false
-    },
-    {
-      name: 'Mutual Benefits Assurance',
-      type: 'Health Plus',
-      monthlyPremium: '₦14,000',
-      coverage: '₦4,000,000',
-      rating: 3.9,
-      features: ['Health Plus Benefits', 'Maternity', 'Surgery', 'Emergency', 'Outpatient'],
-      popular: false
-    },
-    {
-      name: 'Consolidated Hallmark Insurance',
-      type: 'Secure Health',
-      monthlyPremium: '₦16,000',
-      coverage: '₦6,000,000',
-      rating: 4.1,
-      features: ['Secure Coverage', 'Maternity Care', 'Emergency', 'Surgery', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Universal Insurance',
-      type: 'Universal Care',
-      monthlyPremium: '₦11,000',
-      coverage: '₦3,000,000',
-      rating: 3.8,
-      features: ['Universal Coverage', 'Basic Care', 'Maternity', 'Emergency', 'Consultation'],
-      popular: false
-    },
-    {
-      name: 'Goldlink Insurance',
-      type: 'Gold Health Plan',
-      monthlyPremium: '₦22,000',
-      coverage: '₦8,500,000',
-      rating: 4.3,
-      features: ['Gold Standard', 'Comprehensive Maternity', 'Surgery', 'Emergency', 'Dental'],
-      popular: false
-    },
-    {
-      name: 'Prestige Assurance',
-      type: 'Prestige Health',
-      monthlyPremium: '₦19,000',
-      coverage: '₦7,000,000',
-      rating: 4.2,
-      features: ['Prestige Care', 'Maternity Package', 'Private Hospitals', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Lasaco Assurance',
-      type: 'Complete Health',
-      monthlyPremium: '₦13,000',
-      coverage: '₦4,500,000',
-      rating: 4.0,
-      features: ['Complete Coverage', 'Maternity', 'Surgery', 'Emergency', 'Outpatient'],
-      popular: false
-    },
-    {
-      name: 'Law Union & Rock Insurance',
-      type: 'Rock Solid Health',
-      monthlyPremium: '₦17,000',
-      coverage: '₦6,500,000',
-      rating: 4.1,
-      features: ['Solid Coverage', 'Maternity Care', 'Emergency', 'Surgery', 'Prescription'],
-      popular: false
-    },
-    {
-      name: 'WAPIC Insurance',
-      type: 'Comprehensive Care',
-      monthlyPremium: '₦20,000',
-      coverage: '₦8,000,000',
-      rating: 4.2,
-      features: ['West African Coverage', 'Maternity', 'Surgery', 'Emergency', 'International'],
-      popular: false
-    },
-    {
-      name: 'Guinea Insurance',
-      type: 'Total Health',
-      monthlyPremium: '₦15,500',
-      coverage: '₦5,500,000',
-      rating: 3.9,
-      features: ['Total Care', 'Maternity Package', 'Emergency', 'Surgery', 'Outpatient'],
-      popular: false
-    },
-    {
-      name: 'Standard Alliance Insurance',
-      type: 'Alliance Health',
-      monthlyPremium: '₦21,000',
-      coverage: '₦9,000,000',
-      rating: 4.3,
-      features: ['Alliance Benefits', 'Premium Maternity', 'Surgery', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Great Nigerian Insurance',
-      type: 'Great Health Plan',
-      monthlyPremium: '₦18,500',
-      coverage: '₦7,200,000',
-      rating: 4.0,
-      features: ['Great Coverage', 'Maternity Care', 'Emergency', 'Surgery', 'Consultation'],
-      popular: false
-    },
-    {
-      name: 'Staco Insurance',
-      type: 'Staco Health Plus',
-      monthlyPremium: '₦16,500',
-      coverage: '₦6,200,000',
-      rating: 3.8,
-      features: ['Health Plus', 'Maternity', 'Emergency', 'Basic Surgery', 'Outpatient'],
-      popular: false
-    },
-    {
-      name: 'Zenith General Insurance',
-      type: 'Zenith Health',
-      monthlyPremium: '₦24,000',
-      coverage: '₦11,000,000',
-      rating: 4.5,
-      features: ['Zenith Standard', 'Premium Maternity', 'Surgery', 'Emergency', 'International Care'],
-      popular: true
-    },
-    {
-      name: 'Royal Exchange Assurance',
-      type: 'Royal Health',
-      monthlyPremium: '₦23,000',
-      coverage: '₦10,500,000',
-      rating: 4.4,
-      features: ['Royal Treatment', 'Comprehensive Maternity', 'Surgery', 'Emergency', 'Private Care'],
-      popular: false
-    },
-    {
-      name: 'Reliance HMO',
-      type: 'Reliance Care',
-      monthlyPremium: '₦9,500',
-      coverage: '₦2,500,000',
-      rating: 4.2,
-      features: ['HMO Network', 'Maternity Care', 'Preventive Care', 'Emergency', 'Specialist Access'],
-      popular: true
-    },
-    {
-      name: 'Total Health Trust (THT)',
-      type: 'Premium HMO',
-      monthlyPremium: '₦12,500',
-      coverage: '₦4,000,000',
-      rating: 4.4,
-      features: ['Comprehensive HMO', 'Maternity Package', 'Wellness Programs', 'Emergency', 'Specialist Care'],
-      popular: false
-    },
-    {
+      id: '7',
       name: 'HYGEIA HMO',
       type: 'Hygeia Care Plus',
       monthlyPremium: '₦14,500',
@@ -237,150 +98,7 @@ const Insurance = () => {
       popular: true
     },
     {
-      name: 'Clearline HMO',
-      type: 'Clearline Health',
-      monthlyPremium: '₦10,000',
-      coverage: '₦3,000,000',
-      rating: 4.1,
-      features: ['Clear Benefits', 'Maternity Care', 'Preventive', 'Emergency', 'Telemedicine'],
-      popular: false
-    },
-    {
-      name: 'Songhai Health Trust',
-      type: 'Songhai Premium',
-      monthlyPremium: '₦11,500',
-      coverage: '₦3,500,000',
-      rating: 4.0,
-      features: ['Trust Network', 'Maternity Benefits', 'Wellness', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'RedCare HMO',
-      type: 'RedCare Plus',
-      monthlyPremium: '₦13,000',
-      coverage: '₦4,200,000',
-      rating: 4.2,
-      features: ['Red Care Network', 'Comprehensive Maternity', 'Wellness', 'Emergency', 'Digital'],
-      popular: false
-    },
-    {
-      name: 'Integrated Healthcare Services',
-      type: 'IHS Premium',
-      monthlyPremium: '₦16,000',
-      coverage: '₦6,000,000',
-      rating: 4.3,
-      features: ['Integrated Services', 'Premium Maternity', 'Wellness', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Prepaid Health Plans',
-      type: 'PHP Care',
-      monthlyPremium: '₦8,500',
-      coverage: '₦2,200,000',
-      rating: 3.9,
-      features: ['Prepaid Benefits', 'Basic Maternity', 'Primary Care', 'Emergency', 'Generic Drugs'],
-      popular: false
-    },
-    {
-      name: 'Novo Healthcare',
-      type: 'Novo Premium',
-      monthlyPremium: '₦12,000',
-      coverage: '₦3,800,000',
-      rating: 4.1,
-      features: ['Novo Network', 'Maternity Care', 'Preventive', 'Emergency', 'Wellness'],
-      popular: false
-    },
-    {
-      name: 'HealthPlus Limited',
-      type: 'HealthPlus Care',
-      monthlyPremium: '₦10,500',
-      coverage: '₦3,200,000',
-      rating: 4.0,
-      features: ['Health Plus Network', 'Maternity Package', 'Pharmacy', 'Emergency', 'Consultation'],
-      popular: false
-    },
-    {
-      name: 'Zuma HMO',
-      type: 'Zuma Health',
-      monthlyPremium: '₦9,000',
-      coverage: '₦2,800,000',
-      rating: 3.8,
-      features: ['Zuma Network', 'Basic Maternity', 'Primary Care', 'Emergency', 'Preventive'],
-      popular: false
-    },
-    {
-      name: 'Princeton Medicare',
-      type: 'Princeton Care',
-      monthlyPremium: '₦13,500',
-      coverage: '₦4,500,000',
-      rating: 4.2,
-      features: ['Princeton Network', 'Premium Maternity', 'Specialist', 'Emergency', 'Wellness'],
-      popular: false
-    },
-    {
-      name: 'Mediplan Healthcare',
-      type: 'Mediplan Plus',
-      monthlyPremium: '₦11,000',
-      coverage: '₦3,300,000',
-      rating: 3.9,
-      features: ['Mediplan Network', 'Maternity Benefits', 'Basic Care', 'Emergency', 'Pharmacy'],
-      popular: false
-    },
-    {
-      name: 'First Dominican Hospital HMO',
-      type: 'Dominican Care',
-      monthlyPremium: '₦15,500',
-      coverage: '₦5,500,000',
-      rating: 4.3,
-      features: ['Hospital Network', 'Excellent Maternity', 'Specialist', 'Emergency', 'Premium Care'],
-      popular: false
-    },
-    {
-      name: 'Metropolitan Health',
-      type: 'Metro Premium',
-      monthlyPremium: '₦14,000',
-      coverage: '₦4,800,000',
-      rating: 4.1,
-      features: ['Metro Network', 'Comprehensive Maternity', 'Urban Care', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Oceanic Health Management',
-      type: 'Oceanic Care',
-      monthlyPremium: '₦12,500',
-      coverage: '₦4,000,000',
-      rating: 4.0,
-      features: ['Oceanic Network', 'Maternity Package', 'Coastal Care', 'Emergency', 'Wellness'],
-      popular: false
-    },
-    {
-      name: 'Sapphire Health',
-      type: 'Sapphire Premium',
-      monthlyPremium: '₦17,000',
-      coverage: '₦6,500,000',
-      rating: 4.4,
-      features: ['Sapphire Network', 'Luxury Maternity', 'Premium Care', 'Emergency', 'Concierge'],
-      popular: false
-    },
-    {
-      name: 'Aviators Healthcare',
-      type: 'Aviators Plus',
-      monthlyPremium: '₦13,200',
-      coverage: '₦4,300,000',
-      rating: 4.1,
-      features: ['Aviation Network', 'Maternity Care', 'Travel Health', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Wellness HMO',
-      type: 'Wellness Care',
-      monthlyPremium: '₦10,800',
-      coverage: '₦3,400,000',
-      rating: 3.9,
-      features: ['Wellness Focus', 'Maternity Benefits', 'Preventive Care', 'Emergency', 'Nutrition'],
-      popular: false
-    },
-    {
+      id: '8',
       name: 'Sterling Health HMO',
       type: 'Sterling Premium',
       monthlyPremium: '₦18,500',
@@ -388,103 +106,72 @@ const Insurance = () => {
       rating: 4.5,
       features: ['Sterling Network', 'Premium Maternity', 'Executive Care', 'Emergency', 'International'],
       popular: true
-    },
-    {
-      name: 'Phoenix Health Plans',
-      type: 'Phoenix Care',
-      monthlyPremium: '₦11,800',
-      coverage: '₦3,600,000',
-      rating: 4.0,
-      features: ['Phoenix Network', 'Maternity Package', 'Renewal Care', 'Emergency', 'Pharmacy'],
-      popular: false
-    },
-    {
-      name: 'Anchor HMO',
-      type: 'Anchor Health',
-      monthlyPremium: '₦9,800',
-      coverage: '₦2,900,000',
-      rating: 3.8,
-      features: ['Anchor Network', 'Basic Maternity', 'Stable Care', 'Emergency', 'Primary Health'],
-      popular: false
-    },
-    {
-      name: 'Unity Health HMO',
-      type: 'Unity Care',
-      monthlyPremium: '₦12,200',
-      coverage: '₦3,900,000',
-      rating: 4.1,
-      features: ['Unity Network', 'Comprehensive Maternity', 'Community Care', 'Emergency', 'Wellness'],
-      popular: false
-    },
-    {
-      name: 'Capital Health HMO',
-      type: 'Capital Premium',
-      monthlyPremium: '₦16,500',
-      coverage: '₦6,200,000',
-      rating: 4.3,
-      features: ['Capital Network', 'Premium Maternity', 'Executive Health', 'Emergency', 'Specialist'],
-      popular: false
-    },
-    {
-      name: 'Premier Health Plans',
-      type: 'Premier Care',
-      monthlyPremium: '₦19,500',
-      coverage: '₦8,000,000',
-      rating: 4.4,
-      features: ['Premier Network', 'Luxury Maternity', 'VIP Care', 'Emergency', 'Concierge Medicine'],
-      popular: false
-    },
-    {
-      name: 'Optimal Health Care',
-      type: 'Optimal Plus',
-      monthlyPremium: '₦14,800',
-      coverage: '₦5,200,000',
-      rating: 4.2,
-      features: ['Optimal Network', 'Enhanced Maternity', 'Performance Health', 'Emergency', 'Wellness'],
-      popular: false
-    },
-    {
-      name: 'Liberty Health HMO',
-      type: 'Liberty Care',
-      monthlyPremium: '₦13,800',
-      coverage: '₦4,600,000',
-      rating: 4.1,
-      features: ['Liberty Network', 'Freedom Maternity', 'Flexible Care', 'Emergency', 'Choice Plans'],
-      popular: false
-    },
-    {
-      name: 'Victory Healthcare',
-      type: 'Victory Premium',
-      monthlyPremium: '₦15,200',
-      coverage: '₦5,800,000',
-      rating: 4.2,
-      features: ['Victory Network', 'Triumphant Maternity', 'Success Health', 'Emergency', 'Achievement Care'],
-      popular: false
-    },
-    {
-      name: 'Excellence Health Plans',
-      type: 'Excellence Care',
-      monthlyPremium: '₦17,800',
-      coverage: '₦7,200,000',
-      rating: 4.4,
-      features: ['Excellence Network', 'Superior Maternity', 'Quality Care', 'Emergency', 'Premium Service'],
-      popular: false
-    },
-    {
-      name: 'Crown Health HMO',
-      type: 'Crown Premium',
-      monthlyPremium: '₦20,500',
-      coverage: '₦8,800,000',
-      rating: 4.5,
-      features: ['Crown Network', 'Royal Maternity', 'Regal Care', 'Emergency', 'Sovereign Service'],
-      popular: true
     }
   ];
 
-  const filteredPlans = insurancePlans.filter(plan =>
-    plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    plan.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPlans = insurancePlans.filter(plan => {
+    const matchesSearch = plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         plan.type.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const price = parseInt(plan.monthlyPremium.replace(/[₦,]/g, ''));
+    const matchesPrice = price >= filters.priceRange[0] && price <= filters.priceRange[1];
+    
+    const coverage = parseInt(plan.coverage.replace(/[₦,]/g, ''));
+    const matchesCoverage = filters.coverage === 'all' || coverage >= parseInt(filters.coverage);
+    
+    const matchesType = filters.type === 'all' || 
+                       (filters.type === 'hmo' && plan.type.toLowerCase().includes('hmo')) ||
+                       (filters.type === 'insurance' && !plan.type.toLowerCase().includes('hmo')) ||
+                       (filters.type === 'family' && plan.type.toLowerCase().includes('family')) ||
+                       (filters.type === 'premium' && plan.type.toLowerCase().includes('premium'));
+    
+    const matchesRating = plan.rating >= filters.rating;
+    
+    const matchesFeatures = filters.features.length === 0 || 
+                           filters.features.every(feature => 
+                             plan.features.some(planFeature => 
+                               planFeature.toLowerCase().includes(feature.toLowerCase())
+                             )
+                           );
+
+    return matchesSearch && matchesPrice && matchesCoverage && matchesType && matchesRating && matchesFeatures;
+  });
+
+  const sortedPlans = [...filteredPlans].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return parseInt(a.monthlyPremium.replace(/[₦,]/g, '')) - parseInt(b.monthlyPremium.replace(/[₦,]/g, ''));
+      case 'price-high':
+        return parseInt(b.monthlyPremium.replace(/[₦,]/g, '')) - parseInt(a.monthlyPremium.replace(/[₦,]/g, ''));
+      case 'rating':
+        return b.rating - a.rating;
+      case 'coverage':
+        return parseInt(b.coverage.replace(/[₦,]/g, '')) - parseInt(a.coverage.replace(/[₦,]/g, ''));
+      default:
+        return b.popular ? 1 : -1;
+    }
+  });
+
+  const handleAddToComparison = (plan: any) => {
+    if (selectedForComparison.length < 3 && !selectedForComparison.find(p => p.id === plan.id)) {
+      setSelectedForComparison([...selectedForComparison, plan]);
+      setShowComparison(true);
+    }
+  };
+
+  const handleRemoveFromComparison = (planId: string) => {
+    setSelectedForComparison(selectedForComparison.filter(p => p.id !== planId));
+  };
+
+  const handleSelectPlan = (plan: any) => {
+    setSelectedPlan(plan);
+    setShowPayment(true);
+  };
+
+  const handlePaymentInitiate = (method: string, details: any) => {
+    console.log('Payment initiated:', method, details);
+    // Here you would integrate with actual payment processor
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -500,70 +187,184 @@ const Insurance = () => {
               Find the perfect health insurance plan for you and your family, with special focus on maternal care
             </p>
             
-            <div className="max-w-md mx-auto relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search insurance providers..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+            <div className="max-w-2xl mx-auto flex gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search insurance providers..."
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center"
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowComparison(!showComparison)}
+                className="flex items-center"
+              >
+                <Scale className="h-4 w-4 mr-2" />
+                Compare ({selectedForComparison.length})
+              </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredPlans.map((plan, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow relative border-l-4 border-l-teal-500">
-                {plan.popular && (
-                  <Badge className="absolute -top-3 left-4 bg-emerald-600">
-                    Most Popular
-                  </Badge>
-                )}
-                
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Shield className="h-8 w-8 text-teal-600" />
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600">{plan.rating}</span>
+          <div className="grid grid-cols-12 gap-6">
+            {/* Filters Sidebar */}
+            {showFilters && (
+              <div className="col-span-12 lg:col-span-3">
+                <InsuranceFilters
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  onClearFilters={() => setFilters({
+                    priceRange: [1000, 50000],
+                    coverage: 'all',
+                    type: 'all',
+                    features: [],
+                    rating: 0
+                  })}
+                />
+              </div>
+            )}
+
+            {/* Main Content */}
+            <div className={`col-span-12 ${showFilters ? 'lg:col-span-9' : ''}`}>
+              {/* Sort Controls */}
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-gray-600">
+                  Showing {sortedPlans.length} of {insurancePlans.length} plans
+                </p>
+                <div className="flex items-center space-x-2">
+                  <ArrowUpDown className="h-4 w-4" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="border rounded px-3 py-1 text-sm"
+                  >
+                    <option value="popular">Most Popular</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="coverage">Highest Coverage</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Comparison Panel */}
+              {showComparison && (
+                <div className="mb-6">
+                  <InsuranceComparison
+                    selectedPlans={selectedForComparison}
+                    onRemovePlan={handleRemoveFromComparison}
+                    onClearComparison={() => {
+                      setSelectedForComparison([]);
+                      setShowComparison(false);
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Insurance Plans Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                {sortedPlans.map((plan) => (
+                  <Card key={plan.id} className="hover:shadow-lg transition-shadow relative border-l-4 border-l-teal-500">
+                    {plan.popular && (
+                      <Badge className="absolute -top-3 left-4 bg-emerald-600">
+                        Most Popular
+                      </Badge>
+                    )}
+                    
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <Shield className="h-8 w-8 text-teal-600" />
+                        <div className="flex items-center space-x-1">
+                          <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                          <span className="text-sm text-gray-600">{plan.rating}</span>
+                        </div>
+                      </div>
+                      <CardTitle className="text-lg">{plan.name}</CardTitle>
+                      <p className="text-sm text-gray-600">{plan.type}</p>
+                    </CardHeader>
+                    
+                    <CardContent>
+                      <div className="mb-4">
+                        <div className="text-2xl font-bold text-teal-600">{plan.monthlyPremium}</div>
+                        <div className="text-sm text-gray-600">per month</div>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <div className="text-sm text-gray-600">Coverage up to</div>
+                        <div className="text-lg font-semibold">{plan.coverage}</div>
+                      </div>
+                      
+                      <div className="mb-6">
+                        <h4 className="text-sm font-medium text-gray-900 mb-2">Key Features:</h4>
+                        <ul className="space-y-1">
+                          {plan.features.slice(0, 3).map((feature, featureIndex) => (
+                            <li key={featureIndex} className="text-sm text-gray-600 flex items-center">
+                              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2"></div>
+                              {feature}
+                            </li>
+                          ))}
+                          {plan.features.length > 3 && (
+                            <li className="text-sm text-gray-500">
+                              +{plan.features.length - 3} more features
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Button 
+                          className="w-full bg-teal-600 hover:bg-teal-700"
+                          onClick={() => handleSelectPlan(plan)}
+                        >
+                          Get Quote
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => handleAddToComparison(plan)}
+                          disabled={selectedForComparison.length >= 3 || selectedForComparison.find(p => p.id === plan.id)}
+                        >
+                          {selectedForComparison.find(p => p.id === plan.id) ? 'Added to Compare' : 'Compare'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Payment Modal */}
+              {showPayment && selectedPlan && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="p-4 border-b flex items-center justify-between">
+                      <h2 className="text-xl font-semibold">Complete Your Purchase</h2>
+                      <Button variant="ghost" onClick={() => setShowPayment(false)}>×</Button>
+                    </div>
+                    <div className="p-4">
+                      <PaymentMethods
+                        selectedPlan={selectedPlan}
+                        onPaymentInitiate={handlePaymentInitiate}
+                      />
                     </div>
                   </div>
-                  <CardTitle className="text-lg">{plan.name}</CardTitle>
-                  <p className="text-sm text-gray-600">{plan.type}</p>
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="mb-4">
-                    <div className="text-2xl font-bold text-teal-600">{plan.monthlyPremium}</div>
-                    <div className="text-sm text-gray-600">per month</div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Coverage up to</div>
-                    <div className="text-lg font-semibold">{plan.coverage}</div>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Key Features:</h4>
-                    <ul className="space-y-1">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="text-sm text-gray-600 flex items-center">
-                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2"></div>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <Button className="w-full bg-teal-600 hover:bg-teal-700">
-                    Get Quote
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              )}
+            </div>
           </div>
 
+          {/* Help Section */}
           <div className="mt-16 bg-white rounded-lg shadow-sm p-8">
             <div className="text-center">
               <Users className="h-12 w-12 text-teal-600 mx-auto mb-4" />
