@@ -4,6 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/hooks/use-theme";
+import PWAInstallBanner from "@/components/PWAInstallBanner";
+import { useState } from "react";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Hospitals from "./pages/Hospitals";
@@ -22,33 +25,41 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/hospitals" element={<Hospitals />} />
-          <Route path="/insurance" element={<Insurance />} />
-          <Route path="/appointments" element={<Appointments />} />
-          <Route path="/labs" element={<Labs />} />
-          <Route path="/pharmacy" element={<Pharmacy />} />
-          <Route path="/records" element={<Records />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/premium" element={<Premium />} />
-          <Route path="/telemedicine" element={<Telemedicine />} />
-          <Route path="/emergency" element={<Emergency />} />
-          <Route path="/diagnostics" element={<Diagnostics />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [showPWABanner, setShowPWABanner] = useState(true);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="light" storageKey="meddypal-theme">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/hospitals" element={<Hospitals />} />
+              <Route path="/insurance" element={<Insurance />} />
+              <Route path="/appointments" element={<Appointments />} />
+              <Route path="/labs" element={<Labs />} />
+              <Route path="/pharmacy" element={<Pharmacy />} />
+              <Route path="/records" element={<Records />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/premium" element={<Premium />} />
+              <Route path="/telemedicine" element={<Telemedicine />} />
+              <Route path="/emergency" element={<Emergency />} />
+              <Route path="/diagnostics" element={<Diagnostics />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            {showPWABanner && (
+              <PWAInstallBanner onDismiss={() => setShowPWABanner(false)} />
+            )}
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

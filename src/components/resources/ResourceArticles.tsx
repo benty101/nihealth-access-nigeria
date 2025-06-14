@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Clock, Star, Download, User } from 'lucide-react';
+import { BookOpen, Clock, Star, Download, User, MapPin } from 'lucide-react';
 
 interface Article {
   id: number;
@@ -16,6 +16,8 @@ interface Article {
   downloads: number;
   isPopular: boolean;
   tags: string[];
+  location?: string;
+  imageUrl?: string;
 }
 
 interface ResourceArticlesProps {
@@ -34,18 +36,39 @@ const ResourceArticles = ({ articles, searchTerm }: ResourceArticlesProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredArticles.map((article) => (
-        <Card key={article.id} className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <div className="flex items-start justify-between mb-2">
-              <Badge variant="secondary">{article.category}</Badge>
+        <Card key={article.id} className="hover:shadow-lg transition-shadow overflow-hidden">
+          {article.imageUrl && (
+            <div className="h-48 bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center relative">
+              <div className="w-full h-full bg-cover bg-center" 
+                   style={{ backgroundImage: `url(${article.imageUrl})` }}>
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+              </div>
               {article.isPopular && (
-                <Badge className="bg-emerald-100 text-emerald-700">Popular</Badge>
+                <Badge className="absolute top-3 right-3 bg-emerald-500 text-white">
+                  Popular
+                </Badge>
               )}
             </div>
+          )}
+          <CardHeader className={!article.imageUrl ? 'pb-3' : ''}>
+            {!article.imageUrl && (
+              <div className="flex items-start justify-between mb-2">
+                <Badge variant="secondary">{article.category}</Badge>
+                {article.isPopular && (
+                  <Badge className="bg-emerald-100 text-emerald-700">Popular</Badge>
+                )}
+              </div>
+            )}
             <CardTitle className="text-lg leading-tight">{article.title}</CardTitle>
-            <p className="text-sm text-gray-600">{article.description}</p>
+            <p className="text-sm text-gray-600 line-clamp-2">{article.description}</p>
+            {article.location && (
+              <div className="flex items-center text-xs text-gray-500 mt-1">
+                <MapPin className="h-3 w-3 mr-1" />
+                {article.location}
+              </div>
+            )}
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span className="flex items-center">
@@ -69,14 +92,14 @@ const ResourceArticles = ({ articles, searchTerm }: ResourceArticlesProps) => {
               </div>
 
               <div className="flex flex-wrap gap-1">
-                {article.tags.map((tag, idx) => (
+                {article.tags.slice(0, 3).map((tag, idx) => (
                   <Badge key={idx} variant="outline" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
               </div>
 
-              <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700">
+              <Button className="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-sm">
                 <BookOpen className="h-4 w-4 mr-2" />
                 Read Article
               </Button>

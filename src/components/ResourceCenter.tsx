@@ -17,26 +17,29 @@ const ResourceCenter = () => {
     {
       id: 1,
       title: 'Complete Guide to Antenatal Care in Nigeria',
-      description: 'Everything you need to know about prenatal checkups, tests, and what to expect during each trimester.',
+      description: 'Everything you need to know about prenatal checkups, tests, and what to expect during each trimester in Nigerian hospitals.',
       category: 'Pregnancy Care',
       readTime: '8 min read',
       author: 'Dr. Adunni Okafor',
       rating: 4.9,
       downloads: 15420,
       isPopular: true,
-      tags: ['Antenatal', 'Pregnancy', 'Healthcare', 'Nigeria']
+      tags: ['Antenatal', 'Pregnancy', 'Healthcare', 'Nigeria'],
+      location: 'Lagos State',
+      imageUrl: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=200&fit=crop'
     },
     {
       id: 2,
       title: 'Understanding NHIS Coverage for Maternal Health',
-      description: 'A comprehensive breakdown of what the National Health Insurance Scheme covers for pregnant mothers.',
+      description: 'A comprehensive breakdown of what the National Health Insurance Scheme covers for pregnant mothers across Nigerian states.',
       category: 'Insurance',
       readTime: '6 min read',
       author: 'Dr. Kemi Adeleke',
       rating: 4.7,
       downloads: 12080,
       isPopular: true,
-      tags: ['NHIS', 'Insurance', 'Coverage', 'Maternal Health']
+      tags: ['NHIS', 'Insurance', 'Coverage', 'Maternal Health'],
+      location: 'Federal Capital Territory'
     },
     {
       id: 3,
@@ -116,26 +119,30 @@ const ResourceCenter = () => {
     {
       id: 1,
       title: 'Antenatal Exercise Routines for Nigerian Mothers',
-      description: 'Safe exercises during pregnancy adapted for Nigerian climate and culture.',
+      description: 'Safe exercises during pregnancy adapted for Nigerian climate and culture, filmed at Lagos hospitals.',
       duration: '25 minutes',
       instructor: 'Fitness Coach Amaka Eze',
       views: 45000,
       rating: 4.8,
       category: 'Exercise',
       thumbnail: '/api/placeholder/320/180',
-      isPopular: true
+      isPopular: true,
+      location: 'Lagos University Teaching Hospital',
+      lowBandwidth: true
     },
     {
       id: 2,
-      title: 'Understanding Labor and Delivery Process',
-      description: 'What to expect during labor, breathing techniques, and when to go to the hospital.',
+      title: 'Understanding Labour and Delivery Process',
+      description: 'What to expect during labour, breathing techniques, and when to go to hospital - Nigerian context.',
       duration: '18 minutes',
       instructor: 'Dr. Folake Adebisi',
       views: 62000,
       rating: 4.9,
       category: 'Birth Preparation',
       thumbnail: '/api/placeholder/320/180',
-      isPopular: true
+      isPopular: true,
+      location: 'UCH Ibadan',
+      lowBandwidth: false
     },
     {
       id: 3,
@@ -249,27 +256,31 @@ const ResourceCenter = () => {
       id: 1,
       name: 'Dr. Adunni Okafor',
       specialty: 'Maternal-Fetal Medicine',
-      hospital: 'Lagos University Teaching Hospital',
+      hospital: 'Lagos University Teaching Hospital (LUTH)',
       experience: '15 years',
       consultations: 2500,
       rating: 4.9,
-      location: 'Lagos State',
+      location: 'Idi-Araba, Lagos State',
       languages: ['English', 'Yoruba'],
       availability: 'Available for consultations',
-      image: '/api/placeholder/80/80'
+      image: '/api/placeholder/80/80',
+      hospitalType: 'Federal Teaching Hospital',
+      consultationFee: '₦15,000 - ₦25,000'
     },
     {
       id: 2,
       name: 'Dr. Kemi Adeleke',
-      specialty: 'Obstetrics & Gynecology',
+      specialty: 'Obstetrics & Gynaecology',
       hospital: 'University College Hospital Ibadan',
       experience: '12 years',
       consultations: 1800,
       rating: 4.8,
-      location: 'Oyo State',
+      location: 'UCH Road, Ibadan, Oyo State',
       languages: ['English', 'Yoruba'],
       availability: 'Available for consultations',
-      image: '/api/placeholder/80/80'
+      image: '/api/placeholder/80/80',
+      hospitalType: 'Federal Teaching Hospital',
+      consultationFee: '₦12,000 - ₦20,000'
     },
     {
       id: 3,
@@ -510,10 +521,10 @@ const ResourceCenter = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Maternal Health Resource Center
+            Maternal Health Resource Centre
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive resources, expert guidance, and support for Nigerian mothers
+            Comprehensive resources, expert guidance, and support for Nigerian mothers and their families
           </p>
         </div>
 
