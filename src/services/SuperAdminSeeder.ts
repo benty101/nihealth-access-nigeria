@@ -8,7 +8,7 @@ export class SuperAdminSeeder {
       
       // Create the super admin without signing them in
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: 'admin@meddypal.com',
+        email: 'kosyezenekwe@gmail.com',
         password: 'admin123',
         options: {
           data: {
