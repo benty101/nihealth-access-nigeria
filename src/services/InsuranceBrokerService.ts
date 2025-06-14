@@ -431,7 +431,8 @@ class InsuranceBrokerService {
       validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       features: ['Outpatient Care', 'Emergency Services', 'Prescription Coverage'],
       terms: '12 months coverage period',
-      status: 'pending'
+      status: 'pending',
+      apiSource: 'mock'
     };
   }
 
