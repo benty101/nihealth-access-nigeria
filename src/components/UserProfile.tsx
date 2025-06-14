@@ -2,16 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Heart, Calendar, Bell, MapPin, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { profileSchema, nigerianStates } from '@/lib/validation';
+import { profileSchema } from '@/lib/validation';
 import { sanitizeErrorMessage, secureLog, maskEmail } from '@/lib/security';
+import BasicInformation from './profile/BasicInformation';
+import LocationInformation from './profile/LocationInformation';
+import EmergencyContact from './profile/EmergencyContact';
+import PregnancyInformation from './profile/PregnancyInformation';
+import MedicalInformation from './profile/MedicalInformation';
 
 interface Profile {
   id: string;
@@ -86,7 +87,6 @@ const UserProfile = () => {
       }
 
       if (data) {
-        // Ensure gender is properly typed
         const profileData = {
           ...data,
           gender: data.gender as 'male' | 'female' | 'other' || 'female',
@@ -120,19 +120,9 @@ const UserProfile = () => {
     }
   };
 
-  const calculateWeeksPregnant = (dueDate: string) => {
-    if (!dueDate) return 0;
-    const due = new Date(dueDate);
-    const now = new Date();
-    const diffTime = due.getTime() - now.getTime();
-    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
-    return Math.max(0, 40 - diffWeeks);
-  };
-
   const handleSave = async () => {
     if (!user) return;
 
-    // Validate the profile data
     if (!validateForm(profile)) {
       toast({
         title: "Validation Error",
@@ -181,7 +171,6 @@ const UserProfile = () => {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    // Clear validation error when user starts typing
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -189,8 +178,6 @@ const UserProfile = () => {
     setProfile(prev => ({ ...prev, [field]: value }));
     updateActivity();
   };
-
-  const weeksPregnant = calculateWeeksPregnant(profile.due_date || '');
 
   if (loading) {
     return (
@@ -224,267 +211,35 @@ const UserProfile = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="full_name">Full Name</Label>
-              <Input
-                id="full_name"
-                value={profile.full_name || ''}
-                onChange={(e) => handleInputChange('full_name', e.target.value)}
-                placeholder="Enter your full name"
-                className={validationErrors.full_name ? 'border-red-500' : ''}
-                maxLength={100}
-              />
-              {validationErrors.full_name && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.full_name}</p>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="phone_number">Phone Number</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="phone_number"
-                  value={profile.phone_number || ''}
-                  onChange={(e) => handleInputChange('phone_number', e.target.value)}
-                  placeholder="e.g. 08012345678 or +2348012345678"
-                  className={`pl-10 ${validationErrors.phone_number ? 'border-red-500' : ''}`}
-                  maxLength={14}
-                />
-              </div>
-              {validationErrors.phone_number && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.phone_number}</p>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="date_of_birth">Date of Birth</Label>
-              <Input
-                id="date_of_birth"
-                type="date"
-                value={profile.date_of_birth || ''}
-                onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
-                className={validationErrors.date_of_birth ? 'border-red-500' : ''}
-                max={new Date().toISOString().split('T')[0]}
-              />
-              {validationErrors.date_of_birth && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.date_of_birth}</p>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="gender">Gender</Label>
-              <Select 
-                value={profile.gender} 
-                onValueChange={(value) => handleInputChange('gender', value as 'male' | 'female' | 'other')}
-              >
-                <SelectTrigger className={validationErrors.gender ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              {validationErrors.gender && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.gender}</p>
-              )}
-            </div>
-          </div>
+          <BasicInformation
+            profile={profile}
+            validationErrors={validationErrors}
+            onInputChange={handleInputChange}
+          />
 
-          {/* Location Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="state_of_residence">State of Residence</Label>
-              <Select 
-                value={profile.state_of_residence} 
-                onValueChange={(value) => handleInputChange('state_of_residence', value)}
-              >
-                <SelectTrigger className={validationErrors.state_of_residence ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select your state" />
-                </SelectTrigger>
-                <SelectContent>
-                  {nigerianStates.map((state) => (
-                    <SelectItem key={state} value={state}>{state}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {validationErrors.state_of_residence && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.state_of_residence}</p>
-              )}
-            </div>
-            <div>
-              <Label htmlFor="lga">Local Government Area (LGA)</Label>
-              <Input
-                id="lga"
-                value={profile.lga || ''}
-                onChange={(e) => handleInputChange('lga', e.target.value)}
-                placeholder="Enter your LGA"
-                className={validationErrors.lga ? 'border-red-500' : ''}
-                maxLength={100}
-              />
-              {validationErrors.lga && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.lga}</p>
-              )}
-            </div>
-            <div className="md:col-span-2">
-              <Label htmlFor="address">Address</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="address"
-                  value={profile.address || ''}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="Enter your full address"
-                  className={`pl-10 ${validationErrors.address ? 'border-red-500' : ''}`}
-                  maxLength={500}
-                />
-              </div>
-              {validationErrors.address && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors.address}</p>
-              )}
-            </div>
-          </div>
+          <LocationInformation
+            profile={profile}
+            validationErrors={validationErrors}
+            onInputChange={handleInputChange}
+          />
 
-          {/* Emergency Contact */}
-          <div className="border-t pt-4">
-            <h3 className="text-lg font-medium mb-4">Emergency Contact</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="emergency_contact_name">Contact Name</Label>
-                <Input
-                  id="emergency_contact_name"
-                  value={profile.emergency_contact_name || ''}
-                  onChange={(e) => handleInputChange('emergency_contact_name', e.target.value)}
-                  placeholder="Emergency contact full name"
-                  className={validationErrors.emergency_contact_name ? 'border-red-500' : ''}
-                  maxLength={100}
-                />
-                {validationErrors.emergency_contact_name && (
-                  <p className="text-sm text-red-600 mt-1">{validationErrors.emergency_contact_name}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="emergency_contact_phone">Contact Phone</Label>
-                <Input
-                  id="emergency_contact_phone"
-                  value={profile.emergency_contact_phone || ''}
-                  onChange={(e) => handleInputChange('emergency_contact_phone', e.target.value)}
-                  placeholder="Emergency contact phone number"
-                  className={validationErrors.emergency_contact_phone ? 'border-red-500' : ''}
-                  maxLength={14}
-                />
-                {validationErrors.emergency_contact_phone && (
-                  <p className="text-sm text-red-600 mt-1">{validationErrors.emergency_contact_phone}</p>
-                )}
-              </div>
-            </div>
-          </div>
+          <EmergencyContact
+            profile={profile}
+            validationErrors={validationErrors}
+            onInputChange={handleInputChange}
+          />
 
-          {/* Pregnancy Information */}
-          <div className="border-t pt-4">
-            <div className="flex items-center space-x-2 mb-4">
-              <input
-                type="checkbox"
-                id="is_pregnant"
-                checked={profile.is_pregnant || false}
-                onChange={(e) => handleInputChange('is_pregnant', e.target.checked)}
-                className="rounded"
-              />
-              <Label htmlFor="is_pregnant" className="flex items-center">
-                <Heart className="mr-2 h-4 w-4 text-pink-500" />
-                I am currently pregnant
-              </Label>
-            </div>
+          <PregnancyInformation
+            profile={profile}
+            validationErrors={validationErrors}
+            onInputChange={handleInputChange}
+          />
 
-            {profile.is_pregnant && (
-              <div className="bg-pink-50 p-4 rounded-lg space-y-4">
-                <div>
-                  <Label htmlFor="due_date">Expected Due Date</Label>
-                  <Input
-                    id="due_date"
-                    type="date"
-                    value={profile.due_date || ''}
-                    onChange={(e) => handleInputChange('due_date', e.target.value)}
-                    className={validationErrors.due_date ? 'border-red-500' : ''}
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                  {validationErrors.due_date && (
-                    <p className="text-sm text-red-600 mt-1">{validationErrors.due_date}</p>
-                  )}
-                </div>
-
-                {profile.due_date && weeksPregnant > 0 && (
-                  <div className="flex items-center space-x-4">
-                    <Badge className="bg-pink-100 text-pink-800">
-                      {weeksPregnant} weeks pregnant
-                    </Badge>
-                    <Badge className="bg-blue-100 text-blue-800">
-                      Trimester {weeksPregnant <= 12 ? '1' : weeksPregnant <= 26 ? '2' : '3'}
-                    </Badge>
-                  </div>
-                )}
-
-                <div className="flex items-center text-sm text-gray-600">
-                  <Bell className="mr-2 h-4 w-4" />
-                  You'll receive personalized pregnancy tips and appointment reminders
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Medical Information */}
-          <div className="border-t pt-4">
-            <h3 className="text-lg font-medium mb-4">Medical Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="blood_group">Blood Group</Label>
-                <Select 
-                  value={profile.blood_group} 
-                  onValueChange={(value) => handleInputChange('blood_group', value)}
-                >
-                  <SelectTrigger className={validationErrors.blood_group ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Select blood group" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="A+">A+</SelectItem>
-                    <SelectItem value="A-">A-</SelectItem>
-                    <SelectItem value="B+">B+</SelectItem>
-                    <SelectItem value="B-">B-</SelectItem>
-                    <SelectItem value="AB+">AB+</SelectItem>
-                    <SelectItem value="AB-">AB-</SelectItem>
-                    <SelectItem value="O+">O+</SelectItem>
-                    <SelectItem value="O-">O-</SelectItem>
-                  </SelectContent>
-                </Select>
-                {validationErrors.blood_group && (
-                  <p className="text-sm text-red-600 mt-1">{validationErrors.blood_group}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="genotype">Genotype</Label>
-                <Select 
-                  value={profile.genotype} 
-                  onValueChange={(value) => handleInputChange('genotype', value)}
-                >
-                  <SelectTrigger className={validationErrors.genotype ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Select genotype" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AA">AA</SelectItem>
-                    <SelectItem value="AS">AS</SelectItem>
-                    <SelectItem value="AC">AC</SelectItem>
-                    <SelectItem value="SS">SS</SelectItem>
-                    <SelectItem value="SC">SC</SelectItem>
-                    <SelectItem value="CC">CC</SelectItem>
-                  </SelectContent>
-                </Select>
-                {validationErrors.genotype && (
-                  <p className="text-sm text-red-600 mt-1">{validationErrors.genotype}</p>
-                )}
-              </div>
-            </div>
-          </div>
+          <MedicalInformation
+            profile={profile}
+            validationErrors={validationErrors}
+            onInputChange={handleInputChange}
+          />
 
           <Button 
             onClick={handleSave} 
