@@ -4,6 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Star, Users, Stethoscope } from 'lucide-react';
 
 const Hero = () => {
+  const handleFindHealthcare = () => {
+    console.log('Find Healthcare clicked');
+    // Add navigation logic here
+  };
+
+  const handleExploreHospitals = () => {
+    console.log('Explore Hospitals clicked');
+    // Add navigation logic here
+  };
+
+  const handleStartJourney = () => {
+    console.log('Start Journey clicked');
+    // Add navigation logic here
+  };
+
   return (
     <div className="relative overflow-hidden">
       {/* Main Hero Section */}
@@ -32,11 +47,20 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button size="lg" className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button 
+                size="lg" 
+                onClick={handleFindHealthcare}
+                className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+              >
                 <Heart className="mr-2 h-5 w-5" />
                 Find Healthcare
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-4 text-lg rounded-full transition-all duration-300">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={handleExploreHospitals}
+                className="border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-4 text-lg rounded-full transition-all duration-300 cursor-pointer"
+              >
                 <Search className="mr-2 h-5 w-5" />
                 Explore Hospitals
               </Button>
@@ -157,7 +181,11 @@ const Hero = () => {
           <p className="text-xl text-gray-600 mb-8">
             Join thousands of Nigerian families who trust MeddyPal for their healthcare journey
           </p>
-          <Button size="lg" className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+          <Button 
+            size="lg" 
+            onClick={handleStartJourney}
+            className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer active:scale-95"
+          >
             <Heart className="mr-2 h-5 w-5" />
             Start Your Journey Today
           </Button>
