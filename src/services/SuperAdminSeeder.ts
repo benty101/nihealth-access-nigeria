@@ -6,14 +6,16 @@ export class SuperAdminSeeder {
     try {
       console.log('Creating super admin account...');
       
-      // First, try to sign up the super admin
+      // First, try to sign up the super admin with email confirmation disabled in dev
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: 'admin@meddypal.com',
-        password: 'admin123', // Updated to meet minimum length requirement
+        password: 'admin123',
         options: {
           data: {
             full_name: 'Super Administrator'
-          }
+          },
+          // Disable email confirmation for development
+          emailRedirectTo: undefined
         }
       });
 
@@ -32,7 +34,7 @@ export class SuperAdminSeeder {
           password: 'admin123'
         });
 
-        if (signInError) {
+        if (signInError && !signInError.message.includes('Email not confirmed')) {
           console.error('Error signing in super admin:', signInError);
           return { success: false, error: signInError.message };
         }
@@ -41,7 +43,7 @@ export class SuperAdminSeeder {
       }
 
       if (!userId) {
-        return { success: false, error: 'Could not determine user ID' };
+        return { success: false, error: 'Could not determine user ID - please disable email confirmation in Supabase Auth settings' };
       }
 
       // Ensure the super admin role exists
