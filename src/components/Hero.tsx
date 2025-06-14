@@ -28,6 +28,11 @@ const Hero = () => {
     }
   };
 
+  const handleServiceNavigation = (path: string) => {
+    console.log(`Navigating to: ${path}`);
+    navigate(path);
+  };
+
   return (
     <div className="relative overflow-hidden">
       {/* Main Hero Section */}
@@ -36,7 +41,7 @@ const Hero = () => {
           <div className="text-center">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-8 shadow-sm animate-fade-in hover:shadow-md transition-all duration-300">
               <Shield className="h-4 w-4 mr-2 animate-pulse" />
-              🇳🇬 Proudly Nigerian • Ministry of Health Approved
+              🇳🇬 In Partnership with Ministry of Science and Technology
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in animation-delay-200">
@@ -113,7 +118,12 @@ const Hero = () => {
                 Find and compare hospitals, read reviews, check facilities, and get directions to quality healthcare providers near you.
               </p>
               <div className="text-center">
-                <Button variant="outline" size="sm" className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:scale-105 transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleServiceNavigation('/hospitals')}
+                  className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:scale-105 transition-all duration-300"
+                >
                   Browse Hospitals
                 </Button>
               </div>
@@ -129,7 +139,12 @@ const Hero = () => {
                 Compare health insurance plans, check coverage details, and find the best plan for you and your family.
               </p>
               <div className="text-center">
-                <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:scale-105 transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleServiceNavigation('/insurance')}
+                  className="text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
+                >
                   Compare Plans
                 </Button>
               </div>
@@ -145,7 +160,12 @@ const Hero = () => {
                 Schedule appointments with doctors, specialists, and healthcare providers with real-time availability.
               </p>
               <div className="text-center">
-                <Button variant="outline" size="sm" className="text-purple-600 border-purple-600 hover:bg-purple-50 hover:scale-105 transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleServiceNavigation('/appointments')}
+                  className="text-purple-600 border-purple-600 hover:bg-purple-50 hover:scale-105 transition-all duration-300"
+                >
                   Book Now
                 </Button>
               </div>
@@ -161,7 +181,12 @@ const Hero = () => {
                 Order genuine medications online with prescription upload, home delivery, and medication reminders.
               </p>
               <div className="text-center">
-                <Button variant="outline" size="sm" className="text-green-600 border-green-600 hover:bg-green-50 hover:scale-105 transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleServiceNavigation('/pharmacy')}
+                  className="text-green-600 border-green-600 hover:bg-green-50 hover:scale-105 transition-all duration-300"
+                >
                   Shop Medicines
                 </Button>
               </div>
@@ -177,7 +202,12 @@ const Hero = () => {
                 Book lab tests, diagnostic screenings, and health checkups with certified laboratories nationwide.
               </p>
               <div className="text-center">
-                <Button variant="outline" size="sm" className="text-orange-600 border-orange-600 hover:bg-orange-50 hover:scale-105 transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleServiceNavigation('/labs')}
+                  className="text-orange-600 border-orange-600 hover:bg-orange-50 hover:scale-105 transition-all duration-300"
+                >
                   Book Tests
                 </Button>
               </div>
@@ -193,7 +223,12 @@ const Hero = () => {
                 Securely store and manage your medical records, test results, prescriptions, and health history.
               </p>
               <div className="text-center">
-                <Button variant="outline" size="sm" className="text-teal-600 border-teal-600 hover:bg-teal-50 hover:scale-105 transition-all duration-300">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleServiceNavigation('/records')}
+                  className="text-teal-600 border-teal-600 hover:bg-teal-50 hover:scale-105 transition-all duration-300"
+                >
                   Manage Records
                 </Button>
               </div>
