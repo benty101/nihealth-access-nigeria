@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Building2, Plus, MapPin, Phone, Mail, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { adminService, type Hospital } from '@/services/AdminService';
+import { hospitalService, type Hospital } from '@/services/HospitalService';
 import { useToast } from '@/hooks/use-toast';
 
 const HospitalManagement = () => {
@@ -35,7 +34,7 @@ const HospitalManagement = () => {
 
   const loadHospitals = async () => {
     try {
-      const hospitalsData = await adminService.getAllHospitals();
+      const hospitalsData = await hospitalService.getAllHospitals();
       setHospitals(hospitalsData);
     } catch (error) {
       console.error('Error loading hospitals:', error);
@@ -76,13 +75,13 @@ const HospitalManagement = () => {
       };
 
       if (editingHospital) {
-        await adminService.updateHospital(editingHospital.id, hospitalData);
+        await hospitalService.updateHospital(editingHospital.id, hospitalData);
         toast({
           title: "Success",
           description: "Hospital updated successfully"
         });
       } else {
-        await adminService.createHospital(hospitalData);
+        await hospitalService.createHospital(hospitalData);
         toast({
           title: "Success",
           description: "Hospital created successfully"
@@ -122,7 +121,7 @@ const HospitalManagement = () => {
     if (!confirm('Are you sure you want to deactivate this hospital?')) return;
 
     try {
-      await adminService.deleteHospital(hospitalId);
+      await hospitalService.deleteHospital(hospitalId);
       await loadHospitals();
       toast({
         title: "Success",

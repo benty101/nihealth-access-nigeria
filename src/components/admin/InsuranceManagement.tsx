@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FileText, Plus, Edit, Trash2, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { adminService, type InsurancePlan } from '@/services/AdminService';
+import { insuranceService, type InsurancePlan } from '@/services/InsuranceService';
 import { useToast } from '@/hooks/use-toast';
 
 const InsuranceManagement = () => {
@@ -35,7 +34,7 @@ const InsuranceManagement = () => {
 
   const loadPlans = async () => {
     try {
-      const plansData = await adminService.getAllInsurancePlans();
+      const plansData = await insuranceService.getAllInsurancePlans();
       setPlans(plansData);
     } catch (error) {
       console.error('Error loading insurance plans:', error);
@@ -77,13 +76,13 @@ const InsuranceManagement = () => {
       };
 
       if (editingPlan) {
-        await adminService.updateInsurancePlan(editingPlan.id, planData);
+        await insuranceService.updateInsurancePlan(editingPlan.id, planData);
         toast({
           title: "Success",
           description: "Insurance plan updated successfully"
         });
       } else {
-        await adminService.createInsurancePlan(planData);
+        await insuranceService.createInsurancePlan(planData);
         toast({
           title: "Success",
           description: "Insurance plan created successfully"
@@ -122,7 +121,7 @@ const InsuranceManagement = () => {
     if (!confirm('Are you sure you want to deactivate this insurance plan?')) return;
 
     try {
-      await adminService.deleteInsurancePlan(planId);
+      await insuranceService.deleteInsurancePlan(planId);
       await loadPlans();
       toast({
         title: "Success",
