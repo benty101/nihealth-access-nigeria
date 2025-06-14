@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,40 +17,194 @@ import {
   Users,
   Star,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Baby,
+  User
 } from 'lucide-react';
 
+interface OnboardingData {
+  lifeStage: string;
+  healthGoals: string[];
+  location: string;
+}
+
 const HealthDashboard = () => {
-  const quickActions = [
-    {
-      icon: Calendar,
-      title: 'Book Appointment',
-      description: 'Schedule with doctors',
-      color: 'bg-blue-500',
-      hoverColor: 'hover:bg-blue-600'
-    },
-    {
-      icon: Pill,
-      title: 'Order Medicine',
-      description: 'Pharmacy delivery',
-      color: 'bg-green-500',
-      hoverColor: 'hover:bg-green-600'
-    },
-    {
-      icon: TestTube,
-      title: 'Book Lab Test',
-      description: 'Diagnostic services',
-      color: 'bg-orange-500',
-      hoverColor: 'hover:bg-orange-600'
-    },
-    {
-      icon: Stethoscope,
-      title: 'Find Hospital',
-      description: 'Nearby facilities',
-      color: 'bg-purple-500',
-      hoverColor: 'hover:bg-purple-600'
+  const [onboardingData, setOnboardingData] = useState<OnboardingData | null>(null);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('userOnboardingData');
+    if (storedData) {
+      setOnboardingData(JSON.parse(storedData));
     }
-  ];
+  }, []);
+
+  // Personalized quick actions based on life stage
+  const getPersonalizedQuickActions = () => {
+    const baseActions = [
+      {
+        icon: Calendar,
+        title: 'Book Appointment',
+        description: 'Schedule with doctors',
+        color: 'bg-blue-500',
+        hoverColor: 'hover:bg-blue-600'
+      },
+      {
+        icon: Pill,
+        title: 'Order Medicine',
+        description: 'Pharmacy delivery',
+        color: 'bg-green-500',
+        hoverColor: 'hover:bg-green-600'
+      },
+      {
+        icon: TestTube,
+        title: 'Book Lab Test',
+        description: 'Diagnostic services',
+        color: 'bg-orange-500',
+        hoverColor: 'hover:bg-orange-600'
+      },
+      {
+        icon: Stethoscope,
+        title: 'Find Hospital',
+        description: 'Nearby facilities',
+        color: 'bg-purple-500',
+        hoverColor: 'hover:bg-purple-600'
+      }
+    ];
+
+    if (onboardingData?.lifeStage === 'pregnant') {
+      return [
+        {
+          icon: Baby,
+          title: 'Antenatal Care',
+          description: 'Track pregnancy milestones',
+          color: 'bg-pink-500',
+          hoverColor: 'hover:bg-pink-600'
+        },
+        ...baseActions.slice(0, 3)
+      ];
+    }
+
+    if (onboardingData?.lifeStage === 'mother') {
+      return [
+        {
+          icon: Heart,
+          title: 'Family Health',
+          description: 'Manage family records',
+          color: 'bg-rose-500',
+          hoverColor: 'hover:bg-rose-600'
+        },
+        ...baseActions
+      ];
+    }
+
+    if (onboardingData?.lifeStage === 'elderly') {
+      return [
+        {
+          icon: Shield,
+          title: 'Chronic Care',
+          description: 'Medication management',
+          color: 'bg-indigo-500',
+          hoverColor: 'hover:bg-indigo-600'
+        },
+        ...baseActions
+      ];
+    }
+
+    return baseActions;
+  };
+
+  // Personalized recommendations
+  const getPersonalizedRecommendations = () => {
+    if (!onboardingData) return [];
+
+    const recommendations = [];
+
+    if (onboardingData.lifeStage === 'pregnant') {
+      recommendations.push(
+        {
+          title: 'Antenatal Checkup Due',
+          description: 'Schedule your next antenatal visit',
+          action: 'Book Now',
+          priority: 'high',
+          icon: Baby
+        },
+        {
+          title: 'Prenatal Vitamins',
+          description: 'Ensure you have adequate folic acid and iron',
+          action: 'Order',
+          priority: 'medium',
+          icon: Pill
+        }
+      );
+    }
+
+    if (onboardingData.lifeStage === 'mother') {
+      recommendations.push(
+        {
+          title: 'Child Vaccination Schedule',
+          description: 'Next immunization due in 2 weeks',
+          action: 'Schedule',
+          priority: 'high',
+          icon: Shield
+        },
+        {
+          title: 'Family Health Screening',
+          description: 'Annual checkups for the whole family',
+          action: 'Book',
+          priority: 'medium',
+          icon: Users
+        }
+      );
+    }
+
+    if (onboardingData.lifeStage === 'elderly') {
+      recommendations.push(
+        {
+          title: 'Blood Pressure Check',
+          description: 'Monitor your cardiovascular health',
+          action: 'Schedule',
+          priority: 'high',
+          icon: Heart
+        },
+        {
+          title: 'Medication Review',
+          description: 'Review prescriptions with your doctor',
+          action: 'Book',
+          priority: 'medium',
+          icon: FileText
+        }
+      );
+    }
+
+    // Add recommendations based on health goals
+    if (onboardingData.healthGoals.includes('Preventive care')) {
+      recommendations.push({
+        title: 'Preventive Health Screening',
+        description: 'Complete blood work and physical exam',
+        action: 'Schedule',
+        priority: 'medium',
+        icon: TestTube
+      });
+    }
+
+    return recommendations;
+  };
+
+  const getPersonalizedGreeting = () => {
+    if (!onboardingData) return "Welcome back! Here's your health overview.";
+
+    const greetings = {
+      pregnant: "Welcome back, mama! Here's your pregnancy health overview.",
+      mother: "Welcome back! Here's your family's health overview.",
+      elderly: "Welcome back! Here's your health management overview.",
+      general: "Welcome back! Here's your health overview."
+    };
+
+    return greetings[onboardingData.lifeStage as keyof typeof greetings] || greetings.general;
+  };
+
+  const quickActions = getPersonalizedQuickActions();
+  const recommendations = getPersonalizedRecommendations();
 
   const upcomingAppointments = [
     {
@@ -131,12 +284,27 @@ const HealthDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Personalized Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Health Dashboard</h1>
-              <p className="text-gray-600 mt-1">Welcome back, Adaeze. Here's your health overview.</p>
+              <div className="flex items-center mb-2">
+                <h1 className="text-3xl font-bold text-gray-900">Health Dashboard</h1>
+                {onboardingData && (
+                  <Badge className="ml-4 bg-teal-100 text-teal-800 capitalize">
+                    {onboardingData.lifeStage === 'pregnant' ? 'Expecting Mother' : 
+                     onboardingData.lifeStage === 'mother' ? 'Mother' :
+                     onboardingData.lifeStage === 'elderly' ? 'Senior Care' : 'General Health'}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-gray-600">{getPersonalizedGreeting()}</p>
+              {onboardingData?.location && (
+                <p className="text-sm text-gray-500 flex items-center mt-1">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {onboardingData.location}
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="outline" size="sm">
@@ -151,7 +319,46 @@ const HealthDashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Personalized Recommendations */}
+        {recommendations.length > 0 && (
+          <Card className="mb-8 border-l-4 border-l-teal-500">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Star className="h-5 w-5 mr-2 text-teal-600" />
+                Personalized Recommendations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {recommendations.map((rec, index) => (
+                  <div 
+                    key={index} 
+                    className={`p-4 rounded-lg border-l-4 ${
+                      rec.priority === 'high' ? 'bg-red-50 border-l-red-400' : 'bg-blue-50 border-l-blue-400'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center">
+                        <rec.icon className={`h-5 w-5 mr-3 ${
+                          rec.priority === 'high' ? 'text-red-600' : 'text-blue-600'
+                        }`} />
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{rec.title}</h4>
+                          <p className="text-sm text-gray-600 mt-1">{rec.description}</p>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline" className="ml-4">
+                        {rec.action}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Personalized Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickActions.map((action, index) => (
             <Card key={index} className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -270,7 +477,7 @@ const HealthDashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Health Profile Summary */}
+            {/* Personalized Health Profile */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -280,6 +487,35 @@ const HealthDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
+                  {onboardingData && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Health Focus</span>
+                        <Badge className="bg-teal-100 text-teal-800 capitalize">
+                          {onboardingData.lifeStage}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Location</span>
+                        <span className="text-sm font-medium">{onboardingData.location}</span>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="text-sm text-gray-600">Health Goals</span>
+                        <div className="flex flex-wrap gap-1">
+                          {onboardingData.healthGoals.slice(0, 3).map((goal, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {goal}
+                            </Badge>
+                          ))}
+                          {onboardingData.healthGoals.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{onboardingData.healthGoals.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Insurance Status</span>
                     <Badge className="bg-green-100 text-green-800">Active</Badge>
