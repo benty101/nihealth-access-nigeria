@@ -11,6 +11,7 @@ import RoleBasedAuth from '@/components/auth/RoleBasedAuth';
 import SignupForm from '@/components/auth/SignupForm';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import SessionWarning from '@/components/auth/SessionWarning';
+import { SuperAdminSeeder } from '@/services/SuperAdminSeeder';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -19,6 +20,19 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showSessionWarning, setShowSessionWarning] = useState(false);
+
+  // Create super admin on component mount (development only)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      SuperAdminSeeder.createSuperAdmin().then((result) => {
+        if (result.success) {
+          console.log('Super admin account ready');
+        } else {
+          console.log('Super admin setup:', result.error);
+        }
+      });
+    }
+  }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
