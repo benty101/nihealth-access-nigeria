@@ -27,7 +27,7 @@ const HospitalDirectory = () => {
     
     // Kano State
     { id: 10, name: 'Aminu Kano Teaching Hospital', location: 'Kano', state: 'Kano', type: 'Teaching Hospital', specialties: ['All Specialties'], rating: 4.3, verified: true, emergency: true, insurance: ['NHIS'], phone: '+234-64-630-000', beds: 600 },
-    { id: 11, name: 'Murtala Mohammed Specialist Hospital', location: 'Kano', State: 'Kano', type: 'Specialist Hospital', specialties: ['Cardiology', 'Neurology', 'Surgery'], rating: 4.2, verified: true, emergency: true, insurance: ['NHIS'], phone: '+234-64-631-000', beds: 400 },
+    { id: 11, name: 'Murtala Mohammed Specialist Hospital', location: 'Kano', state: 'Kano', type: 'Specialist Hospital', specialties: ['Cardiology', 'Neurology', 'Surgery'], rating: 4.2, verified: true, emergency: true, insurance: ['NHIS'], phone: '+234-64-631-000', beds: 400 },
     
     // Rivers State
     { id: 12, name: 'University of Port Harcourt Teaching Hospital', location: 'Port Harcourt, Rivers', state: 'Rivers', type: 'Teaching Hospital', specialties: ['All Specialties'], rating: 4.4, verified: true, emergency: true, insurance: ['NHIS'], phone: '+234-84-300-000', beds: 500 },
@@ -89,6 +89,7 @@ const HospitalDirectory = () => {
     // This represents a sample of the comprehensive hospital database
   ];
 
+  // Comprehensive hospital database for Nigeria
   const filteredHospitals = hospitals.filter(hospital =>
     (selectedState === 'All' || hospital.state === selectedState) &&
     (selectedSpecialty === 'All' || hospital.specialties.includes(selectedSpecialty)) &&
