@@ -87,7 +87,14 @@ const UserProfile = () => {
       }
 
       if (data) {
-        setProfile(data);
+        // Ensure gender is properly typed
+        const profileData = {
+          ...data,
+          gender: data.gender as 'male' | 'female' | 'other' || 'female',
+          allergies: data.allergies || [],
+          chronic_conditions: data.chronic_conditions || []
+        };
+        setProfile(profileData);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -200,7 +207,7 @@ const UserProfile = () => {
             </div>
             <div>
               <Label htmlFor="gender">Gender</Label>
-              <Select value={profile.gender} onValueChange={(value) => setProfile({...profile, gender: value as any})}>
+              <Select value={profile.gender} onValueChange={(value) => setProfile({...profile, gender: value as 'male' | 'female' | 'other'})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
