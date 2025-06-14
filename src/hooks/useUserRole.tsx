@@ -19,17 +19,23 @@ export const useUserRole = () => {
 
     const fetchUserRole = async () => {
       try {
+        console.log('Fetching role for user:', user.id);
+        
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error('Error fetching user role:', error);
           setRole('patient'); // Default fallback
-        } else {
+        } else if (data) {
+          console.log('User role found:', data.role);
           setRole(data.role as UserRole);
+        } else {
+          console.log('No role found, defaulting to patient');
+          setRole('patient');
         }
       } catch (error) {
         console.error('Error fetching user role:', error);

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,18 +20,18 @@ const Auth = () => {
   const [success, setSuccess] = useState('');
   const [showSessionWarning, setShowSessionWarning] = useState(false);
 
-  // Create super admin on component mount (development only) - clear flag and recreate
+  // Create super admin on component mount - always attempt in development
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      // Clear the flag since we've reset the database
+      // Clear any previous flags since we've reset the database
       localStorage.removeItem('superAdminCreated');
       
       SuperAdminSeeder.createSuperAdmin().then((result) => {
         if (result.success) {
-          console.log('Super admin account ready');
+          console.log('Super admin account ready for kosyezenekwe@gmail.com');
           localStorage.setItem('superAdminCreated', 'true');
         } else {
-          console.log('Super admin setup:', result.error);
+          console.log('Super admin setup result:', result.error);
         }
       });
     }

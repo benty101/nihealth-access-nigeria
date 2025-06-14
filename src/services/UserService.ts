@@ -12,35 +12,53 @@ export interface UserWithRole {
 
 class UserService {
   async getAllUsers(): Promise<UserWithRole[]> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        id,
-        full_name,
-        user_roles(role),
-        created_at
-      `);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          full_name,
+          created_at,
+          user_roles!inner(role)
+        `);
 
-    if (error) throw error;
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
 
-    return data.map(user => ({
-      id: user.id,
-      email: '', // We can't access auth.users email directly
-      full_name: user.full_name || '',
-      role: (user.user_roles as any)?.[0]?.role || 'patient',
-      created_at: user.created_at
-    }));
+      return (data || []).map(user => ({
+        id: user.id,
+        email: '', // We can't access auth.users email directly
+        full_name: user.full_name || '',
+        role: (user.user_roles as any)?.role || 'patient',
+        created_at: user.created_at
+      }));
+    } catch (error) {
+      console.error('Error in getAllUsers:', error);
+      throw error;
+    }
   }
 
   async updateUserRole(userId: string, newRole: UserRole): Promise<void> {
-    const { error } = await supabase
-      .from('user_roles')
-      .upsert({
-        user_id: userId,
-        role: newRole
-      });
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .upsert({
+          user_id: userId,
+          role: newRole
+        }, {
+          onConflict: 'user_id'
+        });
 
-    if (error) throw error;
+      if (error) {
+        console.error('Error updating user role:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error in updateUserRole:', error);
+      throw error;
+    }
   }
 }
 
