@@ -12,7 +12,7 @@ const Hero = () => {
           <div className="text-center">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-8 shadow-sm">
               <Shield className="h-4 w-4 mr-2" />
-              🇳🇬 Proudly Nigerian
+              🇳🇬 Proudly Nigerian • In Partnership with Ministry of Sci & Tech
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
