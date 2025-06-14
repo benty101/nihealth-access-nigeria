@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,6 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -217,10 +218,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log('Attempting to sign out...');
+      
+      // Clear local state immediately to prevent UI issues
+      setUser(null);
+      setSession(null);
+      
+      // Attempt to sign out from Supabase
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      
+      if (error) {
+        console.warn('Supabase signout error (but continuing with local cleanup):', error);
+        // Don't throw the error - we've already cleared local state
+      }
+      
+      // Clear any localStorage items related to auth
+      localStorage.removeItem('supabase.auth.token');
+      
       secureLog('User signed out');
+      console.log('Sign out completed');
     } catch (error) {
+      console.warn('Signout error (but local state cleared):', error);
       secureLog('Signout error', { errorType: 'network_error' });
+      // Don't re-throw - we want logout to always succeed locally
     }
   };
 
