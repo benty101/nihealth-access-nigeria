@@ -21,16 +21,20 @@ const Auth = () => {
   const [success, setSuccess] = useState('');
   const [showSessionWarning, setShowSessionWarning] = useState(false);
 
-  // Create super admin on component mount (development only)
+  // Create super admin on component mount (development only) - only once
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      SuperAdminSeeder.createSuperAdmin().then((result) => {
-        if (result.success) {
-          console.log('Super admin account ready');
-        } else {
-          console.log('Super admin setup:', result.error);
-        }
-      });
+      const superAdminCreated = localStorage.getItem('superAdminCreated');
+      if (!superAdminCreated) {
+        SuperAdminSeeder.createSuperAdmin().then((result) => {
+          if (result.success) {
+            console.log('Super admin account ready');
+            localStorage.setItem('superAdminCreated', 'true');
+          } else {
+            console.log('Super admin setup:', result.error);
+          }
+        });
+      }
     }
   }, []);
 
