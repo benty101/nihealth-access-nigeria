@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import BrokerDashboard from "./pages/BrokerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import HospitalDashboard from "./pages/HospitalDashboard";
 import Onboarding from "./pages/Onboarding";
 import Appointments from "./pages/Appointments";
 import Records from "./pages/Records";
@@ -50,6 +52,16 @@ const App = () => (
             <Route path="/broker" element={
               <ProtectedRoute>
                 <BrokerDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/hospital" element={
+              <ProtectedRoute>
+                <HospitalDashboard />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={

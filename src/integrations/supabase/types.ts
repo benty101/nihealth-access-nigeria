@@ -9,6 +9,134 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      hospital_staff: {
+        Row: {
+          created_at: string | null
+          hospital_id: string
+          id: string
+          is_active: boolean | null
+          position: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          hospital_id: string
+          id?: string
+          is_active?: boolean | null
+          position?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          hospital_id?: string
+          id?: string
+          is_active?: boolean | null
+          position?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_staff_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospitals: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          email: string | null
+          facilities: string[] | null
+          id: string
+          is_active: boolean | null
+          lga: string | null
+          license_number: string | null
+          name: string
+          phone: string | null
+          specialties: string[] | null
+          state: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          facilities?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          lga?: string | null
+          license_number?: string | null
+          name: string
+          phone?: string | null
+          specialties?: string[] | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          facilities?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          lga?: string | null
+          license_number?: string | null
+          name?: string
+          phone?: string | null
+          specialties?: string[] | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      insurance_plans: {
+        Row: {
+          coverage_amount: number | null
+          created_at: string | null
+          features: string[] | null
+          id: string
+          is_active: boolean | null
+          name: string
+          plan_type: string
+          premium_annual: number | null
+          premium_monthly: number | null
+          provider: string
+          terms: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          coverage_amount?: number | null
+          created_at?: string | null
+          features?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          plan_type: string
+          premium_annual?: number | null
+          premium_monthly?: number | null
+          provider: string
+          terms?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          coverage_amount?: number | null
+          created_at?: string | null
+          features?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          plan_type?: string
+          premium_annual?: number | null
+          premium_monthly?: number | null
+          provider?: string
+          terms?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       medical_records: {
         Row: {
           created_at: string | null
@@ -146,15 +274,49 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "super_admin" | "hospital_admin" | "patient"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -269,6 +431,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["super_admin", "hospital_admin", "patient"],
+    },
   },
 } as const
