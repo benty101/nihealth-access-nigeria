@@ -38,47 +38,32 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
@@ -103,11 +88,11 @@
   }
 }
 
-/* Custom animations for MeddyPal */
+/* Enhanced animations for MeddyPal - focusing on mothers and children */
 @layer utilities {
-  /* Fade In Animation */
+  /* Fade In Animation with stronger visibility */
   .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
+    animation: fadeIn 0.8s ease-out forwards;
     opacity: 0;
   }
 
@@ -141,24 +126,45 @@
 
   /* Gentle floating animation for health-related elements */
   .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
   }
 
-  /* Heartbeat animation for important health elements */
+  /* Heartbeat animation for health elements - more prominent */
   .animate-heartbeat {
-    animation: heartbeat 2s ease-in-out infinite;
+    animation: heartbeat 2.5s ease-in-out infinite;
   }
 
   /* Gentle bounce for interactive elements */
   .animate-gentle-bounce {
-    animation: gentleBounce 2s infinite;
+    animation: gentleBounce 3s infinite;
+  }
+
+  /* Scale hover effect */
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  /* Trust indicator glow effect */
+  .trust-glow {
+    animation: trustGlow 2s ease-in-out infinite;
+  }
+
+  /* Maternal care themed gradient animation */
+  .maternal-gradient {
+    background: linear-gradient(-45deg, #06b6d4, #10b981, #0891b2, #059669);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -171,7 +177,7 @@
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
 }
 
@@ -179,7 +185,13 @@
   0%, 100% {
     transform: scale(1);
   }
+  25% {
+    transform: scale(1.05);
+  }
   50% {
+    transform: scale(1.1);
+  }
+  75% {
     transform: scale(1.05);
   }
 }
@@ -189,16 +201,63 @@
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
   }
   60% {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
   }
 }
 
-/* Smooth transitions for all interactive elements */
+@keyframes trustGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Enhanced smooth transitions for all interactive elements */
 * {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
+}
+
+/* Special animations for buttons targeting mothers */
+.maternal-button {
+  background: linear-gradient(135deg, #0891b2, #10b981);
+  transition: all 0.3s ease;
+}
+
+.maternal-button:hover {
+  background: linear-gradient(135deg, #0e7490, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+}
+
+/* Pulse animation for important health indicators */
+.health-pulse {
+  animation: healthPulse 2s ease-in-out infinite;
+}
+
+@keyframes healthPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
