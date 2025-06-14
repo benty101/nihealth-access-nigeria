@@ -6,15 +6,6 @@ export class SuperAdminSeeder {
     try {
       console.log('Creating super admin account...');
       
-      // Check if super admin already exists first
-      const { data: existingUser } = await supabase.auth.admin.listUsers();
-      const adminExists = existingUser?.users?.some(user => user.email === 'admin@meddypal.com');
-      
-      if (adminExists) {
-        console.log('Super admin already exists');
-        return { success: true };
-      }
-      
       // Create the super admin without signing them in
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: 'admin@meddypal.com',
@@ -28,6 +19,11 @@ export class SuperAdminSeeder {
       });
 
       if (signUpError) {
+        // If user already exists, that's fine - just log it and continue
+        if (signUpError.message.includes('already registered') || signUpError.message.includes('User already registered')) {
+          console.log('Super admin already exists');
+          return { success: true };
+        }
         console.error('Error creating super admin:', signUpError);
         return { success: false, error: signUpError.message };
       }
