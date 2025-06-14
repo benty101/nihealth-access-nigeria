@@ -9,7 +9,143 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      medical_records: {
+        Row: {
+          created_at: string | null
+          date_created: string
+          description: string | null
+          doctor_name: string | null
+          file_size: number | null
+          file_url: string | null
+          healthcare_provider: string | null
+          id: string
+          is_shared: boolean | null
+          mime_type: string | null
+          record_type: string
+          shared_with: string[] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_created: string
+          description?: string | null
+          doctor_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          healthcare_provider?: string | null
+          id?: string
+          is_shared?: boolean | null
+          mime_type?: string | null
+          record_type: string
+          shared_with?: string[] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_created?: string
+          description?: string | null
+          doctor_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          healthcare_provider?: string | null
+          id?: string
+          is_shared?: boolean | null
+          mime_type?: string | null
+          record_type?: string
+          shared_with?: string[] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          allergies: string[] | null
+          blood_group: string | null
+          chronic_conditions: string[] | null
+          created_at: string | null
+          date_of_birth: string | null
+          due_date: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          full_name: string | null
+          gender: string | null
+          genotype: string | null
+          id: string
+          insurance_number: string | null
+          insurance_provider: string | null
+          is_pregnant: boolean | null
+          lga: string | null
+          phone_number: string | null
+          preferred_language: string | null
+          state_of_residence: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          allergies?: string[] | null
+          blood_group?: string | null
+          chronic_conditions?: string[] | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          due_date?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string | null
+          gender?: string | null
+          genotype?: string | null
+          id: string
+          insurance_number?: string | null
+          insurance_provider?: string | null
+          is_pregnant?: boolean | null
+          lga?: string | null
+          phone_number?: string | null
+          preferred_language?: string | null
+          state_of_residence?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          allergies?: string[] | null
+          blood_group?: string | null
+          chronic_conditions?: string[] | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          due_date?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string | null
+          gender?: string | null
+          genotype?: string | null
+          id?: string
+          insurance_number?: string | null
+          insurance_provider?: string | null
+          is_pregnant?: boolean | null
+          lga?: string | null
+          phone_number?: string | null
+          preferred_language?: string | null
+          state_of_residence?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

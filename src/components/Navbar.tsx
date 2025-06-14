@@ -1,11 +1,22 @@
+
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, Menu, X, User, Bell, Shield } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Heart, Menu, X, User, Bell, Shield, LogOut } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut, loading } = useAuth();
 
   const publicNavItems = [
     { name: 'Hospitals', path: '/hospitals' },
@@ -15,8 +26,14 @@ const Navbar = () => {
     { name: 'Resources', path: '/resources' },
   ];
 
-  // Mock authentication state - in real app this would come from auth context
-  const isAuthenticated = location.pathname === '/dashboard' || location.pathname.startsWith('/dashboard');
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const getUserInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b border-teal-100 animate-fade-in">
@@ -38,26 +55,8 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            {!isAuthenticated ? (
-              // Public navigation - for exploring services
-              <>
-                {publicNavItems.map((item, index) => (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover-scale animate-fade-in ${
-                      location.pathname === item.path
-                        ? 'text-teal-600 bg-teal-50 shadow-sm'
-                        : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
-                    }`}
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </>
-            ) : (
-              // Authenticated navigation - dashboard focused
+            {user ? (
+              // Authenticated navigation
               <Link
                 to="/dashboard"
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover-scale animate-fade-in ${
@@ -68,11 +67,27 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
+            ) : (
+              // Public navigation
+              publicNavItems.map((item, index) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover-scale animate-fade-in ${
+                    location.pathname === item.path
+                      ? 'text-teal-600 bg-teal-50 shadow-sm'
+                      : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
+                  }`}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {item.name}
+                </Link>
+              ))
             )}
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated ? (
+            {user && !loading ? (
               <>
                 <Button variant="ghost" size="sm" className="relative hover:bg-teal-50 hover-scale animate-fade-in">
                   <Bell className="h-4 w-4" />
@@ -80,22 +95,48 @@ const Navbar = () => {
                     3
                   </span>
                 </Button>
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2 hover:bg-teal-50 hover-scale animate-fade-in animation-delay-200">
-                  <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full flex items-center justify-center animate-float">
-                    <span className="text-white text-sm font-semibold">A</span>
-                  </div>
-                  <span className="text-gray-700">Adaeze</span>
-                </Button>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center space-x-2 hover:bg-teal-50 hover-scale animate-fade-in animation-delay-200">
+                      <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full flex items-center justify-center animate-float">
+                        <span className="text-white text-sm font-semibold">
+                          {getUserInitials(user.email || 'U')}
+                        </span>
+                      </div>
+                      <span className="text-gray-700">Profile</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <User className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/records')}>
+                      <Heart className="mr-2 h-4 w-4" />
+                      Medical Records
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <>
-                <Button variant="outline" size="sm" className="border-teal-200 text-teal-600 hover:bg-teal-50 hover-scale animate-fade-in animation-delay-300">
-                  <User className="h-4 w-4 mr-2" />
-                  Sign In
-                </Button>
-                <Button size="sm" className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover-scale animate-fade-in animation-delay-400">
-                  Get Started Free
-                </Button>
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="border-teal-200 text-teal-600 hover:bg-teal-50 hover-scale animate-fade-in animation-delay-300">
+                    <User className="h-4 w-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button size="sm" className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover-scale animate-fade-in animation-delay-400">
+                    Get Started Free
+                  </Button>
+                </Link>
               </>
             )}
           </div>
@@ -115,7 +156,19 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-teal-100 animate-fade-in">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
-              {!isAuthenticated ? (
+              {user ? (
+                <Link
+                  to="/dashboard"
+                  className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
+                    location.pathname === '/dashboard'
+                      ? 'text-teal-600 bg-teal-50'
+                      : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              ) : (
                 publicNavItems.map((item) => (
                   <Link
                     key={item.name}
@@ -130,37 +183,42 @@ const Navbar = () => {
                     {item.name}
                   </Link>
                 ))
-              ) : (
-                <Link
-                  to="/dashboard"
-                  className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
-                    location.pathname === '/dashboard'
-                      ? 'text-teal-600 bg-teal-50'
-                      : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
               )}
               
               <div className="pt-4 flex flex-col space-y-3">
-                {isAuthenticated ? (
-                  <div className="flex items-center space-x-3 px-3 py-2">
-                    <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-semibold">A</span>
+                {user ? (
+                  <>
+                    <div className="flex items-center space-x-3 px-3 py-2">
+                      <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold">
+                          {getUserInitials(user.email || 'U')}
+                        </span>
+                      </div>
+                      <span className="text-gray-700 font-medium">{user.email}</span>
                     </div>
-                    <span className="text-gray-700 font-medium">Adaeze</span>
-                  </div>
+                    <Button 
+                      onClick={handleSignOut}
+                      variant="outline" 
+                      size="sm" 
+                      className="mx-3 justify-start"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
                 ) : (
                   <>
-                    <Button variant="outline" size="sm" className="border-teal-200 text-teal-600 hover:bg-teal-50 hover-scale animate-fade-in animation-delay-500">
-                      <User className="h-4 w-4 mr-2" />
-                      Sign In
-                    </Button>
-                    <Button size="sm" className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white hover-scale animate-fade-in animation-delay-600">
-                      Get Started Free
-                    </Button>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" size="sm" className="w-full border-teal-200 text-teal-600 hover:bg-teal-50">
+                        <User className="h-4 w-4 mr-2" />
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                      <Button size="sm" className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white">
+                        Get Started Free
+                      </Button>
+                    </Link>
                   </>
                 )}
               </div>

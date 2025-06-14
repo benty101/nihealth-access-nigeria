@@ -5,9 +5,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { AuthProvider } from "@/contexts/AuthContext";
 import PWAInstallBanner from "@/components/PWAInstallBanner";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
 import Index from "./pages/Index";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Hospitals from "./pages/Hospitals";
 import Insurance from "./pages/Insurance";
@@ -30,34 +33,57 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="meddypal-theme">
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/hospitals" element={<Hospitals />} />
-              <Route path="/insurance" element={<Insurance />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="/labs" element={<Labs />} />
-              <Route path="/pharmacy" element={<Pharmacy />} />
-              <Route path="/records" element={<Records />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/premium" element={<Premium />} />
-              <Route path="/telemedicine" element={<Telemedicine />} />
-              <Route path="/emergency" element={<Emergency />} />
-              <Route path="/diagnostics" element={<Diagnostics />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            {showPWABanner && (
-              <PWAInstallBanner onDismiss={() => setShowPWABanner(false)} />
-            )}
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider defaultTheme="light" storageKey="meddypal-theme">
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/hospitals" element={<Hospitals />} />
+                <Route path="/insurance" element={<Insurance />} />
+                <Route path="/appointments" element={
+                  <ProtectedRoute>
+                    <Appointments />
+                  </ProtectedRoute>
+                } />
+                <Route path="/labs" element={<Labs />} />
+                <Route path="/pharmacy" element={<Pharmacy />} />
+                <Route path="/records" element={
+                  <ProtectedRoute>
+                    <Records />
+                  </ProtectedRoute>
+                } />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/premium" element={
+                  <ProtectedRoute>
+                    <Premium />
+                  </ProtectedRoute>
+                } />
+                <Route path="/telemedicine" element={
+                  <ProtectedRoute>
+                    <Telemedicine />
+                  </ProtectedRoute>
+                } />
+                <Route path="/emergency" element={<Emergency />} />
+                <Route path="/diagnostics" element={<Diagnostics />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              {showPWABanner && (
+                <PWAInstallBanner onDismiss={() => setShowPWABanner(false)} />
+              )}
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
