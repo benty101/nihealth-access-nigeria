@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, MapPin, Phone, Star, Clock, Stethoscope, Heart, Brain, Baby, Eye, Bone, Users, Shield, Award, Navigation } from 'lucide-react';
+import { Stethoscope } from 'lucide-react';
+import HospitalStats from './HospitalStats';
+import HospitalSearchFilters from './HospitalSearchFilters';
+import HospitalCard from './HospitalCard';
 
 const HospitalDirectory = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -91,10 +89,6 @@ const HospitalDirectory = () => {
     // This represents a sample of the comprehensive hospital database
   ];
 
-  const states = ['All', 'Lagos', 'FCT', 'Kano', 'Rivers', 'Ogun', 'Oyo', 'Kaduna', 'Delta', 'Anambra', 'Enugu', 'Cross River', 'Osun', 'Sokoto', 'Ondo', 'Imo', 'Benue', 'Ebonyi'];
-  const specialties = ['All', 'Cardiology', 'Neurology', 'Oncology', 'Pediatrics', 'Orthopedics', 'General Surgery', 'Ophthalmology', 'ENT', 'Psychiatry', 'Fertility', 'General Medicine'];
-  const hospitalTypes = ['All', 'Teaching Hospital', 'Federal Medical Centre', 'Specialist Hospital', 'Private Hospital', 'General Hospital'];
-
   const filteredHospitals = hospitals.filter(hospital =>
     (selectedState === 'All' || hospital.state === selectedState) &&
     (selectedSpecialty === 'All' || hospital.specialties.includes(selectedSpecialty)) &&
@@ -104,194 +98,27 @@ const HospitalDirectory = () => {
      hospital.specialties.some(specialty => specialty.toLowerCase().includes(searchTerm.toLowerCase())))
   );
 
-  const getSpecialtyIcon = (specialty: string) => {
-    const iconMap: { [key: string]: any } = {
-      'Cardiology': Heart,
-      'Neurology': Brain,
-      'Pediatrics': Baby,
-      'Ophthalmology': Eye,
-      'Orthopedics': Bone,
-      'General Medicine': Stethoscope,
-      'General Surgery': Stethoscope,
-      'Oncology': Heart,
-      'ENT': Stethoscope,
-      'Psychiatry': Brain,
-      'Fertility': Heart,
-    };
-    return iconMap[specialty] || Stethoscope;
-  };
-
   return (
     <div className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Hospital Directory
-          </h1>
-          <p className="text-lg text-gray-600 mb-6">
-            Find and compare over 500+ verified hospitals across Nigeria
-          </p>
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-600">
-            <div className="flex items-center">
-              <Shield className="h-4 w-4 mr-2 text-green-600" />
-              500+ Verified hospitals
-            </div>
-            <div className="flex items-center">
-              <Award className="h-4 w-4 mr-2 text-blue-600" />
-              Accredited medical centers
-            </div>
-            <div className="flex items-center">
-              <Users className="h-4 w-4 mr-2 text-purple-600" />
-              Real patient reviews
-            </div>
-          </div>
-        </div>
+        <HospitalStats />
 
-        {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search hospitals..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            
-            <select 
-              className="px-4 py-2 border rounded-lg"
-              value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
-            >
-              {states.map(state => (
-                <option key={state} value={state}>{state === 'All' ? 'All States' : state}</option>
-              ))}
-            </select>
-            
-            <select 
-              className="px-4 py-2 border rounded-lg"
-              value={selectedSpecialty}
-              onChange={(e) => setSelectedSpecialty(e.target.value)}
-            >
-              {specialties.map(specialty => (
-                <option key={specialty} value={specialty}>{specialty === 'All' ? 'All Specialties' : specialty}</option>
-              ))}
-            </select>
-            
-            <select 
-              className="px-4 py-2 border rounded-lg"
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-            >
-              {hospitalTypes.map(type => (
-                <option key={type} value={type}>{type === 'All' ? 'All Types' : type}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="text-sm text-gray-600">
-            Showing {filteredHospitals.length} hospitals
-          </div>
-        </div>
+        <HospitalSearchFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedState={selectedState}
+          setSelectedState={setSelectedState}
+          selectedSpecialty={selectedSpecialty}
+          setSelectedSpecialty={setSelectedSpecialty}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          filteredCount={filteredHospitals.length}
+        />
 
         {/* Hospital Results */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredHospitals.map((hospital) => (
-            <Card key={hospital.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg leading-tight mb-2">{hospital.name}</CardTitle>
-                    <div className="flex items-center text-sm text-gray-600 mb-1">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {hospital.location}
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Phone className="h-4 w-4 mr-1" />
-                      {hospital.phone}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    {hospital.verified && (
-                      <Badge className="bg-green-100 text-green-800 text-xs">
-                        <Shield className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                    )}
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-medium ml-1">{hospital.rating}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge variant="outline" className="text-xs">{hospital.type}</Badge>
-                  {hospital.emergency && (
-                    <Badge className="bg-red-100 text-red-800 text-xs">
-                      <Clock className="h-3 w-3 mr-1" />
-                      24/7
-                    </Badge>
-                  )}
-                  <Badge variant="secondary" className="text-xs">
-                    <Users className="h-3 w-3 mr-1" />
-                    {hospital.beds} beds
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Specialties</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {hospital.specialties.slice(0, 4).map((specialty, index) => {
-                      const IconComponent = getSpecialtyIcon(specialty);
-                      return (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          <IconComponent className="h-3 w-3 mr-1" />
-                          {specialty}
-                        </Badge>
-                      );
-                    })}
-                    {hospital.specialties.length > 4 && (
-                      <Badge variant="secondary" className="text-xs">
-                        +{hospital.specialties.length - 4} more
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Insurance Accepted</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {hospital.insurance.map((ins, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {ins}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    <Navigation className="mr-2 h-4 w-4" />
-                    Get Directions
-                  </Button>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button variant="outline" size="sm">
-                      <Phone className="mr-2 h-4 w-4" />
-                      Call
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <HospitalCard key={hospital.id} hospital={hospital} />
           ))}
         </div>
 
