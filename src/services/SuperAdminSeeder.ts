@@ -8,7 +8,7 @@ export class SuperAdminSeeder {
       
       // First, try to sign up the super admin with email confirmation disabled in dev
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: 'admin@meddypal.com',
+        email: 'kbeze193@gmail.com',
         password: 'admin123',
         options: {
           data: {
@@ -30,7 +30,7 @@ export class SuperAdminSeeder {
       if (!userId) {
         // Try to sign in to get the user ID if signup failed due to existing user
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email: 'admin@meddypal.com',
+          email: 'kbeze193@gmail.com',
           password: 'admin123'
         });
 
