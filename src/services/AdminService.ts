@@ -33,6 +33,58 @@ export interface InsurancePlan {
   updated_at: string;
 }
 
+export interface Pharmacy {
+  id: string;
+  name: string;
+  address?: string;
+  state?: string;
+  lga?: string;
+  phone?: string;
+  email?: string;
+  license_number?: string;
+  specialties?: string[];
+  services?: string[];
+  operating_hours?: any;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Lab {
+  id: string;
+  name: string;
+  address?: string;
+  state?: string;
+  lga?: string;
+  phone?: string;
+  email?: string;
+  license_number?: string;
+  test_types?: string[];
+  equipment?: string[];
+  certifications?: string[];
+  operating_hours?: any;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TelemedicineProvider {
+  id: string;
+  name: string;
+  specialization?: string;
+  license_number?: string;
+  phone?: string;
+  email?: string;
+  consultation_fee?: number;
+  available_hours?: any;
+  languages?: string[];
+  experience_years?: number;
+  rating?: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface UserWithRole {
   id: string;
   email: string;
@@ -166,6 +218,126 @@ class AdminService {
   async deleteInsurancePlan(id: string): Promise<void> {
     const { error } = await supabase
       .from('insurance_plans')
+      .update({ is_active: false })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  // Pharmacy Management
+  async getAllPharmacies(): Promise<Pharmacy[]> {
+    const { data, error } = await supabase
+      .from('pharmacies')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createPharmacy(pharmacy: Omit<Pharmacy, 'id' | 'created_at' | 'updated_at'>): Promise<Pharmacy> {
+    const { data, error } = await supabase
+      .from('pharmacies')
+      .insert(pharmacy)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async updatePharmacy(id: string, updates: Partial<Pharmacy>): Promise<void> {
+    const { error } = await supabase
+      .from('pharmacies')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  async deletePharmacy(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('pharmacies')
+      .update({ is_active: false })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  // Lab Management
+  async getAllLabs(): Promise<Lab[]> {
+    const { data, error } = await supabase
+      .from('labs')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createLab(lab: Omit<Lab, 'id' | 'created_at' | 'updated_at'>): Promise<Lab> {
+    const { data, error } = await supabase
+      .from('labs')
+      .insert(lab)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async updateLab(id: string, updates: Partial<Lab>): Promise<void> {
+    const { error } = await supabase
+      .from('labs')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  async deleteLab(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('labs')
+      .update({ is_active: false })
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  // Telemedicine Provider Management
+  async getAllTelemedicineProviders(): Promise<TelemedicineProvider[]> {
+    const { data, error } = await supabase
+      .from('telemedicine_providers')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createTelemedicineProvider(provider: Omit<TelemedicineProvider, 'id' | 'created_at' | 'updated_at'>): Promise<TelemedicineProvider> {
+    const { data, error } = await supabase
+      .from('telemedicine_providers')
+      .insert(provider)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async updateTelemedicineProvider(id: string, updates: Partial<TelemedicineProvider>): Promise<void> {
+    const { error } = await supabase
+      .from('telemedicine_providers')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+
+  async deleteTelemedicineProvider(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('telemedicine_providers')
       .update({ is_active: false })
       .eq('id', id);
 

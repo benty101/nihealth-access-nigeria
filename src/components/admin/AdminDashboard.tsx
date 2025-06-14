@@ -1,11 +1,14 @@
 
 import React, { useState } from 'react';
-import { Shield, Users, Building2, FileText, Settings } from 'lucide-react';
+import { Shield, Users, Building2, FileText, Settings, Pill, TestTube, Video } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UserManagement from './UserManagement';
 import HospitalManagement from './HospitalManagement';
 import InsuranceManagement from './InsuranceManagement';
+import PharmacyManagement from './PharmacyManagement';
+import LabManagement from './LabManagement';
+import TelemedicineManagement from './TelemedicineManagement';
 
 const AdminDashboard = () => {
   return (
@@ -19,7 +22,7 @@ const AdminDashboard = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Super Admin Dashboard</h1>
-              <p className="text-gray-600">Manage users, hospitals, and system configuration</p>
+              <p className="text-gray-600">Manage all platform services and configurations</p>
             </div>
           </div>
         </div>
@@ -39,12 +42,12 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Hospitals</CardTitle>
+              <CardTitle className="text-sm font-medium">Active Services</CardTitle>
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">45</div>
-              <p className="text-xs text-muted-foreground">+3 new this month</p>
+              <div className="text-2xl font-bold">156</div>
+              <p className="text-xs text-muted-foreground">Hospitals, Labs, Pharmacies</p>
             </CardContent>
           </Card>
 
@@ -73,10 +76,13 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="users">User Management</TabsTrigger>
-            <TabsTrigger value="hospitals">Hospital Management</TabsTrigger>
-            <TabsTrigger value="insurance">Insurance Plans</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
+            <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
+            <TabsTrigger value="labs">Labs</TabsTrigger>
+            <TabsTrigger value="telemedicine">Telemedicine</TabsTrigger>
+            <TabsTrigger value="insurance">Insurance</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -85,6 +91,18 @@ const AdminDashboard = () => {
 
           <TabsContent value="hospitals">
             <HospitalManagement />
+          </TabsContent>
+
+          <TabsContent value="pharmacies">
+            <PharmacyManagement />
+          </TabsContent>
+
+          <TabsContent value="labs">
+            <LabManagement />
+          </TabsContent>
+
+          <TabsContent value="telemedicine">
+            <TelemedicineManagement />
           </TabsContent>
 
           <TabsContent value="insurance">

@@ -137,6 +137,60 @@ export type Database = {
         }
         Relationships: []
       }
+      labs: {
+        Row: {
+          address: string | null
+          certifications: string[] | null
+          created_at: string | null
+          email: string | null
+          equipment: string[] | null
+          id: string
+          is_active: boolean | null
+          lga: string | null
+          license_number: string | null
+          name: string
+          operating_hours: Json | null
+          phone: string | null
+          state: string | null
+          test_types: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          email?: string | null
+          equipment?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          lga?: string | null
+          license_number?: string | null
+          name: string
+          operating_hours?: Json | null
+          phone?: string | null
+          state?: string | null
+          test_types?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          email?: string | null
+          equipment?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          lga?: string | null
+          license_number?: string | null
+          name?: string
+          operating_hours?: Json | null
+          phone?: string | null
+          state?: string | null
+          test_types?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       medical_records: {
         Row: {
           created_at: string | null
@@ -201,6 +255,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pharmacies: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          lga: string | null
+          license_number: string | null
+          name: string
+          operating_hours: Json | null
+          phone: string | null
+          services: string[] | null
+          specialties: string[] | null
+          state: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          lga?: string | null
+          license_number?: string | null
+          name: string
+          operating_hours?: Json | null
+          phone?: string | null
+          services?: string[] | null
+          specialties?: string[] | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          lga?: string | null
+          license_number?: string | null
+          name?: string
+          operating_hours?: Json | null
+          phone?: string | null
+          services?: string[] | null
+          specialties?: string[] | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -270,6 +375,57 @@ export type Database = {
           phone_number?: string | null
           preferred_language?: string | null
           state_of_residence?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      telemedicine_providers: {
+        Row: {
+          available_hours: Json | null
+          consultation_fee: number | null
+          created_at: string | null
+          email: string | null
+          experience_years: number | null
+          id: string
+          is_active: boolean | null
+          languages: string[] | null
+          license_number: string | null
+          name: string
+          phone: string | null
+          rating: number | null
+          specialization: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          available_hours?: Json | null
+          consultation_fee?: number | null
+          created_at?: string | null
+          email?: string | null
+          experience_years?: number | null
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          license_number?: string | null
+          name: string
+          phone?: string | null
+          rating?: number | null
+          specialization?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          available_hours?: Json | null
+          consultation_fee?: number | null
+          created_at?: string | null
+          email?: string | null
+          experience_years?: number | null
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          license_number?: string | null
+          name?: string
+          phone?: string | null
+          rating?: number | null
+          specialization?: string | null
           updated_at?: string | null
         }
         Relationships: []

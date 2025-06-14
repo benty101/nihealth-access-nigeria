@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { Shield, Heart, AlertCircle } from 'lucide-react';
 import { isSessionExpired, shouldShowWarning } from '@/lib/security';
-import LoginForm from '@/components/auth/LoginForm';
+import RoleBasedAuth from '@/components/auth/RoleBasedAuth';
 import SignupForm from '@/components/auth/SignupForm';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import SessionWarning from '@/components/auth/SessionWarning';
@@ -48,10 +48,6 @@ const Auth = () => {
     const interval = setInterval(checkSession, 60000);
     return () => clearInterval(interval);
   }, [user, lastActivity, navigate]);
-
-  const handleLoginSuccess = () => {
-    navigate('/dashboard');
-  };
 
   if (loading) {
     return (
@@ -96,9 +92,9 @@ const Auth = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs defaultValue="signin" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Sign In</TabsTrigger>
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
@@ -115,14 +111,8 @@ const Auth = () => {
                 </Alert>
               )}
 
-              <TabsContent value="login">
-                <LoginForm
-                  onSuccess={handleLoginSuccess}
-                  error={error}
-                  setError={setError}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                />
+              <TabsContent value="signin">
+                <RoleBasedAuth />
 
                 <div className="mt-4">
                   <div className="relative">
