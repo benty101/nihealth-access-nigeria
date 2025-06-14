@@ -21,20 +21,20 @@ const Auth = () => {
   const [success, setSuccess] = useState('');
   const [showSessionWarning, setShowSessionWarning] = useState(false);
 
-  // Create super admin on component mount (development only) - only once
+  // Create super admin on component mount (development only) - clear flag and recreate
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      const superAdminCreated = localStorage.getItem('superAdminCreated');
-      if (!superAdminCreated) {
-        SuperAdminSeeder.createSuperAdmin().then((result) => {
-          if (result.success) {
-            console.log('Super admin account ready');
-            localStorage.setItem('superAdminCreated', 'true');
-          } else {
-            console.log('Super admin setup:', result.error);
-          }
-        });
-      }
+      // Clear the flag since we've reset the database
+      localStorage.removeItem('superAdminCreated');
+      
+      SuperAdminSeeder.createSuperAdmin().then((result) => {
+        if (result.success) {
+          console.log('Super admin account ready');
+          localStorage.setItem('superAdminCreated', 'true');
+        } else {
+          console.log('Super admin setup:', result.error);
+        }
+      });
     }
   }, []);
 
