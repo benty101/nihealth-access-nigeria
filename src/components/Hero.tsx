@@ -1,44 +1,44 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Star, Users } from 'lucide-react';
+import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Star, Users, Baby } from 'lucide-react';
 
 const Hero = () => {
   return (
     <div className="relative overflow-hidden">
       {/* Main Hero Section */}
-      <div className="bg-gradient-to-br from-blue-50 via-white to-green-50 py-24 lg:py-32">
+      <div className="bg-gradient-to-br from-pink-50 via-white to-green-50 py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-8">
-              <Heart className="h-4 w-4 mr-2" />
-              🇳🇬 Proudly Nigerian • Ministry of Science & Technology Partnership
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-pink-100 to-purple-100 text-pink-800 text-sm font-medium mb-8 shadow-sm">
+              <Baby className="h-4 w-4 mr-2" />
+              🇳🇬 Powered by MAMA Funds • Reducing Maternal Mortality in Nigeria
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
-              Your Health Journey,{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Simplified
+              Quality Healthcare{' '}
+              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                for Every Mother
               </span>
             </h1>
             
             <p className="text-xl text-gray-600 mb-6 max-w-4xl mx-auto leading-relaxed">
-              Nigeria's first comprehensive digital health platform. Access verified hospitals, 
-              book appointments, manage health records, and compare insurance plans.
+              Find trusted hospitals, compare health plans, and manage your wellness journey. 
+              Starting with comprehensive maternal care across Nigeria.
             </p>
             
-            <p className="text-lg text-blue-700 font-semibold mb-12 max-w-3xl mx-auto">
-              🤱 Starting with comprehensive support for expectant mothers across Nigeria
+            <p className="text-lg text-pink-700 font-semibold mb-12 max-w-3xl mx-auto">
+              🤱 Because every mother deserves access to quality healthcare
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button size="lg" className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
                 <Heart className="mr-2 h-5 w-5" />
-                Get Started Free
+                Find Maternal Care
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg rounded-full transition-all duration-300">
+              <Button size="lg" variant="outline" className="border-2 border-pink-600 text-pink-600 hover:bg-pink-50 px-8 py-4 text-lg rounded-full transition-all duration-300">
                 <Search className="mr-2 h-5 w-5" />
-                Find Hospitals
+                Explore Hospitals
               </Button>
             </div>
 
@@ -49,12 +49,12 @@ const Hero = () => {
                 Verified Healthcare Providers
               </div>
               <div className="flex items-center">
-                <Shield className="h-5 w-5 text-blue-500 mr-2" />
+                <Shield className="h-5 w-5 text-pink-500 mr-2" />
                 NDPR Compliant & Secure
               </div>
               <div className="flex items-center">
-                <Users className="h-5 w-5 text-purple-500 mr-2" />
-                Trusted by 10,000+ Users
+                <Heart className="h-5 w-5 text-purple-500 mr-2" />
+                Maternal Health Focused
               </div>
             </div>
           </div>
@@ -66,91 +66,99 @@ const Hero = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need for Better Healthcare
+              Comprehensive Maternal Healthcare Services
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive healthcare services designed specifically for Nigerian families
+              Everything you need for a safe and healthy pregnancy journey
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-pink-200 transition-all duration-300 hover:-translate-y-2">
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-pink-100 hover:shadow-2xl hover:border-pink-300 transition-all duration-300 hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Search className="h-8 w-8 text-pink-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center">Find Hospitals</h3>
+              <h3 className="text-xl font-bold mb-4 text-center">Find Maternal Hospitals</h3>
               <p className="text-gray-600 text-center leading-relaxed">
-                Discover maternal-friendly hospitals with verified services, real reviews, and NHIS coverage
+                Discover verified hospitals with excellent maternal care, NHIS coverage, and real patient reviews
               </p>
             </div>
             
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-green-200 transition-all duration-300 hover:-translate-y-2">
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl hover:border-green-300 transition-all duration-300 hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Calendar className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-center">Book Antenatal Care</h3>
               <p className="text-gray-600 text-center leading-relaxed">
-                Schedule appointments for scans, checkups, and delivery with instant confirmation
+                Schedule appointments for scans, checkups, and delivery with instant confirmation and reminders
               </p>
             </div>
             
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-2">
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-blue-100 hover:shadow-2xl hover:border-blue-300 transition-all duration-300 hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center">Health Records</h3>
+              <h3 className="text-xl font-bold mb-4 text-center">Health Records Vault</h3>
               <p className="text-gray-600 text-center leading-relaxed">
-                Securely store and share your medical documents with healthcare providers
+                Securely store and share your pregnancy records, scans, and documents with healthcare providers
               </p>
             </div>
 
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-purple-200 transition-all duration-300 hover:-translate-y-2">
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-purple-100 hover:shadow-2xl hover:border-purple-300 transition-all duration-300 hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Shield className="h-8 w-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center">Compare Insurance</h3>
+              <h3 className="text-xl font-bold mb-4 text-center">Insurance Coverage</h3>
               <p className="text-gray-600 text-center leading-relaxed">
-                Find the best maternity and family health coverage with transparent pricing
+                Compare and find the best maternal health insurance plans with transparent pricing and coverage
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="py-20 bg-gradient-to-r from-blue-600 to-green-600">
+      {/* Impact Stats Section */}
+      <div className="py-20 bg-gradient-to-r from-pink-600 via-purple-600 to-pink-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">Making a Difference Together</h2>
+            <p className="text-pink-100 text-lg">Working to reduce maternal mortality across Nigeria</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center text-white">
             <div>
               <div className="text-4xl font-bold mb-2">500+</div>
-              <div className="text-blue-100">Verified Hospitals</div>
+              <div className="text-pink-100">Maternal Care Hospitals</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">50+</div>
-              <div className="text-blue-100">Insurance Partners</div>
+              <div className="text-pink-100">Insurance Partners</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">10,000+</div>
-              <div className="text-blue-100">Happy Users</div>
+              <div className="text-pink-100">Mothers Served</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">36</div>
-              <div className="text-blue-100">States Covered</div>
+              <div className="text-pink-100">States Covered</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* CTA Section */}
-      <div className="py-20 bg-gray-50">
+      <div className="py-20 bg-gradient-to-br from-pink-50 to-purple-50">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <Baby className="h-16 w-16 text-pink-600 mx-auto mb-6" />
+          </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Ready to Transform Your Healthcare Journey?
+            Your Journey to Safe Motherhood Starts Here
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of Nigerian families who trust MeddyPal for their healthcare needs
+            Join thousands of Nigerian mothers who trust MeddyPal for their healthcare journey
           </p>
-          <Button size="lg" className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+          <Button size="lg" className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+            <Heart className="mr-2 h-5 w-5" />
             Start Your Journey Today
           </Button>
         </div>
