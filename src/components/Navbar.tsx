@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, Menu, X, User, Bell, Baby } from 'lucide-react';
+import { Heart, Menu, X, User, Bell, Shield } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,13 +27,13 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Baby className="h-6 w-6 text-white" />
+                <Shield className="h-6 w-6 text-white" />
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
                   MeddyPal
                 </span>
-                <span className="text-xs text-gray-500 -mt-1">Proudly Nigerian • Ministry of Sci & Tech</span>
+                <span className="text-xs text-gray-500 -mt-1">Proudly Nigerian</span>
               </div>
             </Link>
           </div>

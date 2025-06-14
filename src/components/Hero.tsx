@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Star, Users, Baby } from 'lucide-react';
+import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Star, Users, Stethoscope } from 'lucide-react';
 
 const Hero = () => {
   return (
@@ -11,8 +11,8 @@ const Hero = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-8 shadow-sm">
-              <Baby className="h-4 w-4 mr-2" />
-              🇳🇬 Proudly Nigerian • In Partnership with Ministry of Science & Technology
+              <Shield className="h-4 w-4 mr-2" />
+              🇳🇬 Proudly Nigerian
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
@@ -53,8 +53,8 @@ const Hero = () => {
                 NDPR Compliant & Secure
               </div>
               <div className="flex items-center">
-                <Heart className="h-5 w-5 text-sage-500 mr-2" />
-                Maternal Health Focused
+                <Stethoscope className="h-5 w-5 text-emerald-500 mr-2" />
+                Comprehensive Care Network
               </div>
             </div>
           </div>
@@ -94,9 +94,9 @@ const Hero = () => {
               </p>
             </div>
             
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-sage-100 hover:shadow-2xl hover:border-sage-300 transition-all duration-300 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-sage-100 to-sage-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <FileText className="h-8 w-8 text-sage-600" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-teal-100 hover:shadow-2xl hover:border-teal-300 transition-all duration-300 hover:-translate-y-2">
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-teal-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="h-8 w-8 text-teal-600" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-center">Health Records Vault</h3>
               <p className="text-gray-600 text-center leading-relaxed">
@@ -104,9 +104,9 @@ const Hero = () => {
               </p>
             </div>
 
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-blue-100 hover:shadow-2xl hover:border-blue-300 transition-all duration-300 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Shield className="h-8 w-8 text-blue-600" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 hover:shadow-2xl hover:border-emerald-300 transition-all duration-300 hover:-translate-y-2">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Shield className="h-8 w-8 text-emerald-600" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-center">Insurance Coverage</h3>
               <p className="text-gray-600 text-center leading-relaxed">
@@ -149,7 +149,7 @@ const Hero = () => {
       <div className="py-20 bg-gradient-to-br from-teal-50 to-emerald-50">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <Baby className="h-16 w-16 text-teal-600 mx-auto mb-6" />
+            <Shield className="h-16 w-16 text-teal-600 mx-auto mb-6" />
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
             Your Journey to Safe Motherhood Starts Here
