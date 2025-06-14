@@ -47,9 +47,9 @@ const QuickLinks = () => {
   ];
 
   return (
-    <Card>
+    <Card className="h-fit">
       <CardHeader>
-        <CardTitle>Quick Links</CardTitle>
+        <CardTitle className="text-lg font-semibold">Quick Links</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
@@ -57,11 +57,11 @@ const QuickLinks = () => {
             <Button 
               key={path}
               variant="ghost" 
-              className="w-full justify-start"
+              className="w-full justify-start hover:bg-teal-50 hover:text-teal-700 transition-colors"
               onClick={() => navigate(path)}
             >
-              <Icon className="h-4 w-4 mr-2" />
-              {label}
+              <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
+              <span className="text-left">{label}</span>
             </Button>
           ))}
         </div>
