@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { TestTube, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { adminService, type Lab } from '@/services/AdminService';
+import { labService, type Lab } from '@/services/LabService';
 import { useToast } from '@/hooks/use-toast';
 
 const LabManagement = () => {
@@ -20,7 +19,7 @@ const LabManagement = () => {
 
   const loadLabs = async () => {
     try {
-      const labsData = await adminService.getAllLabs();
+      const labsData = await labService.getAllLabs();
       setLabs(labsData);
     } catch (error) {
       console.error('Error loading labs:', error);
@@ -36,7 +35,7 @@ const LabManagement = () => {
 
   const toggleLabStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await adminService.updateLab(id, { is_active: !currentStatus });
+      await labService.updateLab(id, { is_active: !currentStatus });
       await loadLabs();
       toast({
         title: "Success",

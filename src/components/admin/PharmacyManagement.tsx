@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Pill, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { adminService, type Pharmacy } from '@/services/AdminService';
+import { pharmacyService, type Pharmacy } from '@/services/PharmacyService';
 import { useToast } from '@/hooks/use-toast';
 
 const PharmacyManagement = () => {
@@ -20,7 +19,7 @@ const PharmacyManagement = () => {
 
   const loadPharmacies = async () => {
     try {
-      const pharmaciesData = await adminService.getAllPharmacies();
+      const pharmaciesData = await pharmacyService.getAllPharmacies();
       setPharmacies(pharmaciesData);
     } catch (error) {
       console.error('Error loading pharmacies:', error);
@@ -36,7 +35,7 @@ const PharmacyManagement = () => {
 
   const togglePharmacyStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await adminService.updatePharmacy(id, { is_active: !currentStatus });
+      await pharmacyService.updatePharmacy(id, { is_active: !currentStatus });
       await loadPharmacies();
       toast({
         title: "Success",

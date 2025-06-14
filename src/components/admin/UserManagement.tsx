@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Users, Shield, Building2, User, Search, Filter } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { adminService, type UserWithRole } from '@/services/AdminService';
+import { userService, type UserWithRole } from '@/services/UserService';
 import type { UserRole } from '@/hooks/useUserRole';
 import { useToast } from '@/hooks/use-toast';
 
@@ -23,7 +22,7 @@ const UserManagement = () => {
 
   const loadUsers = async () => {
     try {
-      const usersData = await adminService.getAllUsers();
+      const usersData = await userService.getAllUsers();
       setUsers(usersData);
     } catch (error) {
       console.error('Error loading users:', error);
@@ -39,7 +38,7 @@ const UserManagement = () => {
 
   const updateUserRole = async (userId: string, newRole: UserRole) => {
     try {
-      await adminService.updateUserRole(userId, newRole);
+      await userService.updateUserRole(userId, newRole);
       await loadUsers(); // Refresh the list
       toast({
         title: "Success",

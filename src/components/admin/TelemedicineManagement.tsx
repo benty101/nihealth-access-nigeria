@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Video, Plus, Search, Edit, Trash2, Star } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { adminService, type TelemedicineProvider } from '@/services/AdminService';
+import { telemedicineService, type TelemedicineProvider } from '@/services/TelemedicineService';
 import { useToast } from '@/hooks/use-toast';
 
 const TelemedicineManagement = () => {
@@ -20,7 +19,7 @@ const TelemedicineManagement = () => {
 
   const loadProviders = async () => {
     try {
-      const providersData = await adminService.getAllTelemedicineProviders();
+      const providersData = await telemedicineService.getAllTelemedicineProviders();
       setProviders(providersData);
     } catch (error) {
       console.error('Error loading telemedicine providers:', error);
@@ -36,7 +35,7 @@ const TelemedicineManagement = () => {
 
   const toggleProviderStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await adminService.updateTelemedicineProvider(id, { is_active: !currentStatus });
+      await telemedicineService.updateTelemedicineProvider(id, { is_active: !currentStatus });
       await loadProviders();
       toast({
         title: "Success",
