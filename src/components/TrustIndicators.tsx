@@ -36,7 +36,7 @@ const TrustIndicators = () => {
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center px-6 py-3 rounded-full bg-white shadow-sm border border-emerald-200 text-emerald-800 text-sm font-medium mb-6 animate-gentle-bounce">
             <Shield className="h-4 w-4 mr-2 animate-pulse" />
-            🇳🇬 Trusted by Nigerian Families
+            🇳🇬 In Partnership with Ministry of Science and Technology
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Why Mothers Choose <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">MeddyPal</span>
