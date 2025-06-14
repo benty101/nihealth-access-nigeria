@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { secureLog } from '@/lib/security';
+import { secureLogger } from '@/lib/secureLogger';
 import { AuthContextType, AuthProviderProps } from '@/types/auth';
 import { AuthService } from '@/services/authService';
 import { AuthStorage } from '@/utils/authStorage';
@@ -38,14 +39,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state change:', event, session?.user?.id);
+        secureLogger.info('Auth state change', { event, userId: session?.user?.id });
         
         if (event === 'SIGNED_OUT' || !session) {
           clearAuthState();
+          secureLogger.auth('user_signed_out');
         } else {
           setSession(session);
           setUser(session?.user ?? null);
           updateActivity();
+          secureLogger.auth('user_authenticated', session.user?.id);
         }
         
         setLoading(false);
@@ -61,12 +64,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.id);
+      secureLogger.info('Initial session check', { hasSession: !!session });
       
       if (session) {
         setSession(session);
         setUser(session?.user ?? null);
         updateActivity();
+        secureLogger.auth('session_restored', session.user?.id);
       } else {
         clearAuthState();
       }
@@ -88,18 +92,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string, phone: string) => {
+    secureLogger.auth('signup_attempt', undefined, { email: email.substring(0, 3) + '***' });
     return AuthService.signUp(email, password, fullName, phone);
   };
 
   const signIn = async (email: string, password: string) => {
+    secureLogger.auth('signin_attempt', undefined, { email: email.substring(0, 3) + '***' });
     return AuthService.signIn(email, password);
   };
 
   const signInWithGoogle = async () => {
+    secureLogger.auth('google_oauth_attempt');
     return AuthService.signInWithGoogle();
   };
 
   const signOut = async () => {
+    const currentUserId = user?.id;
+    
     // Clear local state immediately to prevent UI issues
     clearAuthState();
     
@@ -108,6 +117,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     
     // Perform actual sign out
     await AuthService.signOut();
+    
+    secureLogger.auth('user_signed_out', currentUserId);
   };
 
   const value = {

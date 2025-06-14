@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import SignupForm from '@/components/auth/SignupForm';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import SessionWarning from '@/components/auth/SessionWarning';
 import { SuperAdminSeeder } from '@/services/SuperAdminSeeder';
+import { secureLogger } from '@/lib/secureLogger';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -20,26 +22,28 @@ const Auth = () => {
   const [success, setSuccess] = useState('');
   const [showSessionWarning, setShowSessionWarning] = useState(false);
 
-  // Create super admin on component mount - always attempt in development
+  // Secure super admin creation - only in development and not already created
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      // Clear any previous flags since we've reset the database
-      localStorage.removeItem('superAdminCreated');
+      const superAdminCreated = localStorage.getItem('superAdminCreated');
       
-      SuperAdminSeeder.createSuperAdmin().then((result) => {
-        if (result.success) {
-          console.log('Super admin account ready for kosyezenekwe@gmail.com');
-          localStorage.setItem('superAdminCreated', 'true');
-        } else {
-          console.log('Super admin setup result:', result.error);
-        }
-      });
+      if (!superAdminCreated) {
+        SuperAdminSeeder.createSuperAdmin().then((result) => {
+          if (result.success) {
+            secureLogger.admin('super_admin_account_created');
+            localStorage.setItem('superAdminCreated', 'true');
+          } else {
+            secureLogger.error('Super admin setup failed', result.error);
+          }
+        });
+      }
     }
   }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !loading) {
+      secureLogger.auth('authenticated_user_redirect', user.id);
       navigate('/dashboard');
     }
   }, [user, loading, navigate]);
@@ -51,12 +55,14 @@ const Auth = () => {
     const checkSession = () => {
       if (isSessionExpired(lastActivity)) {
         setShowSessionWarning(false);
+        secureLogger.auth('session_expired', user.id);
         navigate('/auth');
         return;
       }
 
       if (shouldShowWarning(lastActivity)) {
         setShowSessionWarning(true);
+        secureLogger.auth('session_warning_shown', user.id);
       } else {
         setShowSessionWarning(false);
       }

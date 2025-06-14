@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Users, Shield, Building2, User, Search, Filter } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { userService, type UserWithRole } from '@/services/UserService';
 import type { UserRole } from '@/hooks/useUserRole';
 import { useToast } from '@/hooks/use-toast';
+import { secureLogger } from '@/lib/secureLogger';
+import { useAuth } from '@/contexts/AuthContext';
 
 const UserManagement = () => {
   const [users, setUsers] = useState<UserWithRole[]>([]);
@@ -15,6 +18,7 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const { toast } = useToast();
+  const { user: currentUser } = useAuth();
 
   useEffect(() => {
     loadUsers();
@@ -22,10 +26,12 @@ const UserManagement = () => {
 
   const loadUsers = async () => {
     try {
+      secureLogger.admin('users_list_accessed', currentUser?.id);
       const usersData = await userService.getAllUsers();
       setUsers(usersData);
+      secureLogger.admin('users_list_loaded', currentUser?.id, { count: usersData.length });
     } catch (error) {
-      console.error('Error loading users:', error);
+      secureLogger.error('Error loading users', error, { adminId: currentUser?.id });
       toast({
         title: "Error",
         description: "Failed to load users",
@@ -38,14 +44,30 @@ const UserManagement = () => {
 
   const updateUserRole = async (userId: string, newRole: UserRole) => {
     try {
+      secureLogger.admin('user_role_update_attempt', currentUser?.id, { 
+        targetUserId: userId, 
+        newRole 
+      });
+      
       await userService.updateUserRole(userId, newRole);
       await loadUsers(); // Refresh the list
+      
+      secureLogger.admin('user_role_updated', currentUser?.id, { 
+        targetUserId: userId, 
+        newRole 
+      });
+      
       toast({
         title: "Success",
         description: "User role updated successfully"
       });
     } catch (error) {
-      console.error('Error updating user role:', error);
+      secureLogger.error('Error updating user role', error, { 
+        adminId: currentUser?.id,
+        targetUserId: userId,
+        attemptedRole: newRole
+      });
+      
       toast({
         title: "Error",
         description: "Failed to update user role",

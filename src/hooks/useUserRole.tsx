@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { secureLogger } from '@/lib/secureLogger';
 
 export type UserRole = 'super_admin' | 'hospital_admin' | 'patient';
 
@@ -19,7 +20,7 @@ export const useUserRole = () => {
 
     const fetchUserRole = async () => {
       try {
-        console.log('Fetching role for user:', user.id);
+        secureLogger.info('Fetching role for user', { userId: user.id });
         
         const { data, error } = await supabase
           .from('user_roles')
@@ -28,17 +29,17 @@ export const useUserRole = () => {
           .maybeSingle();
 
         if (error) {
-          console.error('Error fetching user role:', error);
+          secureLogger.error('Error fetching user role', error, { userId: user.id });
           setRole('patient'); // Default fallback
         } else if (data) {
-          console.log('User role found:', data.role);
+          secureLogger.auth('user_role_retrieved', user.id, { role: data.role });
           setRole(data.role as UserRole);
         } else {
-          console.log('No role found, defaulting to patient');
+          secureLogger.info('No role found, defaulting to patient', { userId: user.id });
           setRole('patient');
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        secureLogger.error('Error fetching user role', error, { userId: user.id });
         setRole('patient');
       } finally {
         setLoading(false);
