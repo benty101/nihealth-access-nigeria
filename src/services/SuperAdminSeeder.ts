@@ -9,7 +9,7 @@ export class SuperAdminSeeder {
       // First, try to sign up the super admin
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: 'admin@meddypal.com',
-        password: 'adimm',
+        password: 'admin123', // Updated to meet minimum length requirement
         options: {
           data: {
             full_name: 'Super Administrator'
@@ -29,7 +29,7 @@ export class SuperAdminSeeder {
         // Try to sign in to get the user ID if signup failed due to existing user
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email: 'admin@meddypal.com',
-          password: 'adimm'
+          password: 'admin123'
         });
 
         if (signInError) {
