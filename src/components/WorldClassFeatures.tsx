@@ -1,159 +1,151 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
-  Smartphone, 
   Shield, 
-  Globe, 
-  Award, 
+  Zap, 
   Users, 
-  TrendingUp, 
-  Clock,
-  MessageSquare,
-  Bell,
-  Star,
-  Zap,
-  Lock
+  Award, 
+  Clock, 
+  Heart,
+  Globe,
+  BookOpen,
+  ExternalLink
 } from 'lucide-react';
 
 const WorldClassFeatures = () => {
-  const features = [
-    {
-      icon: Smartphone,
-      title: 'AI-Powered Health Assistant',
-      description: 'Get instant answers to pregnancy questions with our advanced AI chatbot trained on Nigerian medical protocols.',
-      badge: 'Coming Soon',
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      icon: Shield,
-      title: 'Blockchain Health Records',
-      description: 'Secure, immutable health records that you own and control, accessible across all healthcare providers.',
-      badge: 'Enterprise',
-      color: 'from-emerald-500 to-teal-500'
-    },
-    {
-      icon: Globe,
-      title: 'Telemedicine Platform',
-      description: 'Connect with specialists nationwide through our integrated video consultation platform.',
-      badge: 'Live',
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Predictive Health Analytics',
-      description: 'ML-powered risk assessment and personalized health insights based on your data patterns.',
-      badge: 'Beta',
-      color: 'from-orange-500 to-red-500'
-    },
-    {
-      icon: Bell,
-      title: 'Smart Appointment Management',
-      description: 'Automated scheduling with conflict detection, reminder systems, and real-time updates.',
-      badge: 'Live',
-      color: 'from-green-500 to-emerald-500'
-    },
-    {
-      icon: Users,
-      title: 'Community Support Network',
-      description: 'Connect with other mothers, join support groups, and share experiences in a safe environment.',
-      badge: 'Live',
-      color: 'from-indigo-500 to-purple-500'
-    }
-  ];
+  const handleViewAPI = () => {
+    console.log('View API Documentation clicked');
+    // This would typically open API documentation
+  };
 
-  const stats = [
-    { number: '99.9%', label: 'Uptime Guarantee', icon: Zap },
-    { number: '256-bit', label: 'SSL Encryption', icon: Lock },
-    { number: '24/7', label: 'Expert Support', icon: MessageSquare },
-    { number: '4.9/5', label: 'User Rating', icon: Star }
-  ];
+  const handleViewIntegrations = () => {
+    console.log('View Integrations clicked');
+    // This would typically open integrations page
+  };
 
   return (
-    <div className="py-24 bg-gradient-to-br from-gray-50 to-white">
+    <div className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-6">
-            <Award className="h-4 w-4 mr-2" />
-            World-Class Healthcare Technology
-          </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Built for the Future of Healthcare
+          <Badge variant="outline" className="mb-4 px-6 py-2 text-teal-600 border-teal-600">
+            World-Class Platform
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Built for Excellence in Healthcare
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Leveraging cutting-edge technology to deliver healthcare experiences that rival the world's best platforms
+            Enterprise-grade features designed specifically for the Nigerian healthcare ecosystem
           </p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div key={index} className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                <Icon className="h-8 w-8 text-teal-600 mx-auto mb-3" />
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.number}</div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
-              </div>
-            );
-          })}
         </div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <Card key={index} className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-lg overflow-hidden">
-                <div className={`h-2 bg-gradient-to-r ${feature.color}`}></div>
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <Badge 
-                      variant={feature.badge === 'Live' ? 'default' : 'secondary'}
-                      className={`text-xs ${
-                        feature.badge === 'Live' ? 'bg-green-100 text-green-700' :
-                        feature.badge === 'Beta' ? 'bg-blue-100 text-blue-700' :
-                        feature.badge === 'Enterprise' ? 'bg-purple-100 text-purple-700' :
-                        'bg-orange-100 text-orange-700'
-                      }`}
-                    >
-                      {feature.badge}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-teal-500">
+            <CardHeader>
+              <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-teal-200 transition-colors">
+                <Shield className="h-6 w-6 text-teal-600" />
+              </div>
+              <CardTitle className="text-xl">Bank-Grade Security</CardTitle>
+              <CardDescription>
+                End-to-end encryption, HIPAA compliance, and secure data handling for all medical records
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-emerald-500">
+            <CardHeader>
+              <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-emerald-200 transition-colors">
+                <Zap className="h-6 w-6 text-emerald-600" />
+              </div>
+              <CardTitle className="text-xl">Lightning Fast</CardTitle>
+              <CardDescription>
+                Optimized performance with sub-second response times and 99.9% uptime guarantee
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
+            <CardHeader>
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+              <CardTitle className="text-xl">Multi-User Access</CardTitle>
+              <CardDescription>
+                Family accounts, shared records, and collaborative healthcare management
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-purple-500">
+            <CardHeader>
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+                <Award className="h-6 w-6 text-purple-600" />
+              </div>
+              <CardTitle className="text-xl">Certified Providers</CardTitle>
+              <CardDescription>
+                Only verified and licensed healthcare providers with quality assurance
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-orange-500">
+            <CardHeader>
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-orange-200 transition-colors">
+                <Clock className="h-6 w-6 text-orange-600" />
+              </div>
+              <CardTitle className="text-xl">24/7 Support</CardTitle>
+              <CardDescription>
+                Round-the-clock customer support and emergency assistance when you need it
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-pink-500">
+            <CardHeader>
+              <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-pink-200 transition-colors">
+                <Heart className="h-6 w-6 text-pink-600" />
+              </div>
+              <CardTitle className="text-xl">Personalized Care</CardTitle>
+              <CardDescription>
+                AI-powered health insights and personalized recommendations for better outcomes
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
 
-        {/* Integration Banner */}
-        <div className="bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 rounded-2xl p-8 md:p-12 text-center text-white">
-          <div className="max-w-3xl mx-auto">
-            <Globe className="h-16 w-16 mx-auto mb-6 opacity-90" />
-            <h3 className="text-3xl font-bold mb-4">
-              Seamless Integration with Nigerian Healthcare
-            </h3>
-            <p className="text-lg text-teal-100 mb-8">
-              Built to work perfectly with NHIS, major hospital systems, and local healthcare providers across all 36 states
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="bg-white text-teal-700 hover:bg-gray-100">
-                View API Documentation
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-teal-700">
-                Request Integration
-              </Button>
-            </div>
+        {/* Integration Section */}
+        <div className="bg-gradient-to-br from-teal-600 via-emerald-600 to-teal-700 rounded-3xl p-12 text-center text-white">
+          <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-8">
+            <Globe className="h-10 w-10 text-white" />
+          </div>
+          <h3 className="text-3xl md:text-4xl font-bold mb-6">
+            Seamless Integration with Nigerian Healthcare
+          </h3>
+          <p className="text-xl text-teal-100 mb-8 max-w-3xl mx-auto">
+            Built to work perfectly with NHIS, major hospital systems, and local healthcare providers across all 36 states
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={handleViewAPI}
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+            >
+              <BookOpen className="mr-2 h-5 w-5" />
+              View API Documentation
+            </Button>
+            <Button 
+              size="lg"
+              onClick={handleViewIntegrations}
+              className="bg-white text-teal-600 hover:bg-gray-50"
+            >
+              <ExternalLink className="mr-2 h-5 w-5" />
+              View All Integrations
+            </Button>
           </div>
         </div>
       </div>
