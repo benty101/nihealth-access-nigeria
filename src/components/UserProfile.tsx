@@ -10,6 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Heart, Calendar, Bell, MapPin, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { profileSchema, nigerianStates } from '@/lib/validation';
+import { sanitizeErrorMessage, secureLog, maskEmail } from '@/lib/security';
 
 interface Profile {
   id: string;
@@ -34,10 +36,11 @@ interface Profile {
 }
 
 const UserProfile = () => {
-  const { user } = useAuth();
+  const { user, updateActivity } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [profile, setProfile] = useState<Partial<Profile>>({
     full_name: '',
     phone_number: '',
@@ -59,14 +62,6 @@ const UserProfile = () => {
     preferred_language: 'english',
   });
 
-  const nigerianStates = [
-    'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
-    'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT', 'Gombe',
-    'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara',
-    'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau',
-    'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
-  ];
-
   useEffect(() => {
     if (user) {
       fetchProfile();
@@ -75,6 +70,7 @@ const UserProfile = () => {
 
   const fetchProfile = async () => {
     try {
+      updateActivity();
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -82,7 +78,10 @@ const UserProfile = () => {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error);
+        secureLog('Profile fetch error', { 
+          userId: user?.id,
+          errorCode: error.code 
+        });
         return;
       }
 
@@ -95,11 +94,29 @@ const UserProfile = () => {
           chronic_conditions: data.chronic_conditions || []
         };
         setProfile(profileData);
+        secureLog('Profile loaded successfully', { userId: user?.id });
       }
     } catch (error) {
-      console.error('Error:', error);
+      secureLog('Profile fetch network error', { userId: user?.id });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const validateForm = (data: any): boolean => {
+    try {
+      profileSchema.parse(data);
+      setValidationErrors({});
+      return true;
+    } catch (error: any) {
+      const errors: Record<string, string> = {};
+      error.errors?.forEach((err: any) => {
+        if (err.path?.[0]) {
+          errors[err.path[0]] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      return false;
     }
   };
 
@@ -115,7 +132,19 @@ const UserProfile = () => {
   const handleSave = async () => {
     if (!user) return;
 
+    // Validate the profile data
+    if (!validateForm(profile)) {
+      toast({
+        title: "Validation Error",
+        description: "Please correct the errors in the form before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
+    updateActivity();
+
     try {
       const { error } = await supabase
         .from('profiles')
@@ -129,20 +158,36 @@ const UserProfile = () => {
         throw error;
       }
 
+      secureLog('Profile updated successfully', { userId: user.id });
+      
       toast({
         title: "Profile updated successfully!",
         description: "Your health profile has been saved.",
       });
     } catch (error) {
-      console.error('Error saving profile:', error);
+      secureLog('Profile update error', { 
+        userId: user.id,
+        errorType: 'update_failed'
+      });
+      
       toast({
         title: "Error updating profile",
-        description: "Please try again later.",
+        description: sanitizeErrorMessage(error),
         variant: "destructive",
       });
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleInputChange = (field: string, value: any) => {
+    // Clear validation error when user starts typing
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    
+    setProfile(prev => ({ ...prev, [field]: value }));
+    updateActivity();
   };
 
   const weeksPregnant = calculateWeeksPregnant(profile.due_date || '');
@@ -166,9 +211,16 @@ const UserProfile = () => {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <User className="mr-2 h-5 w-5" />
-            My Health Profile
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center">
+              <User className="mr-2 h-5 w-5" />
+              My Health Profile
+            </div>
+            {user?.email && (
+              <div className="text-sm text-gray-500">
+                {maskEmail(user.email)}
+              </div>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -179,9 +231,14 @@ const UserProfile = () => {
               <Input
                 id="full_name"
                 value={profile.full_name || ''}
-                onChange={(e) => setProfile({...profile, full_name: e.target.value})}
+                onChange={(e) => handleInputChange('full_name', e.target.value)}
                 placeholder="Enter your full name"
+                className={validationErrors.full_name ? 'border-red-500' : ''}
+                maxLength={100}
               />
+              {validationErrors.full_name && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.full_name}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="phone_number">Phone Number</Label>
@@ -190,11 +247,15 @@ const UserProfile = () => {
                 <Input
                   id="phone_number"
                   value={profile.phone_number || ''}
-                  onChange={(e) => setProfile({...profile, phone_number: e.target.value})}
-                  placeholder="e.g. 08012345678"
-                  className="pl-10"
+                  onChange={(e) => handleInputChange('phone_number', e.target.value)}
+                  placeholder="e.g. 08012345678 or +2348012345678"
+                  className={`pl-10 ${validationErrors.phone_number ? 'border-red-500' : ''}`}
+                  maxLength={14}
                 />
               </div>
+              {validationErrors.phone_number && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.phone_number}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="date_of_birth">Date of Birth</Label>
@@ -202,13 +263,21 @@ const UserProfile = () => {
                 id="date_of_birth"
                 type="date"
                 value={profile.date_of_birth || ''}
-                onChange={(e) => setProfile({...profile, date_of_birth: e.target.value})}
+                onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
+                className={validationErrors.date_of_birth ? 'border-red-500' : ''}
+                max={new Date().toISOString().split('T')[0]}
               />
+              {validationErrors.date_of_birth && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.date_of_birth}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="gender">Gender</Label>
-              <Select value={profile.gender} onValueChange={(value) => setProfile({...profile, gender: value as 'male' | 'female' | 'other'})}>
-                <SelectTrigger>
+              <Select 
+                value={profile.gender} 
+                onValueChange={(value) => handleInputChange('gender', value as 'male' | 'female' | 'other')}
+              >
+                <SelectTrigger className={validationErrors.gender ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
@@ -217,6 +286,9 @@ const UserProfile = () => {
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
+              {validationErrors.gender && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.gender}</p>
+              )}
             </div>
           </div>
 
@@ -224,8 +296,11 @@ const UserProfile = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="state_of_residence">State of Residence</Label>
-              <Select value={profile.state_of_residence} onValueChange={(value) => setProfile({...profile, state_of_residence: value})}>
-                <SelectTrigger>
+              <Select 
+                value={profile.state_of_residence} 
+                onValueChange={(value) => handleInputChange('state_of_residence', value)}
+              >
+                <SelectTrigger className={validationErrors.state_of_residence ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Select your state" />
                 </SelectTrigger>
                 <SelectContent>
@@ -234,15 +309,23 @@ const UserProfile = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {validationErrors.state_of_residence && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.state_of_residence}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="lga">Local Government Area (LGA)</Label>
               <Input
                 id="lga"
                 value={profile.lga || ''}
-                onChange={(e) => setProfile({...profile, lga: e.target.value})}
+                onChange={(e) => handleInputChange('lga', e.target.value)}
                 placeholder="Enter your LGA"
+                className={validationErrors.lga ? 'border-red-500' : ''}
+                maxLength={100}
               />
+              {validationErrors.lga && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.lga}</p>
+              )}
             </div>
             <div className="md:col-span-2">
               <Label htmlFor="address">Address</Label>
@@ -251,11 +334,15 @@ const UserProfile = () => {
                 <Input
                   id="address"
                   value={profile.address || ''}
-                  onChange={(e) => setProfile({...profile, address: e.target.value})}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
                   placeholder="Enter your full address"
-                  className="pl-10"
+                  className={`pl-10 ${validationErrors.address ? 'border-red-500' : ''}`}
+                  maxLength={500}
                 />
               </div>
+              {validationErrors.address && (
+                <p className="text-sm text-red-600 mt-1">{validationErrors.address}</p>
+              )}
             </div>
           </div>
 
@@ -268,18 +355,28 @@ const UserProfile = () => {
                 <Input
                   id="emergency_contact_name"
                   value={profile.emergency_contact_name || ''}
-                  onChange={(e) => setProfile({...profile, emergency_contact_name: e.target.value})}
+                  onChange={(e) => handleInputChange('emergency_contact_name', e.target.value)}
                   placeholder="Emergency contact full name"
+                  className={validationErrors.emergency_contact_name ? 'border-red-500' : ''}
+                  maxLength={100}
                 />
+                {validationErrors.emergency_contact_name && (
+                  <p className="text-sm text-red-600 mt-1">{validationErrors.emergency_contact_name}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="emergency_contact_phone">Contact Phone</Label>
                 <Input
                   id="emergency_contact_phone"
                   value={profile.emergency_contact_phone || ''}
-                  onChange={(e) => setProfile({...profile, emergency_contact_phone: e.target.value})}
+                  onChange={(e) => handleInputChange('emergency_contact_phone', e.target.value)}
                   placeholder="Emergency contact phone number"
+                  className={validationErrors.emergency_contact_phone ? 'border-red-500' : ''}
+                  maxLength={14}
                 />
+                {validationErrors.emergency_contact_phone && (
+                  <p className="text-sm text-red-600 mt-1">{validationErrors.emergency_contact_phone}</p>
+                )}
               </div>
             </div>
           </div>
@@ -291,7 +388,7 @@ const UserProfile = () => {
                 type="checkbox"
                 id="is_pregnant"
                 checked={profile.is_pregnant || false}
-                onChange={(e) => setProfile({...profile, is_pregnant: e.target.checked})}
+                onChange={(e) => handleInputChange('is_pregnant', e.target.checked)}
                 className="rounded"
               />
               <Label htmlFor="is_pregnant" className="flex items-center">
@@ -308,8 +405,13 @@ const UserProfile = () => {
                     id="due_date"
                     type="date"
                     value={profile.due_date || ''}
-                    onChange={(e) => setProfile({...profile, due_date: e.target.value})}
+                    onChange={(e) => handleInputChange('due_date', e.target.value)}
+                    className={validationErrors.due_date ? 'border-red-500' : ''}
+                    min={new Date().toISOString().split('T')[0]}
                   />
+                  {validationErrors.due_date && (
+                    <p className="text-sm text-red-600 mt-1">{validationErrors.due_date}</p>
+                  )}
                 </div>
 
                 {profile.due_date && weeksPregnant > 0 && (
@@ -337,8 +439,11 @@ const UserProfile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="blood_group">Blood Group</Label>
-                <Select value={profile.blood_group} onValueChange={(value) => setProfile({...profile, blood_group: value})}>
-                  <SelectTrigger>
+                <Select 
+                  value={profile.blood_group} 
+                  onValueChange={(value) => handleInputChange('blood_group', value)}
+                >
+                  <SelectTrigger className={validationErrors.blood_group ? 'border-red-500' : ''}>
                     <SelectValue placeholder="Select blood group" />
                   </SelectTrigger>
                   <SelectContent>
@@ -352,11 +457,17 @@ const UserProfile = () => {
                     <SelectItem value="O-">O-</SelectItem>
                   </SelectContent>
                 </Select>
+                {validationErrors.blood_group && (
+                  <p className="text-sm text-red-600 mt-1">{validationErrors.blood_group}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="genotype">Genotype</Label>
-                <Select value={profile.genotype} onValueChange={(value) => setProfile({...profile, genotype: value})}>
-                  <SelectTrigger>
+                <Select 
+                  value={profile.genotype} 
+                  onValueChange={(value) => handleInputChange('genotype', value)}
+                >
+                  <SelectTrigger className={validationErrors.genotype ? 'border-red-500' : ''}>
                     <SelectValue placeholder="Select genotype" />
                   </SelectTrigger>
                   <SelectContent>
@@ -368,6 +479,9 @@ const UserProfile = () => {
                     <SelectItem value="CC">CC</SelectItem>
                   </SelectContent>
                 </Select>
+                {validationErrors.genotype && (
+                  <p className="text-sm text-red-600 mt-1">{validationErrors.genotype}</p>
+                )}
               </div>
             </div>
           </div>

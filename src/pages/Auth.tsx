@@ -8,13 +8,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { Shield, Heart, User, Phone, Mail, Lock, AlertCircle } from 'lucide-react';
+import { loginSchema, signupSchema } from '@/lib/validation';
+import { sanitizeErrorMessage, isSessionExpired, shouldShowWarning } from '@/lib/security';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { user, signUp, signIn, signInWithGoogle, loading } = useAuth();
+  const { user, signUp, signIn, signInWithGoogle, loading, lastActivity, updateActivity } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Session timeout warning
+  const [showSessionWarning, setShowSessionWarning] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -22,6 +28,28 @@ const Auth = () => {
       navigate('/dashboard');
     }
   }, [user, loading, navigate]);
+
+  // Session timeout monitoring
+  useEffect(() => {
+    if (!user) return;
+
+    const checkSession = () => {
+      if (isSessionExpired(lastActivity)) {
+        setShowSessionWarning(false);
+        navigate('/auth');
+        return;
+      }
+
+      if (shouldShowWarning(lastActivity)) {
+        setShowSessionWarning(true);
+      } else {
+        setShowSessionWarning(false);
+      }
+    };
+
+    const interval = setInterval(checkSession, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [user, lastActivity, navigate]);
 
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -36,75 +64,122 @@ const Auth = () => {
     confirmPassword: ''
   });
 
+  const validateForm = (data: any, schema: any): boolean => {
+    try {
+      schema.parse(data);
+      setValidationErrors({});
+      return true;
+    } catch (error: any) {
+      const errors: Record<string, string> = {};
+      error.errors?.forEach((err: any) => {
+        if (err.path?.[0]) {
+          errors[err.path[0]] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      return false;
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
+    setValidationErrors({});
 
-    const { error } = await signIn(loginForm.email, loginForm.password);
-    
-    if (error) {
-      if (error.message.includes('Invalid login credentials')) {
-        setError('Invalid email or password. Please check your details and try again.');
-      } else {
-        setError('Unable to sign in. Please try again later.');
-      }
-    } else {
-      navigate('/dashboard');
+    // Client-side validation
+    if (!validateForm(loginForm, loginSchema)) {
+      return;
     }
-    
-    setIsLoading(false);
+
+    setIsLoading(true);
+    updateActivity();
+
+    try {
+      const { error } = await signIn(loginForm.email, loginForm.password);
+      
+      if (error) {
+        setError(sanitizeErrorMessage(error));
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      setError('Connection error. Please check your internet and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true);
     setError('');
+    setIsLoading(true);
+    updateActivity();
 
-    const { error } = await signInWithGoogle();
-    
-    if (error) {
-      setError('Unable to sign in with Google. Please try again.');
+    try {
+      const { error } = await signInWithGoogle();
+      
+      if (error) {
+        setError(sanitizeErrorMessage(error));
+      }
+    } catch (error) {
+      setError('Connection error. Please check your internet and try again.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
     setSuccess('');
+    setValidationErrors({});
 
-    if (signupForm.password !== signupForm.confirmPassword) {
-      setError('Passwords do not match.');
-      setIsLoading(false);
+    // Client-side validation
+    if (!validateForm(signupForm, signupSchema)) {
       return;
     }
 
-    if (signupForm.password.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      setIsLoading(false);
-      return;
-    }
+    setIsLoading(true);
+    updateActivity();
 
-    const { error } = await signUp(
-      signupForm.email,
-      signupForm.password,
-      signupForm.fullName,
-      signupForm.phone
-    );
+    try {
+      const { error } = await signUp(
+        signupForm.email,
+        signupForm.password,
+        signupForm.fullName,
+        signupForm.phone
+      );
 
-    if (error) {
-      if (error.message.includes('User already registered')) {
-        setError('This email is already registered. Please sign in instead.');
+      if (error) {
+        setError(sanitizeErrorMessage(error));
       } else {
-        setError('Unable to create account. Please try again.');
+        setSuccess('Account created successfully! Please check your email to verify your account before signing in.');
+        // Clear form on success
+        setSignupForm({
+          fullName: '',
+          email: '',
+          phone: '',
+          password: '',
+          confirmPassword: ''
+        });
       }
-    } else {
-      setSuccess('Account created successfully! Please check your email to verify your account.');
+    } catch (error) {
+      setError('Connection error. Please check your internet and try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string, formType: 'login' | 'signup') => {
+    // Clear validation error when user starts typing
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: '' }));
     }
 
-    setIsLoading(false);
+    if (formType === 'login') {
+      setLoginForm(prev => ({ ...prev, [field]: value }));
+    } else {
+      setSignupForm(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   if (loading) {
@@ -123,6 +198,16 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Session Warning */}
+        {showSessionWarning && (
+          <Alert className="mb-4 border-yellow-200 bg-yellow-50">
+            <AlertCircle className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-800">
+              Your session will expire soon. Please save any work and refresh the page to continue.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center space-x-3 group mb-6">
@@ -177,12 +262,16 @@ const Auth = () => {
                         id="login-email"
                         type="email"
                         placeholder="Enter your email"
-                        className="pl-10"
+                        className={`pl-10 ${validationErrors.email ? 'border-red-500' : ''}`}
                         value={loginForm.email}
-                        onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+                        onChange={(e) => handleInputChange('email', e.target.value, 'login')}
                         required
+                        maxLength={254}
                       />
                     </div>
+                    {validationErrors.email && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.email}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="login-password">Password</Label>
@@ -192,12 +281,16 @@ const Auth = () => {
                         id="login-password"
                         type="password"
                         placeholder="Enter your password"
-                        className="pl-10"
+                        className={`pl-10 ${validationErrors.password ? 'border-red-500' : ''}`}
                         value={loginForm.password}
-                        onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                        onChange={(e) => handleInputChange('password', e.target.value, 'login')}
                         required
+                        maxLength={128}
                       />
                     </div>
+                    {validationErrors.password && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.password}</p>
+                    )}
                   </div>
                   <Button 
                     type="submit" 
@@ -244,12 +337,16 @@ const Auth = () => {
                         id="signup-name"
                         type="text"
                         placeholder="Enter your full name"
-                        className="pl-10"
+                        className={`pl-10 ${validationErrors.fullName ? 'border-red-500' : ''}`}
                         value={signupForm.fullName}
-                        onChange={(e) => setSignupForm({...signupForm, fullName: e.target.value})}
+                        onChange={(e) => handleInputChange('fullName', e.target.value, 'signup')}
                         required
+                        maxLength={100}
                       />
                     </div>
+                    {validationErrors.fullName && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.fullName}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="signup-email">Email Address</Label>
@@ -259,12 +356,16 @@ const Auth = () => {
                         id="signup-email"
                         type="email"
                         placeholder="Enter your email"
-                        className="pl-10"
+                        className={`pl-10 ${validationErrors.email ? 'border-red-500' : ''}`}
                         value={signupForm.email}
-                        onChange={(e) => setSignupForm({...signupForm, email: e.target.value})}
+                        onChange={(e) => handleInputChange('email', e.target.value, 'signup')}
                         required
+                        maxLength={254}
                       />
                     </div>
+                    {validationErrors.email && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.email}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="signup-phone">Phone Number</Label>
@@ -273,13 +374,17 @@ const Auth = () => {
                       <Input
                         id="signup-phone"
                         type="tel"
-                        placeholder="e.g. 08012345678"
-                        className="pl-10"
+                        placeholder="e.g. 08012345678 or +2348012345678"
+                        className={`pl-10 ${validationErrors.phone ? 'border-red-500' : ''}`}
                         value={signupForm.phone}
-                        onChange={(e) => setSignupForm({...signupForm, phone: e.target.value})}
+                        onChange={(e) => handleInputChange('phone', e.target.value, 'signup')}
                         required
+                        maxLength={14}
                       />
                     </div>
+                    {validationErrors.phone && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.phone}</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="signup-password">Password</Label>
@@ -288,13 +393,20 @@ const Auth = () => {
                       <Input
                         id="signup-password"
                         type="password"
-                        placeholder="Create a strong password"
-                        className="pl-10"
+                        placeholder="Create a strong password (min 8 characters)"
+                        className={`pl-10 ${validationErrors.password ? 'border-red-500' : ''}`}
                         value={signupForm.password}
-                        onChange={(e) => setSignupForm({...signupForm, password: e.target.value})}
+                        onChange={(e) => handleInputChange('password', e.target.value, 'signup')}
                         required
+                        maxLength={128}
                       />
                     </div>
+                    {validationErrors.password && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.password}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Must contain at least one uppercase letter, lowercase letter, and number
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="signup-confirm">Confirm Password</Label>
@@ -304,12 +416,16 @@ const Auth = () => {
                         id="signup-confirm"
                         type="password"
                         placeholder="Confirm your password"
-                        className="pl-10"
+                        className={`pl-10 ${validationErrors.confirmPassword ? 'border-red-500' : ''}`}
                         value={signupForm.confirmPassword}
-                        onChange={(e) => setSignupForm({...signupForm, confirmPassword: e.target.value})}
+                        onChange={(e) => handleInputChange('confirmPassword', e.target.value, 'signup')}
                         required
+                        maxLength={128}
                       />
                     </div>
+                    {validationErrors.confirmPassword && (
+                      <p className="text-sm text-red-600 mt-1">{validationErrors.confirmPassword}</p>
+                    )}
                   </div>
                   <Button 
                     type="submit" 
