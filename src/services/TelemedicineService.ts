@@ -29,6 +29,11 @@ class TelemedicineService {
     return data || [];
   }
 
+  // Alias method for component compatibility
+  async getAllProviders(): Promise<TelemedicineProvider[]> {
+    return this.getAllTelemedicineProviders();
+  }
+
   async createTelemedicineProvider(provider: Omit<TelemedicineProvider, 'id' | 'created_at' | 'updated_at'>): Promise<TelemedicineProvider> {
     const { data, error } = await supabase
       .from('telemedicine_providers')
@@ -47,6 +52,11 @@ class TelemedicineService {
       .eq('id', id);
 
     if (error) throw error;
+  }
+
+  // Alias method for component compatibility
+  async updateProvider(id: string, updates: Partial<TelemedicineProvider>): Promise<void> {
+    return this.updateTelemedicineProvider(id, updates);
   }
 
   async deleteTelemedicineProvider(id: string): Promise<void> {
