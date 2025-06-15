@@ -7,32 +7,76 @@ import InsurancePlanCard from '@/components/insurance/InsurancePlanCard';
 import InsuranceComparison from '@/components/insurance/InsuranceComparison';
 import InsuranceHelpSection from '@/components/insurance/InsuranceHelpSection';
 import UserGuidance from '@/components/onboarding/UserGuidance';
-import { useInsuranceFiltering } from '@/hooks/useInsuranceFiltering';
+import { insurancePlans } from '@/data/insurancePlans';
 
 const Insurance = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('popular');
+  const [filters, setFilters] = useState({
+    priceRange: [1000, 50000],
+    coverage: 'all',
+    type: 'all',
+    features: [],
+    rating: 0
+  });
+  const [showFilters, setShowFilters] = useState(true);
   const [showComparison, setShowComparison] = useState(false);
   const [comparisonPlans, setComparisonPlans] = useState<any[]>([]);
 
-  const {
-    searchTerm,
-    setSearchTerm,
-    sortBy,
-    setSortBy,
-    filters,
-    setFilters,
-    filteredPlans,
-    showFilters,
-    setShowFilters
-  } = useInsuranceFiltering();
+  // Filter and sort plans
+  const filteredPlans = insurancePlans.filter(plan => {
+    const matchesSearch = plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         plan.type.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const price = parseInt(plan.monthlyPremium.replace(/[₦,]/g, ''));
+    const matchesPrice = price >= filters.priceRange[0] && price <= filters.priceRange[1];
+    
+    const coverage = parseInt(plan.coverage.replace(/[₦,]/g, ''));
+    const matchesCoverage = filters.coverage === 'all' || coverage >= parseInt(filters.coverage);
+    
+    const matchesType = filters.type === 'all' || 
+                       (filters.type === 'hmo' && plan.type.toLowerCase().includes('hmo')) ||
+                       (filters.type === 'insurance' && !plan.type.toLowerCase().includes('hmo')) ||
+                       (filters.type === 'family' && plan.type.toLowerCase().includes('family')) ||
+                       (filters.type === 'premium' && plan.type.toLowerCase().includes('premium'));
+    
+    const matchesRating = plan.rating >= filters.rating;
+    
+    const matchesFeatures = filters.features.length === 0 || 
+                           filters.features.every(feature => 
+                             plan.features.some(planFeature => 
+                               planFeature.toLowerCase().includes(feature.toLowerCase())
+                             )
+                           );
+
+    return matchesSearch && matchesPrice && matchesCoverage && matchesType && matchesRating && matchesFeatures;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return parseInt(a.monthlyPremium.replace(/[₦,]/g, '')) - parseInt(b.monthlyPremium.replace(/[₦,]/g, ''));
+      case 'price-high':
+        return parseInt(b.monthlyPremium.replace(/[₦,]/g, '')) - parseInt(a.monthlyPremium.replace(/[₦,]/g, ''));
+      case 'rating':
+        return b.rating - a.rating;
+      case 'coverage':
+        return parseInt(b.coverage.replace(/[₦,]/g, '')) - parseInt(a.coverage.replace(/[₦,]/g, ''));
+      default:
+        return b.popular ? 1 : -1;
+    }
+  });
 
   const handleAddToComparison = (plan: any) => {
     if (comparisonPlans.length < 3 && !comparisonPlans.find(p => p.id === plan.id)) {
       setComparisonPlans([...comparisonPlans, plan]);
+      setShowComparison(true);
     }
   };
 
   const handleRemoveFromComparison = (planId: string) => {
     setComparisonPlans(comparisonPlans.filter(p => p.id !== planId));
+    if (comparisonPlans.length <= 1) {
+      setShowComparison(false);
+    }
   };
 
   const clearFilters = () => {
@@ -59,7 +103,9 @@ const Insurance = () => {
           sortBy={sortBy}
           onSortChange={setSortBy}
           resultsCount={filteredPlans.length}
-          totalCount={filteredPlans.length}
+          totalCount={insurancePlans.length}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
         />
 
         <div className="flex flex-col lg:flex-row gap-8 mt-8">
@@ -80,8 +126,12 @@ const Insurance = () => {
             {showComparison && comparisonPlans.length > 0 && (
               <div className="mb-6">
                 <InsuranceComparison
-                  plans={comparisonPlans}
+                  selectedPlans={comparisonPlans}
                   onRemovePlan={handleRemoveFromComparison}
+                  onClearComparison={() => {
+                    setComparisonPlans([]);
+                    setShowComparison(false);
+                  }}
                 />
               </div>
             )}
@@ -92,9 +142,10 @@ const Insurance = () => {
                 <InsurancePlanCard
                   key={plan.id}
                   plan={plan}
+                  onSelectPlan={(plan) => console.log('Selected plan:', plan)}
                   onAddToComparison={handleAddToComparison}
                   isInComparison={comparisonPlans.some(p => p.id === plan.id)}
-                  comparisonCount={comparisonPlans.length}
+                  comparisonFull={comparisonPlans.length >= 3}
                 />
               ))}
             </div>
