@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { pharmacyService, type Pharmacy } from '@/services/PharmacyService';
 import { useToast } from '@/hooks/use-toast';
+import PharmacyForm from './forms/PharmacyForm';
 
 interface PharmacyManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -18,6 +19,8 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | undefined>();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -46,6 +49,25 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAdd = () => {
+    setSelectedPharmacy(undefined);
+    setShowForm(true);
+  };
+
+  const handleEdit = (pharmacy: Pharmacy) => {
+    setSelectedPharmacy(pharmacy);
+    setShowForm(true);
+  };
+
+  const handleFormSuccess = async () => {
+    await loadPharmacies();
+    if (onStatsChange) {
+      await onStatsChange();
+    }
+    setShowForm(false);
+    setSelectedPharmacy(undefined);
   };
 
   const togglePharmacyStatus = async (id: string, currentStatus: boolean) => {
@@ -109,126 +131,140 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Pill className="h-5 w-5" />
-              Pharmacy Management
-            </CardTitle>
-            <CardDescription>
-              Manage pharmacy listings and services across the platform
-            </CardDescription>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Pill className="h-5 w-5" />
+                Pharmacy Management
+              </CardTitle>
+              <CardDescription>
+                Manage pharmacy listings and services across the platform
+              </CardDescription>
+            </div>
+            <Button onClick={handleAdd} className="bg-teal-600 hover:bg-teal-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Pharmacy
+            </Button>
           </div>
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Pharmacy
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Search */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search pharmacies..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        </CardHeader>
+        <CardContent>
+          {/* Search */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search pharmacies..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Badge variant="secondary">
+              {filteredPharmacies.length} found
+            </Badge>
           </div>
-          <Badge variant="secondary">
-            {filteredPharmacies.length} found
-          </Badge>
-        </div>
 
-        {/* Pharmacies Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPharmacies.map((pharmacy) => (
-            <Card key={pharmacy.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{pharmacy.name}</CardTitle>
-                    <p className="text-sm text-gray-600">{pharmacy.address}</p>
-                    <p className="text-xs text-gray-500">{pharmacy.state}, {pharmacy.lga}</p>
+          {/* Pharmacies Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPharmacies.map((pharmacy) => (
+              <Card key={pharmacy.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg">{pharmacy.name}</CardTitle>
+                      <p className="text-sm text-gray-600">{pharmacy.address}</p>
+                      <p className="text-xs text-gray-500">{pharmacy.state}, {pharmacy.lga}</p>
+                    </div>
+                    <Badge className={pharmacy.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                      {pharmacy.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
                   </div>
-                  <Badge className={pharmacy.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                    {pharmacy.is_active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">License:</span>
-                    <span className="text-gray-600">{pharmacy.license_number || 'N/A'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Phone:</span>
-                    <span className="text-gray-600">{pharmacy.phone || 'N/A'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Email:</span>
-                    <span className="text-gray-600">{pharmacy.email || 'N/A'}</span>
-                  </div>
-                </div>
-
-                {pharmacy.specialties && pharmacy.specialties.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-sm font-medium mb-2">Specialties:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {pharmacy.specialties.slice(0, 3).map((specialty, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {specialty}
-                        </Badge>
-                      ))}
-                      {pharmacy.specialties.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{pharmacy.specialties.length - 3} more
-                        </Badge>
-                      )}
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-medium">License:</span>
+                      <span className="text-gray-600">{pharmacy.license_number || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-medium">Phone:</span>
+                      <span className="text-gray-600">{pharmacy.phone || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-medium">Email:</span>
+                      <span className="text-gray-600">{pharmacy.email || 'N/A'}</span>
                     </div>
                   </div>
-                )}
 
-                <div className="flex items-center gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="h-3 w-3 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant={pharmacy.is_active ? "destructive" : "default"}
-                    size="sm"
-                    onClick={() => togglePharmacyStatus(pharmacy.id, pharmacy.is_active)}
-                  >
-                    {pharmacy.is_active ? (
-                      <>
-                        <Trash2 className="h-3 w-3 mr-1" />
-                        Deactivate
-                      </>
-                    ) : (
-                      'Activate'
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  {pharmacy.specialties && pharmacy.specialties.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-sm font-medium mb-2">Specialties:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {pharmacy.specialties.slice(0, 3).map((specialty, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {specialty}
+                          </Badge>
+                        ))}
+                        {pharmacy.specialties.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{pharmacy.specialties.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
-        {filteredPharmacies.length === 0 && (
-          <div className="text-center py-8">
-            <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">
-              {searchTerm ? 'No pharmacies found matching your criteria' : 'No pharmacies available'}
-            </p>
+                  <div className="flex items-center gap-2 pt-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleEdit(pharmacy)}
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant={pharmacy.is_active ? "destructive" : "default"}
+                      size="sm"
+                      onClick={() => togglePharmacyStatus(pharmacy.id, pharmacy.is_active)}
+                    >
+                      {pharmacy.is_active ? (
+                        <>
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Deactivate
+                        </>
+                      ) : (
+                        'Activate'
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {filteredPharmacies.length === 0 && (
+            <div className="text-center py-8">
+              <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">
+                {searchTerm ? 'No pharmacies found matching your criteria' : 'No pharmacies available'}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <PharmacyForm
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        pharmacy={selectedPharmacy}
+        onSuccess={handleFormSuccess}
+      />
+    </>
   );
 };
 
