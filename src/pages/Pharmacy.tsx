@@ -11,6 +11,8 @@ import type { Medication as MedicationType } from '@/services/AdminService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { pharmacyService } from '@/services/PharmacyService';
+import { usePharmacies } from '@/hooks/usePharmacies';
+import { useMedications } from '@/hooks/useMedications';
 
 const Pharmacy = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,15 +21,10 @@ const Pharmacy = () => {
   const [sortBy, setSortBy] = useState('name');
   const [selectedPharmacyId, setSelectedPharmacyId] = useState<string | null>(null);
 
-  const { data: medications = [], isLoading: medsLoading, isError: medsError } = useQuery<MedicationType[], Error>({
-    queryKey: ['medications'],
-    queryFn: () => medicationService.getActiveMedications(),
-  });
-
-  // Fetch all active pharmacies from the database
-  const { data: pharmacies = [], isLoading: pharmaciesLoading, isError: pharmaciesError } = useQuery({
-    queryKey: ['pharmacies'],
-    queryFn: () => pharmacyService.getActivePharmacies()
+  // USE UNIFIED HOOKS:
+  const { data: pharmacies = [], isLoading: pharmaciesLoading, isError: pharmaciesError } = usePharmacies();
+  const { data: medications = [], isLoading: medsLoading, isError: medsError } = useMedications({
+    pharmacyId: selectedPharmacyId
   });
 
   const categories = [

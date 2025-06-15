@@ -9,47 +9,19 @@ import { adminService, type Pharmacy } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
 import PharmacyForm from './forms/PharmacyForm';
 import PharmacyCard from './pharmacy/PharmacyCard';
+import { usePharmacies } from '@/hooks/usePharmacies';
 
 interface PharmacyManagementProps {
   onStatsChange?: () => Promise<void>;
 }
 
 const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
-  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Replace pharmacies state with our new hook
+  const { data: pharmacies = [], isLoading: loading, isError, refetch } = usePharmacies({ admin: true });
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | undefined>();
   const { toast } = useToast();
-
-  useEffect(() => {
-    loadPharmacies();
-  }, []);
-
-  const loadPharmacies = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      console.log('PharmacyManagement: Loading all pharmacies for admin...');
-      
-      const pharmaciesData = await adminService.getAllPharmacies();
-      setPharmacies(pharmaciesData);
-      console.log('PharmacyManagement: Successfully loaded', pharmaciesData.length, 'pharmacies for admin');
-      
-    } catch (error) {
-      console.error('PharmacyManagement: Error loading pharmacies:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setError(`Failed to load pharmacies: ${errorMessage}`);
-      toast({
-        title: "Error",
-        description: "Failed to load pharmacies. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAdd = () => {
     setSelectedPharmacy(undefined);
@@ -62,7 +34,7 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
   };
 
   const handleFormSuccess = async () => {
-    await loadPharmacies();
+    await refetch();
     if (onStatsChange) {
       await onStatsChange();
     }
@@ -73,12 +45,12 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
   const togglePharmacyStatus = async (id: string, currentStatus: boolean) => {
     try {
       await adminService.updatePharmacy(id, { is_active: !currentStatus });
-      await loadPharmacies();
-      
+      await refetch();
+
       if (onStatsChange) {
         await onStatsChange();
       }
-      
+
       toast({
         title: "Success",
         description: `Pharmacy ${!currentStatus ? 'activated' : 'deactivated'} successfully`
@@ -112,16 +84,16 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <Card>
         <CardContent className="py-16">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>Failed to load pharmacies</AlertDescription>
           </Alert>
           <div className="flex justify-center mt-4">
-            <Button onClick={loadPharmacies} variant="outline">
+            <Button onClick={refetch} variant="outline">
               Try Again
             </Button>
           </div>
