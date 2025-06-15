@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Users, Building2, Database, AlertTriangle } from 'lucide-react';
+import { Shield, Building2, Database, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import UserManagement from './UserManagement';
 import HospitalManagement from './HospitalManagement';
 import InsuranceManagement from './InsuranceManagement';
 import PharmacyManagement from './PharmacyManagement';
@@ -13,7 +12,6 @@ import LabManagement from './LabManagement';
 import TelemedicineManagement from './TelemedicineManagement';
 
 interface SystemStats {
-  totalUsers: number;
   totalHospitals: number;
   totalPharmacies: number;
   totalLabs: number;
@@ -24,7 +22,6 @@ interface SystemStats {
 
 const SuperAdminDashboard = () => {
   const [stats, setStats] = useState<SystemStats>({
-    totalUsers: 0,
     totalHospitals: 0,
     totalPharmacies: 0,
     totalLabs: 0,
@@ -46,8 +43,11 @@ const SuperAdminDashboard = () => {
       
       const errors: string[] = [];
       
+      // Define valid table names with proper typing
+      type TableName = 'hospitals' | 'pharmacies' | 'labs' | 'insurance_plans' | 'telemedicine_providers';
+      
       // Create individual fetch functions with error handling
-      const fetchCount = async (table: string, label: string): Promise<number> => {
+      const fetchCount = async (table: TableName, label: string): Promise<number> => {
         try {
           console.log(`SuperAdmin: Fetching ${table} count...`);
           const { count, error } = await supabase
@@ -71,14 +71,12 @@ const SuperAdminDashboard = () => {
 
       // Fetch all counts with individual error handling
       const [
-        totalUsers,
         totalHospitals,
         totalPharmacies,
         totalLabs,
         totalInsurancePlans,
         totalTelemedicineProviders
       ] = await Promise.all([
-        fetchCount('profiles', 'Users'),
         fetchCount('hospitals', 'Hospitals'),
         fetchCount('pharmacies', 'Pharmacies'),
         fetchCount('labs', 'Labs'),
@@ -87,7 +85,6 @@ const SuperAdminDashboard = () => {
       ]);
 
       const newStats: SystemStats = {
-        totalUsers,
         totalHospitals,
         totalPharmacies,
         totalLabs,
@@ -156,19 +153,6 @@ const SuperAdminDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Platform Users</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {loading ? '...' : stats.totalUsers.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">Total registered users</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Healthcare Facilities</CardTitle>
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -192,22 +176,30 @@ const SuperAdminDashboard = () => {
               <p className="text-xs text-muted-foreground">Pharmacies, labs & telemedicine</p>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Insurance Plans</CardTitle>
+              <Shield className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {loading ? '...' : stats.totalInsurancePlans}
+              </div>
+              <p className="text-xs text-muted-foreground">Available plans</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Management Tabs */}
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="users">Users</TabsTrigger>
+        <Tabs defaultValue="hospitals" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
             <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
             <TabsTrigger value="labs">Labs</TabsTrigger>
             <TabsTrigger value="telemedicine">Telemedicine</TabsTrigger>
             <TabsTrigger value="insurance">Insurance</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="users">
-            <UserManagement onStatsChange={fetchStats} />
-          </TabsContent>
 
           <TabsContent value="hospitals">
             <HospitalManagement onStatsChange={fetchStats} />
