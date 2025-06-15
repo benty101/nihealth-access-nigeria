@@ -1,25 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { FileText, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { adminService, type InsurancePlan } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
-
-interface InsurancePlan {
-  id: string;
-  name: string;
-  provider: string;
-  plan_type: string;
-  coverage_amount: number;
-  premium_annual: number;
-  premium_monthly: number;
-  features: string[];
-  is_active: boolean;
-  terms: string;
-}
 
 interface InsuranceManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -28,6 +16,7 @@ interface InsuranceManagementProps {
 const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
   const [plans, setPlans] = useState<InsurancePlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
@@ -37,18 +26,16 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
 
   const loadPlans = async () => {
     try {
-      const { data, error } = await supabase
-        .from('insurance_plans')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      setLoading(true);
+      setError(null);
+      const data = await adminService.getAllInsurancePlans();
       setPlans(data || []);
     } catch (error) {
-      console.error('Error loading insurance plans:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(`Failed to load insurance plans: ${errorMessage}`);
       toast({
         title: "Error",
-        description: "Failed to load insurance plans",
+        description: "Failed to load insurance plans. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -58,16 +45,9 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
 
   const togglePlanStatus = async (id: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('insurance_plans')
-        .update({ is_active: !currentStatus })
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await adminService.updateInsurancePlan(id, { is_active: !currentStatus });
       await loadPlans();
       
-      // Trigger stats refresh if callback provided
       if (onStatsChange) {
         await onStatsChange();
       }
@@ -105,6 +85,24 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
     );
   }
 
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="py-16">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadPlans} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -136,6 +134,9 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
               className="pl-10"
             />
           </div>
+           <Badge variant="secondary">
+              {filteredPlans.length} found
+            </Badge>
         </div>
 
         {/* Plans Grid */}
@@ -216,7 +217,9 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
         {filteredPlans.length === 0 && (
           <div className="text-center py-8">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No insurance plans found matching your criteria</p>
+            <p className="text-gray-600">
+             {searchTerm ? 'No insurance plans found matching your criteria' : 'No insurance plans available'}
+            </p>
           </div>
         )}
       </CardContent>
