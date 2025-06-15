@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Hospital {
@@ -105,6 +104,8 @@ export interface Medication {
   created_at: string;
   updated_at: string;
 }
+
+export type CreateMedicationRequest = Omit<Medication, 'id' | 'created_at' | 'updated_at' | 'rating' | 'side_effects' | 'contraindications'>;
 
 export interface LabTest {
   id: string;
@@ -282,7 +283,7 @@ class AdminService {
     return data || [];
   }
 
-  async createMedication(medication: Omit<Medication, 'id' | 'created_at' | 'updated_at' | 'rating' | 'side_effects' | 'contraindications'>): Promise<void> {
+  async createMedication(medication: CreateMedicationRequest): Promise<void> {
     const { error } = await supabase
       .from('medications')
       .insert([medication]);

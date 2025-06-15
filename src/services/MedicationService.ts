@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Medication } from './AdminService';
+import type { Medication } from '@/services/AdminService';
 
 class MedicationService {
   async getActiveMedications(): Promise<Medication[]> {

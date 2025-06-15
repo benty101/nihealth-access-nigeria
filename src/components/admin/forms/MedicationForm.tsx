@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { medicationService, type Medication, type CreateMedicationRequest } from '@/services/MedicationService';
+import { adminService, type Medication, type CreateMedicationRequest } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
 
 const medicationSchema = z.object({
@@ -75,7 +75,7 @@ const MedicationForm = ({ isOpen, onClose, medication, onSuccess }: MedicationFo
   const onSubmit = async (data: MedicationFormData) => {
     try {
       if (isEditing) {
-        await medicationService.updateMedication(medication.id, data);
+        await adminService.updateMedication(medication.id, data);
         toast({
           title: "Success",
           description: "Medication updated successfully",
@@ -95,7 +95,7 @@ const MedicationForm = ({ isOpen, onClose, medication, onSuccess }: MedicationFo
           in_stock: data.in_stock,
           is_active: data.is_active,
         };
-        await medicationService.createMedication(createData);
+        await adminService.createMedication(createData);
         toast({
           title: "Success", 
           description: "Medication created successfully",
