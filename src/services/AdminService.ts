@@ -107,6 +107,8 @@ export interface Medication {
 
 export type CreateMedicationRequest = Omit<Medication, 'id' | 'created_at' | 'updated_at' | 'rating' | 'side_effects' | 'contraindications'>;
 
+export type CreatePharmacyRequest = Omit<Pharmacy, 'id' | 'created_at' | 'updated_at'>;
+
 export interface LabTest {
   id: string;
   name: string;
