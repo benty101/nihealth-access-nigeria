@@ -7,9 +7,8 @@ export const useSuperAdminNavigation = () => {
   const getNavigationItems = () => {
     return [
       { path: '/admin', label: 'System Admin', icon: Shield },
-      { path: '/hospital', label: 'Hospital Tools', icon: Building2 },
-      { path: '/broker', label: 'Broker Tools', icon: TrendingUp },
-      { path: '/admin/settings', label: 'Settings', icon: Settings }
+      { path: '/hospital-dashboard', label: 'Hospital Tools', icon: Building2 },
+      { path: '/broker-dashboard', label: 'Broker Tools', icon: TrendingUp },
     ];
   };
 
