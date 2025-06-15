@@ -10,10 +10,18 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <Hero />
-      <TrustIndicators />
-      <WorldClassFeatures />
-      <TestimonialsSection />
+      <div className="animate-fade-in">
+        <Hero />
+      </div>
+      <div className="animate-fade-in animation-delay-200">
+        <TrustIndicators />
+      </div>
+      <div className="animate-fade-in animation-delay-400">
+        <WorldClassFeatures />
+      </div>
+      <div className="animate-fade-in animation-delay-600">
+        <TestimonialsSection />
+      </div>
     </div>
   );
 };
