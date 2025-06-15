@@ -1,72 +1,69 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FileText, Shield, MapPin, Heart, Video, AlertTriangle, TestTube } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { FileText, Shield, MapPin, Heart, Video, AlertTriangle, TestTube, Pill, Users } from 'lucide-react';
+
+const quickLinks = [
+  {
+    label: 'Family Health',
+    description: 'Manage family records',
+    icon: Heart,
+    color: 'bg-red-500',
+    path: '/records',
+  },
+  {
+    label: 'Pediatric Care',
+    description: 'Child health services',
+    icon: Shield,
+    color: 'bg-violet-500',
+    path: '/resources', // Or create a dedicated pediatric page if you wish
+  },
+  {
+    label: 'Order Medicine',
+    description: 'Pharmacy delivery',
+    icon: Pill,
+    color: 'bg-green-500',
+    path: '/pharmacy',
+  },
+  {
+    label: 'Book Lab Test',
+    description: 'Diagnostic services',
+    icon: TestTube,
+    color: 'bg-orange-500',
+    path: '/diagnostics',
+  },
+  {
+    label: 'Find Hospital',
+    description: 'Nearby facilities',
+    icon: MapPin,
+    color: 'bg-blue-500',
+    path: '/hospitals',
+  },
+];
 
 const QuickLinks = () => {
   const navigate = useNavigate();
 
-  const quickLinks = [
-    {
-      icon: FileText,
-      label: 'Medical Records',
-      path: '/records'
-    },
-    {
-      icon: Shield,
-      label: 'Insurance Details',
-      path: '/insurance'
-    },
-    {
-      icon: MapPin,
-      label: 'Find Hospitals',
-      path: '/hospitals'
-    },
-    {
-      icon: Heart,
-      label: 'Health Resources',
-      path: '/resources'
-    },
-    {
-      icon: Video,
-      label: 'Telemedicine',
-      path: '/telemedicine'
-    },
-    {
-      icon: AlertTriangle,
-      label: 'Emergency SOS',
-      path: '/emergency'
-    },
-    {
-      icon: TestTube,
-      label: 'Book Diagnostics',
-      path: '/diagnostics'
-    }
-  ];
-
   return (
-    <Card className="h-fit">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">Quick Links</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          {quickLinks.map(({ icon: Icon, label, path }) => (
-            <Button 
-              key={path}
-              variant="ghost" 
-              className="w-full justify-start hover:bg-teal-50 hover:text-teal-700 transition-colors"
-              onClick={() => navigate(path)}
-            >
-              <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
-              <span className="text-left">{label}</span>
-            </Button>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+      {quickLinks.map(({ icon: Icon, label, description, color, path }) => (
+        <button
+          key={label}
+          aria-label={label}
+          className="w-full rounded-xl border bg-white shadow-sm p-4 flex items-center cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate(path)}
+          type="button"
+        >
+          <span className={`flex items-center justify-center rounded-lg ${color} bg-opacity-20 h-12 w-12 mr-4`}>
+            <Icon className={`h-6 w-6 ${color.replace('bg-', 'text-')}`} />
+          </span>
+          <span className="flex flex-col items-start text-left">
+            <span className="font-semibold text-base text-gray-900">{label}</span>
+            <span className="text-sm text-gray-500">{description}</span>
+          </span>
+        </button>
+      ))}
+    </div>
   );
 };
 
