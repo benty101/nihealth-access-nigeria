@@ -1,6 +1,5 @@
+
 import React, { useState, useEffect } from 'react';
-import { Shield, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { adminDataService, type SystemStats } from '@/services/AdminDataService';
@@ -12,6 +11,8 @@ import LabManagement from './LabManagement';
 import TelemedicineManagement from './TelemedicineManagement';
 import MedicationManagement from './MedicationManagement';
 import LabTestManagement from './LabTestManagement';
+import SuperAdminHeader from './dashboard/SuperAdminHeader';
+import ConnectionErrorState from './dashboard/ConnectionErrorState';
 
 const SuperAdminDashboard = () => {
   const [stats, setStats] = useState<SystemStats>({
@@ -120,53 +121,13 @@ const SuperAdminDashboard = () => {
   };
 
   if (connectionStatus === 'disconnected') {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-red-600" />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Connection Failed</h2>
-              <p className="text-gray-600 mb-4">Unable to connect to the database</p>
-              <Button onClick={handleRefresh} className="bg-red-600 hover:bg-red-700">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Retry Connection
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ConnectionErrorState onRetry={handleRefresh} />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">System Administration</h1>
-                <p className="text-gray-600">Real-time management of all frontend listings and platform services</p>
-              </div>
-            </div>
-            <Button 
-              onClick={handleRefresh} 
-              disabled={loading}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Sync Frontend Data
-            </Button>
-          </div>
-        </div>
+        <SuperAdminHeader loading={loading} onRefresh={handleRefresh} />
 
         {/* Management Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">

@@ -1,15 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { Pill, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { Pill, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { medicationService, type Medication } from '@/services/MedicationService';
 import { useToast } from '@/hooks/use-toast';
 import MedicationForm from './forms/MedicationForm';
+import MedicationTableRow from './medication/MedicationTableRow';
 
 interface MedicationManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -183,56 +184,12 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
               </TableHeader>
               <TableBody>
                 {filteredMedications.map((medication) => (
-                  <TableRow key={medication.id}>
-                    <TableCell className="font-medium">
-                      <div>
-                        <p className="font-semibold">{medication.name}</p>
-                        <p className="text-sm text-gray-500">{medication.dosage}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{medication.category}</Badge>
-                    </TableCell>
-                    <TableCell>₦{medication.price.toLocaleString()}</TableCell>
-                    <TableCell>{medication.brand || 'N/A'}</TableCell>
-                    <TableCell>
-                      <Badge className={medication.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                        {medication.in_stock ? 'In Stock' : 'Out of Stock'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={medication.prescription_required ? 'destructive' : 'secondary'}>
-                        {medication.prescription_required ? 'Required' : 'OTC'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={medication.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                        {medication.is_active ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleEditMedication(medication)}>
-                          <Edit className="h-3 w-3 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant={medication.is_active ? "destructive" : "default"}
-                          size="sm"
-                          onClick={() => toggleMedicationStatus(medication.id, medication.is_active)}
-                        >
-                          {medication.is_active ? (
-                            <>
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Deactivate
-                            </>
-                          ) : (
-                            'Activate'
-                          )}
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <MedicationTableRow 
+                    key={medication.id}
+                    medication={medication}
+                    onEdit={handleEditMedication}
+                    onToggleStatus={toggleMedicationStatus}
+                  />
                 ))}
               </TableBody>
             </Table>

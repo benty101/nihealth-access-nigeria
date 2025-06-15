@@ -1,14 +1,16 @@
+
 import React, { useState, useEffect } from 'react';
-import { TestTube, Plus, Search, Edit, Trash2, AlertCircle, Clock } from 'lucide-react';
+import { TestTube, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { labTestService, type LabTest } from '@/services/LabTestService';
 import { useToast } from '@/hooks/use-toast';
 import LabTestForm from './forms/LabTestForm';
+import LabTestTableRow from './labtest/LabTestTableRow';
 
 interface LabTestManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -183,62 +185,12 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
               </TableHeader>
               <TableBody>
                 {filteredLabTests.map((labTest) => (
-                  <TableRow key={labTest.id}>
-                    <TableCell className="font-medium">
-                      <div>
-                        <p className="font-semibold">{labTest.name}</p>
-                        <p className="text-sm text-gray-500">{labTest.description}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{labTest.category}</Badge>
-                    </TableCell>
-                    <TableCell>₦{labTest.price.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
-                        {labTest.test_code || 'N/A'}
-                      </code>
-                    </TableCell>
-                    <TableCell>{labTest.sample_type || 'N/A'}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3 text-gray-400" />
-                        <span className="text-sm">{labTest.turnaround_time || 'N/A'}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={labTest.is_fasting_required ? 'destructive' : 'secondary'}>
-                        {labTest.is_fasting_required ? 'Required' : 'Not Required'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={labTest.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                        {labTest.is_active ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleEditLabTest(labTest)}>
-                          <Edit className="h-3 w-3 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant={labTest.is_active ? "destructive" : "default"}
-                          size="sm"
-                          onClick={() => toggleLabTestStatus(labTest.id, labTest.is_active)}
-                        >
-                          {labTest.is_active ? (
-                            <>
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Deactivate
-                            </>
-                          ) : (
-                            'Activate'
-                          )}
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <LabTestTableRow 
+                    key={labTest.id}
+                    labTest={labTest}
+                    onEdit={handleEditLabTest}
+                    onToggleStatus={toggleLabTestStatus}
+                  />
                 ))}
               </TableBody>
             </Table>

@@ -1,10 +1,12 @@
 
 import React from 'react';
-import { Building2, Shield, Pill, TestTube, Video, FileText, Users, AlertTriangle, Activity, Database } from 'lucide-react';
+import { Building2, Pill, TestTube, Video, FileText, AlertTriangle, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import type { SystemStats } from '@/services/AdminDataService';
+import StatCard from './overview/StatCard';
+import ServiceStatusDetails from './overview/ServiceStatusDetails';
 
 interface SystemOverviewProps {
   stats: SystemStats;
@@ -30,35 +32,6 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
       </div>
     );
   }
-
-  const StatCard = ({ title, icon: Icon, total, active, description }: {
-    title: string;
-    icon: any;
-    total: number;
-    active: number;
-    description: string;
-  }) => (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{active.toLocaleString()}</div>
-        <p className="text-xs text-muted-foreground mb-2">
-          {description} ({total.toLocaleString()} total)
-        </p>
-        <div className="flex items-center gap-2">
-          <Badge variant={active > 0 ? "default" : "secondary"} className="text-xs">
-            {active > 0 ? 'Active' : 'None Active'}
-          </Badge>
-          <span className="text-xs text-gray-500">
-            {total > 0 ? `${Math.round((active/total) * 100)}% active` : 'No data'}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="space-y-6">
@@ -186,43 +159,7 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
       </div>
 
       {/* Service Status Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            Live Frontend Data Status
-          </CardTitle>
-          <CardDescription>Real-time status reflecting all frontend listings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { name: 'Hospitals', key: 'hospitals', total: stats.totalHospitals, active: stats.activeHospitals },
-              { name: 'Pharmacies', key: 'pharmacies', total: stats.totalPharmacies, active: stats.activePharmacies },
-              { name: 'Medications', key: 'medications', total: stats.totalMedications, active: stats.activeMedications },
-              { name: 'Laboratories', key: 'labs', total: stats.totalLabs, active: stats.activeLabs },
-              { name: 'Test Catalog', key: 'lab_tests', total: stats.totalLabTests, active: stats.activeLabTests },
-              { name: 'Insurance', key: 'insurance_plans', total: stats.totalInsurancePlans, active: stats.activeInsurancePlans },
-              { name: 'Telemedicine', key: 'telemedicine_providers', total: stats.totalTelemedicineProviders, active: stats.activeTelemedicineProviders },
-            ].map((service) => (
-              <div key={service.key} className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="font-medium">{service.name}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">
-                    {service.active}/{service.total} active
-                  </span>
-                  <Badge 
-                    variant={stats.loadedServices.includes(service.key) ? "default" : "destructive"}
-                    className="text-xs"
-                  >
-                    {stats.loadedServices.includes(service.key) ? 'Synced' : 'Error'}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ServiceStatusDetails stats={stats} />
     </div>
   );
 };
