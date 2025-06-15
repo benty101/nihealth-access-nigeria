@@ -153,7 +153,7 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
         />
 
         <StatCard
-          title="Labs"
+          title="Laboratories"
           icon={TestTube}
           total={stats.totalLabs}
           active={stats.activeLabs}
@@ -161,7 +161,7 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
         />
 
         <StatCard
-          title="Lab Tests"
+          title="Test Catalog"
           icon={TestTube}
           total={stats.totalLabTests}
           active={stats.activeLabTests}
@@ -200,8 +200,8 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
               { name: 'Hospitals', key: 'hospitals', total: stats.totalHospitals, active: stats.activeHospitals },
               { name: 'Pharmacies', key: 'pharmacies', total: stats.totalPharmacies, active: stats.activePharmacies },
               { name: 'Medications', key: 'medications', total: stats.totalMedications, active: stats.activeMedications },
-              { name: 'Labs', key: 'labs', total: stats.totalLabs, active: stats.activeLabs },
-              { name: 'Lab Tests', key: 'lab_tests', total: stats.totalLabTests, active: stats.activeLabTests },
+              { name: 'Laboratories', key: 'labs', total: stats.totalLabs, active: stats.activeLabs },
+              { name: 'Test Catalog', key: 'lab_tests', total: stats.totalLabTests, active: stats.activeLabTests },
               { name: 'Insurance', key: 'insurance_plans', total: stats.totalInsurancePlans, active: stats.activeInsurancePlans },
               { name: 'Telemedicine', key: 'telemedicine_providers', total: stats.totalTelemedicineProviders, active: stats.activeTelemedicineProviders },
             ].map((service) => (

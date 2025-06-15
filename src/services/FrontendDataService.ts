@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export interface FrontendSyncData {
@@ -10,6 +9,8 @@ export interface FrontendSyncData {
   insurancePlans: any[];
   telemedicineProviders: any[];
 }
+
+type CountableTable = 'hospitals' | 'pharmacies' | 'labs' | 'medications' | 'lab_tests' | 'insurance_plans' | 'telemedicine_providers';
 
 class FrontendDataService {
   async syncAllFrontendData(): Promise<FrontendSyncData> {
@@ -119,7 +120,7 @@ class FrontendDataService {
     return data || [];
   }
 
-  async getActiveCount(tableName: string): Promise<number> {
+  async getActiveCount(tableName: CountableTable): Promise<number> {
     const { count, error } = await supabase
       .from(tableName)
       .select('*', { count: 'exact', head: true })
@@ -133,7 +134,7 @@ class FrontendDataService {
     return count || 0;
   }
 
-  async getTotalCount(tableName: string): Promise<number> {
+  async getTotalCount(tableName: CountableTable): Promise<number> {
     const { count, error } = await supabase
       .from(tableName)
       .select('*', { count: 'exact', head: true });

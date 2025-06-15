@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TestTube, Plus, Search, Edit, Trash2, AlertCircle, Clock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -137,10 +136,10 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <TestTube className="h-5 w-5" />
-                Lab Test Management
+                Test Catalog Management
               </CardTitle>
               <CardDescription>
-                Manage all lab tests available across laboratory listings
+                Manage the catalog of all lab tests available across laboratory listings
               </CardDescription>
             </div>
             <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleAddLabTest}>

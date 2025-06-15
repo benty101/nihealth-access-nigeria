@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Shield, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -176,8 +175,8 @@ const SuperAdminDashboard = () => {
             <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
             <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
             <TabsTrigger value="medications">Medications</TabsTrigger>
-            <TabsTrigger value="labs">Labs</TabsTrigger>
-            <TabsTrigger value="lab-tests">Lab Tests</TabsTrigger>
+            <TabsTrigger value="labs">Laboratories</TabsTrigger>
+            <TabsTrigger value="lab-tests">Test Catalog</TabsTrigger>
             <TabsTrigger value="telemedicine">Telemedicine</TabsTrigger>
             <TabsTrigger value="insurance">Insurance</TabsTrigger>
           </TabsList>
