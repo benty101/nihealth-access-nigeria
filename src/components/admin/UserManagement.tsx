@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Users, Shield, Building2, User, Search, Filter } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +11,11 @@ import { useToast } from '@/hooks/use-toast';
 import { secureLogger } from '@/lib/secureLogger';
 import { useAuth } from '@/contexts/AuthContext';
 
-const UserManagement = () => {
+interface UserManagementProps {
+  onStatsChange?: () => Promise<void>;
+}
+
+const UserManagement = ({ onStatsChange }: UserManagementProps) => {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,6 +54,11 @@ const UserManagement = () => {
       
       await userService.updateUserRole(userId, newRole);
       await loadUsers(); // Refresh the list
+      
+      // Trigger stats refresh if callback provided
+      if (onStatsChange) {
+        await onStatsChange();
+      }
       
       secureLogger.admin('user_role_updated', currentUser?.id, { 
         targetUserId: userId, 

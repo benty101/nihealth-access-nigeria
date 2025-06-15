@@ -7,7 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { pharmacyService, type Pharmacy } from '@/services/PharmacyService';
 import { useToast } from '@/hooks/use-toast';
 
-const PharmacyManagement = () => {
+interface PharmacyManagementProps {
+  onStatsChange?: () => Promise<void>;
+}
+
+const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,6 +41,12 @@ const PharmacyManagement = () => {
     try {
       await pharmacyService.updatePharmacy(id, { is_active: !currentStatus });
       await loadPharmacies();
+      
+      // Trigger stats refresh if callback provided
+      if (onStatsChange) {
+        await onStatsChange();
+      }
+      
       toast({
         title: "Success",
         description: `Pharmacy ${!currentStatus ? 'activated' : 'deactivated'} successfully`

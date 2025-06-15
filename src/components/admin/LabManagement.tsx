@@ -7,7 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { labService, type Lab } from '@/services/LabService';
 import { useToast } from '@/hooks/use-toast';
 
-const LabManagement = () => {
+interface LabManagementProps {
+  onStatsChange?: () => Promise<void>;
+}
+
+const LabManagement = ({ onStatsChange }: LabManagementProps) => {
   const [labs, setLabs] = useState<Lab[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,6 +41,12 @@ const LabManagement = () => {
     try {
       await labService.updateLab(id, { is_active: !currentStatus });
       await loadLabs();
+      
+      // Trigger stats refresh if callback provided
+      if (onStatsChange) {
+        await onStatsChange();
+      }
+      
       toast({
         title: "Success",
         description: `Lab ${!currentStatus ? 'activated' : 'deactivated'} successfully`
