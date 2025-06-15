@@ -13,6 +13,11 @@ const Onboarding = () => {
     localStorage.setItem('userOnboardingData', JSON.stringify(data));
     localStorage.setItem('onboardingCompleted', 'true');
     
+    console.log('Onboarding: Data saved to localStorage', {
+      onboardingCompleted: localStorage.getItem('onboardingCompleted'),
+      userOnboardingData: !!localStorage.getItem('userOnboardingData')
+    });
+    
     // Navigate to dashboard
     navigate('/dashboard');
   };

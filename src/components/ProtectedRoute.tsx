@@ -2,7 +2,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Shield } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,23 +10,25 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
+  console.log('ProtectedRoute: Auth state', { user: user?.id, loading });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Shield className="h-8 w-8 text-white" />
-          </div>
-          <p className="text-gray-600">Loading your account...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
   if (!user) {
+    console.log('ProtectedRoute: No user, redirecting to auth');
     return <Navigate to="/auth" replace />;
   }
 
+  console.log('ProtectedRoute: User authenticated, rendering children');
   return <>{children}</>;
 };
 
