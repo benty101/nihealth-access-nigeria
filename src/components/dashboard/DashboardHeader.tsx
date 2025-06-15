@@ -54,17 +54,16 @@ const DashboardHeader = ({ onboardingData, greeting }: DashboardHeaderProps) => 
 
   const getPersonalizedGreeting = () => {
     const userName = userProfile?.full_name ? userProfile.full_name.split(' ')[0] : 'there';
-    const location = userProfile?.state_of_residence || onboardingData?.location || 'your area';
     
     if (onboardingData?.lifeStage === 'pregnant') {
-      return `Welcome back, ${userName}! Here's your pregnancy care overview for ${location}.`;
+      return `Welcome back, ${userName}! Here's your pregnancy care overview.`;
     } else if (onboardingData?.lifeStage === 'mother') {
-      return `Welcome back, ${userName}! Here's your family's health overview in ${location}.`;
+      return `Welcome back, ${userName}! Here's your family's health overview.`;
     } else if (onboardingData?.lifeStage === 'elderly') {
-      return `Welcome back, ${userName}! Here's your personalized health management for ${location}.`;
+      return `Welcome back, ${userName}! Here's your personalized health management.`;
     }
     
-    return `Welcome back, ${userName}! Here's your health overview for ${location}.`;
+    return `Welcome back, ${userName}! Here's your health overview.`;
   };
 
   const displayLocation = userProfile?.state_of_residence || onboardingData?.location;
