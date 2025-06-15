@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -58,6 +57,17 @@ const UserMenu = () => {
         return 'HOSPITAL ADMIN';
       default:
         return 'PATIENT';
+    }
+  };
+
+  const getDashboardPath = () => {
+    switch (role) {
+      case 'super_admin':
+        return '/admin';
+      case 'hospital_admin':
+        return '/hospital-dashboard';
+      default:
+        return '/dashboard';
     }
   };
 
@@ -141,7 +151,7 @@ const UserMenu = () => {
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
-            <Link to="/dashboard" className="flex items-center py-2 px-3 cursor-pointer hover:bg-gray-50 w-full">
+            <Link to={getDashboardPath()} className="flex items-center py-2 px-3 cursor-pointer hover:bg-gray-50 w-full">
               <Settings className="mr-3 h-4 w-4 text-gray-500" />
               <span>Dashboard</span>
             </Link>
