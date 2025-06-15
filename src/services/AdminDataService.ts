@@ -11,7 +11,23 @@ export interface SystemStats {
   loadedServices: string[];
 }
 
+type TableName = 'hospitals' | 'pharmacies' | 'labs' | 'insurance_plans' | 'telemedicine_providers';
+
+interface ServiceConfig {
+  tableName: TableName;
+  label: string;
+  statsKey: keyof Pick<SystemStats, 'totalHospitals' | 'totalPharmacies' | 'totalLabs' | 'totalInsurancePlans' | 'totalTelemedicineProviders'>;
+}
+
 class AdminDataService {
+  private readonly services: ServiceConfig[] = [
+    { tableName: 'hospitals', label: 'Hospitals', statsKey: 'totalHospitals' },
+    { tableName: 'pharmacies', label: 'Pharmacies', statsKey: 'totalPharmacies' },
+    { tableName: 'labs', label: 'Labs', statsKey: 'totalLabs' },
+    { tableName: 'insurance_plans', label: 'Insurance Plans', statsKey: 'totalInsurancePlans' },
+    { tableName: 'telemedicine_providers', label: 'Telemedicine Providers', statsKey: 'totalTelemedicineProviders' }
+  ];
+
   async getSystemStats(): Promise<SystemStats> {
     console.log('AdminDataService: Starting system stats fetch...');
     
@@ -25,56 +41,30 @@ class AdminDataService {
       loadedServices: []
     };
 
-    // Define services to check
-    const services = [
-      { name: 'hospitals', label: 'Hospitals' },
-      { name: 'pharmacies', label: 'Pharmacies' },
-      { name: 'labs', label: 'Labs' },
-      { name: 'insurance_plans', label: 'Insurance Plans' },
-      { name: 'telemedicine_providers', label: 'Telemedicine Providers' }
-    ];
-
     // Fetch each service individually with comprehensive error handling
-    for (const service of services) {
+    for (const service of this.services) {
       try {
-        console.log(`AdminDataService: Fetching ${service.name}...`);
+        console.log(`AdminDataService: Fetching ${service.tableName}...`);
         
-        const { count, error, data } = await supabase
-          .from(service.name)
+        const { count, error } = await supabase
+          .from(service.tableName)
           .select('id', { count: 'exact', head: true });
 
         if (error) {
-          console.error(`AdminDataService: Error fetching ${service.name}:`, error);
+          console.error(`AdminDataService: Error fetching ${service.tableName}:`, error);
           stats.errors.push(`${service.label}: ${error.message}`);
           continue;
         }
 
         const totalCount = count || 0;
-        console.log(`AdminDataService: ${service.name} count: ${totalCount}`);
+        console.log(`AdminDataService: ${service.tableName} count: ${totalCount}`);
 
-        // Update stats based on service name
-        switch (service.name) {
-          case 'hospitals':
-            stats.totalHospitals = totalCount;
-            break;
-          case 'pharmacies':
-            stats.totalPharmacies = totalCount;
-            break;
-          case 'labs':
-            stats.totalLabs = totalCount;
-            break;
-          case 'insurance_plans':
-            stats.totalInsurancePlans = totalCount;
-            break;
-          case 'telemedicine_providers':
-            stats.totalTelemedicineProviders = totalCount;
-            break;
-        }
-
+        // Update stats using the configured key
+        stats[service.statsKey] = totalCount;
         stats.loadedServices.push(service.label);
 
       } catch (err) {
-        console.error(`AdminDataService: Exception fetching ${service.name}:`, err);
+        console.error(`AdminDataService: Exception fetching ${service.tableName}:`, err);
         stats.errors.push(`${service.label}: Connection failed`);
       }
     }
@@ -86,7 +76,7 @@ class AdminDataService {
   async checkDatabaseConnection(): Promise<boolean> {
     try {
       console.log('AdminDataService: Checking database connection...');
-      const { error } = await supabase.from('user_roles').select('id').limit(1);
+      const { error } = await supabase.from('hospitals').select('id').limit(1);
       
       if (error) {
         console.error('AdminDataService: Database connection failed:', error);
@@ -98,6 +88,24 @@ class AdminDataService {
     } catch (err) {
       console.error('AdminDataService: Database connection exception:', err);
       return false;
+    }
+  }
+
+  async getTableCount(tableName: TableName): Promise<number> {
+    try {
+      const { count, error } = await supabase
+        .from(tableName)
+        .select('id', { count: 'exact', head: true });
+
+      if (error) {
+        console.error(`AdminDataService: Error fetching count for ${tableName}:`, error);
+        throw error;
+      }
+
+      return count || 0;
+    } catch (err) {
+      console.error(`AdminDataService: Exception fetching count for ${tableName}:`, err);
+      throw err;
     }
   }
 }

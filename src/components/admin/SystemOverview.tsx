@@ -12,7 +12,11 @@ interface SystemOverviewProps {
 
 const SystemOverview: React.FC<SystemOverviewProps> = ({ stats, loading }) => {
   const totalServices = stats.totalPharmacies + stats.totalLabs + stats.totalTelemedicineProviders;
-  const successRate = stats.loadedServices.length / 5 * 100;
+  const successRate = stats.loadedServices.length > 0 ? (stats.loadedServices.length / 5) * 100 : 0;
+
+  const formatNumber = (num: number) => {
+    return loading ? '...' : num.toLocaleString();
+  };
 
   return (
     <div className="space-y-6">
@@ -71,7 +75,7 @@ const SystemOverview: React.FC<SystemOverviewProps> = ({ stats, loading }) => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? '...' : stats.totalHospitals.toLocaleString()}
+              {formatNumber(stats.totalHospitals)}
             </div>
             <p className="text-xs text-muted-foreground">Active hospitals</p>
           </CardContent>
@@ -84,10 +88,10 @@ const SystemOverview: React.FC<SystemOverviewProps> = ({ stats, loading }) => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? '...' : totalServices.toLocaleString()}
+              {formatNumber(totalServices)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Pharmacies ({stats.totalPharmacies}), Labs ({stats.totalLabs}), Telemedicine ({stats.totalTelemedicineProviders})
+              Pharmacies ({formatNumber(stats.totalPharmacies)}), Labs ({formatNumber(stats.totalLabs)}), Telemedicine ({formatNumber(stats.totalTelemedicineProviders)})
             </p>
           </CardContent>
         </Card>
@@ -99,7 +103,7 @@ const SystemOverview: React.FC<SystemOverviewProps> = ({ stats, loading }) => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {loading ? '...' : stats.totalInsurancePlans.toLocaleString()}
+              {formatNumber(stats.totalInsurancePlans)}
             </div>
             <p className="text-xs text-muted-foreground">Available plans</p>
           </CardContent>
