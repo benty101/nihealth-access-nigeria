@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Pill, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { adminService } from '@/services/AdminService';
-import { pharmacyService, type Pharmacy } from '@/services/PharmacyService';
+import { adminService, type Pharmacy } from '@/services/AdminService';
+import { pharmacyService } from '@/services/PharmacyService';
 import { useToast } from '@/hooks/use-toast';
 import PharmacyForm from './forms/PharmacyForm';
 import PharmacyCard from './pharmacy/PharmacyCard';

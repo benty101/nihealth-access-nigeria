@@ -30,6 +30,7 @@ export interface Pharmacy {
   operating_hours?: any;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Lab {
@@ -47,6 +48,7 @@ export interface Lab {
   operating_hours?: any;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface TelemedicineProvider {
@@ -63,6 +65,7 @@ export interface TelemedicineProvider {
   available_hours?: any;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface InsurancePlan {

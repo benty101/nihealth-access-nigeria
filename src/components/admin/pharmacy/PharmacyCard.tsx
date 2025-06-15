@@ -4,7 +4,7 @@ import { Edit, Trash2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { Pharmacy } from '@/services/PharmacyService';
+import type { Pharmacy } from '@/services/AdminService';
 
 interface PharmacyCardProps {
   pharmacy: Pharmacy;
