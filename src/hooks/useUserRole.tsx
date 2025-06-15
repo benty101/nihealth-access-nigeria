@@ -45,8 +45,8 @@ export const useUserRole = () => {
         if (error) {
           if (error.code === '42P17') {
             secureLogger.error('RLS infinite recursion detected, using fallback', error, { userId: user.id });
-            // For super admin accounts created in development, check email
-            if (user.email === 'admin@meddypal.com') {
+            // For super admin accounts created in development, check email - FIXED EMAIL
+            if (user.email === 'kosyezenekwe@gmail.com') {
               secureLogger.auth('super_admin_detected_by_email', user.id);
               setRole('super_admin');
             } else {
@@ -65,8 +65,8 @@ export const useUserRole = () => {
         }
       } catch (error) {
         secureLogger.error('Error fetching user role', error, { userId: user.id });
-        // Check for super admin by email as fallback
-        if (user.email === 'admin@meddypal.com') {
+        // Check for super admin by email as fallback - FIXED EMAIL
+        if (user.email === 'kosyezenekwe@gmail.com') {
           secureLogger.auth('super_admin_fallback_by_email', user.id);
           setRole('super_admin');
         } else {
