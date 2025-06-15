@@ -10,26 +10,50 @@ import { medicationService } from '@/services/MedicationService';
 import type { Medication as MedicationType } from '@/services/AdminService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { pharmacyService } from '@/services/PharmacyService';
 
 const Pharmacy = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [cart, setCart] = useState<{[key: string]: number}>({});
   const [sortBy, setSortBy] = useState('name');
+  const [selectedPharmacyId, setSelectedPharmacyId] = useState<string | null>(null);
 
-  const { data: medications = [], isLoading, isError } = useQuery<MedicationType[], Error>({
+  const { data: medications = [], isLoading: medsLoading, isError: medsError } = useQuery<MedicationType[], Error>({
     queryKey: ['medications'],
     queryFn: () => medicationService.getActiveMedications(),
   });
 
-  const categories = ['All', 'Pain Relief', 'Antibiotics', 'Cardiovascular', 'Diabetes', 'Supplements', 'Respiratory', 'Gastrointestinal', 'Mental Health', 'Dermatology', 'Women\'s Health', 'Men\'s Health', 'Eye Care'];
+  // Fetch all active pharmacies from the database
+  const { data: pharmacies = [], isLoading: pharmaciesLoading, isError: pharmaciesError } = useQuery({
+    queryKey: ['pharmacies'],
+    queryFn: () => pharmacyService.getActivePharmacies()
+  });
 
+  const categories = [
+    'All',
+    'Pain Relief',
+    'Antibiotics',
+    'Cardiovascular',
+    'Diabetes',
+    'Supplements',
+    'Respiratory',
+    'Gastrointestinal',
+    'Mental Health',
+    'Dermatology',
+    "Women's Health",
+    "Men's Health",
+    'Eye Care'
+  ];
+
+  // Optionally filter medications by selected pharmacy
   const filteredMedications = medications
     .filter(med => 
       (selectedCategory === 'All' || med.category === selectedCategory) &&
       (med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
        med.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       (med.brand && med.brand.toLowerCase().includes(searchTerm.toLowerCase())))
+       (med.brand && med.brand.toLowerCase().includes(searchTerm.toLowerCase()))) &&
+      (!selectedPharmacyId || med.pharmacy_id === selectedPharmacyId)
     )
     .sort((a, b) => {
       switch (sortBy) {
@@ -92,6 +116,40 @@ const Pharmacy = () => {
             </div>
           </div>
 
+          {/* Pharmacies grid for selection */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-2">Pharmacies</h2>
+            {pharmaciesLoading ? (
+              <div>Loading pharmacies...</div>
+            ) : pharmaciesError ? (
+              <div className="text-red-500">Failed to fetch pharmacies. Please try again.</div>
+            ) : pharmacies.length > 0 ? (
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  variant={!selectedPharmacyId ? "default" : "outline"}
+                  onClick={() => setSelectedPharmacyId(null)}
+                  size="sm"
+                  className={!selectedPharmacyId ? "bg-blue-600 hover:bg-blue-700" : ""}
+                >
+                  All Pharmacies
+                </Button>
+                {pharmacies.map((pharm) => (
+                  <Button
+                    key={pharm.id}
+                    variant={selectedPharmacyId === pharm.id ? "default" : "outline"}
+                    onClick={() => setSelectedPharmacyId(pharm.id)}
+                    size="sm"
+                    className={selectedPharmacyId === pharm.id ? "bg-blue-600 hover:bg-blue-700" : ""}
+                  >
+                    {pharm.name}
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <div>No pharmacies available</div>
+            )}
+          </div>
+
           {/* Search and Cart */}
           <div className="flex flex-col lg:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
@@ -138,7 +196,7 @@ const Pharmacy = () => {
           </div>
 
           {/* Medications Grid */}
-          {isLoading && (
+          {(medsLoading || pharmaciesLoading) && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, index) => (
                 <Card key={index}>
@@ -149,17 +207,17 @@ const Pharmacy = () => {
             </div>
           )}
 
-          {isError && (
+          {(medsError || pharmaciesError) && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>
-                Failed to load medications. Please try again later.
+                Failed to load data. Please try again later.
               </AlertDescription>
             </Alert>
           )}
 
-          {!isLoading && !isError && (
+          {!medsLoading && !pharmaciesLoading && !medsError && !pharmaciesError && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredMedications.map((medication) => (
                 <Card key={medication.id} className="hover:shadow-lg transition-shadow flex flex-col">
@@ -173,6 +231,11 @@ const Pharmacy = () => {
                       )}
                     </div>
                     <CardTitle className="text-lg leading-tight">{medication.name}</CardTitle>
+                    {medication.pharmacy_id && (
+                      <span className="block text-xs text-gray-500 mb-1">
+                        {pharmacies.find(ph => ph.id === medication.pharmacy_id)?.name || ''}
+                      </span>
+                    )}
                     <p className="text-sm text-gray-600 mb-2 truncate">{medication.description}</p>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>{medication.brand}</span>
@@ -236,7 +299,7 @@ const Pharmacy = () => {
             </div>
           )}
 
-          {!isLoading && !isError && filteredMedications.length === 0 && (
+          {!medsLoading && !pharmaciesLoading && !medsError && !pharmaciesError && filteredMedications.length === 0 && (
              <div className="text-center py-16">
               <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600">
