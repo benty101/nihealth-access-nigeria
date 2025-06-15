@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { frontendDataService } from './FrontendDataService';
 
@@ -42,103 +41,50 @@ class AdminDataService {
   }
 
   async getSystemStats(): Promise<SystemStats> {
-    console.log('AdminDataService: Starting comprehensive system statistics collection...');
+    console.log('AdminDataService: Fetching system stats using secure RPC...');
     
-    const stats: SystemStats = {
-      totalHospitals: 0,
-      totalPharmacies: 0,
-      totalLabs: 0,
-      totalInsurancePlans: 0,
-      totalTelemedicineProviders: 0,
-      totalMedications: 0,
-      totalLabTests: 0,
-      activeHospitals: 0,
-      activePharmacies: 0,
-      activeLabs: 0,
-      activeInsurancePlans: 0,
-      activeTelemedicineProviders: 0,
-      activeMedications: 0,
-      activeLabTests: 0,
-      errors: [],
-      loadedServices: [],
-      lastSyncTime: new Date().toISOString(),
-    };
+    const { data, error } = await supabase.rpc('get_system_stats_for_admin');
 
-    const services = [
-      { name: 'hospitals', table: 'hospitals' as const },
-      { name: 'pharmacies', table: 'pharmacies' as const },
-      { name: 'labs', table: 'labs' as const },
-      { name: 'insurance_plans', table: 'insurance_plans' as const },
-      { name: 'telemedicine_providers', table: 'telemedicine_providers' as const },
-      { name: 'medications', table: 'medications' as const },
-      { name: 'lab_tests', table: 'lab_tests' as const },
-    ];
-
-    for (const service of services) {
-      try {
-        console.log(`AdminDataService: Fetching ${service.name} statistics...`);
-        
-        // Get total count
-        const totalCount = await frontendDataService.getTotalCount(service.table);
-        
-        // Get active count
-        const activeCount = await frontendDataService.getActiveCount(service.table);
-
-        console.log(`AdminDataService: ${service.name} - Total: ${totalCount}, Active: ${activeCount}`);
-
-        // Map counts to the correct properties
-        switch (service.name) {
-          case 'hospitals':
-            stats.totalHospitals = totalCount;
-            stats.activeHospitals = activeCount;
-            break;
-          case 'pharmacies':
-            stats.totalPharmacies = totalCount;
-            stats.activePharmacies = activeCount;
-            break;
-          case 'labs':
-            stats.totalLabs = totalCount;
-            stats.activeLabs = activeCount;
-            break;
-          case 'insurance_plans':
-            stats.totalInsurancePlans = totalCount;
-            stats.activeInsurancePlans = activeCount;
-            break;
-          case 'telemedicine_providers':
-            stats.totalTelemedicineProviders = totalCount;
-            stats.activeTelemedicineProviders = activeCount;
-            break;
-          case 'medications':
-            stats.totalMedications = totalCount;
-            stats.activeMedications = activeCount;
-            break;
-          case 'lab_tests':
-            stats.totalLabTests = totalCount;
-            stats.activeLabTests = activeCount;
-            break;
-        }
-
-        stats.loadedServices.push(service.name);
-        
-      } catch (error) {
-        console.error(`AdminDataService: Error loading ${service.name}:`, error);
-        stats.errors.push(`Failed to load ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
+    if (error) {
+      console.error('AdminDataService: Error calling get_system_stats_for_admin RPC:', error);
+      throw new Error(`Failed to fetch system statistics: ${error.message}`);
     }
 
-    console.log('AdminDataService: Comprehensive system statistics collection complete', {
-      loadedServices: stats.loadedServices.length,
-      errors: stats.errors.length,
-      totalStats: {
-        hospitals: `${stats.activeHospitals}/${stats.totalHospitals}`,
-        pharmacies: `${stats.activePharmacies}/${stats.totalPharmacies}`,
-        labs: `${stats.activeLabs}/${stats.totalLabs}`,
-        insurance: `${stats.activeInsurancePlans}/${stats.totalInsurancePlans}`,
-        telemedicine: `${stats.activeTelemedicineProviders}/${stats.totalTelemedicineProviders}`,
-        medications: `${stats.activeMedications}/${stats.totalMedications}`,
-        labTests: `${stats.activeLabTests}/${stats.totalLabTests}`
-      }
-    });
+    if (!data) {
+      throw new Error('No data returned from get_system_stats_for_admin RPC');
+    }
+    
+    const fetchedStats = data;
+
+    const stats: SystemStats = {
+      totalHospitals: fetchedStats.totalHospitals || 0,
+      activeHospitals: fetchedStats.activeHospitals || 0,
+      totalPharmacies: fetchedStats.totalPharmacies || 0,
+      activePharmacies: fetchedStats.activePharmacies || 0,
+      totalLabs: fetchedStats.totalLabs || 0,
+      activeLabs: fetchedStats.activeLabs || 0,
+      totalInsurancePlans: fetchedStats.totalInsurancePlans || 0,
+      activeInsurancePlans: fetchedStats.activeInsurancePlans || 0,
+      totalTelemedicineProviders: fetchedStats.totalTelemedicineProviders || 0,
+      activeTelemedicineProviders: fetchedStats.activeTelemedicineProviders || 0,
+      totalMedications: fetchedStats.totalMedications || 0,
+      activeMedications: fetchedStats.activeMedications || 0,
+      totalLabTests: fetchedStats.totalLabTests || 0,
+      activeLabTests: fetchedStats.activeLabTests || 0,
+      errors: [], // No per-service errors anymore with this approach
+      loadedServices: [ // Assume all are loaded if RPC succeeds
+        'hospitals',
+        'pharmacies',
+        'labs',
+        'insurance_plans',
+        'telemedicine_providers',
+        'medications',
+        'lab_tests',
+      ],
+      lastSyncTime: new Date().toISOString(),
+    };
+    
+    console.log('AdminDataService: Comprehensive system statistics collection complete via RPC', { stats });
 
     return stats;
   }

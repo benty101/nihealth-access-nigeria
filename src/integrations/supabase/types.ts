@@ -603,6 +603,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_system_stats_for_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
