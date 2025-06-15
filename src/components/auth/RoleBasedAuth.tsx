@@ -26,7 +26,7 @@ const RoleBasedAuth = () => {
         role 
       });
 
-      // Navigate based on role
+      // Navigate based on role - SUPER ADMIN GOES DIRECTLY TO ADMIN PANEL
       switch (role) {
         case 'super_admin':
           secureLogger.auth('navigating_super_admin_to_admin', user.id);
