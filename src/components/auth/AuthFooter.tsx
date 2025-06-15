@@ -6,14 +6,26 @@ const AuthFooter = () => {
   return (
     <>
       <div className="mt-6 text-center">
-        <Link to="/" className="text-sm text-teal-600 hover:text-teal-700">
+        <Link to="/" className="text-sm text-teal-600 hover:text-teal-700 transition-colors">
           ← Back to Home
         </Link>
       </div>
 
-      <div className="mt-6 text-center text-xs text-gray-500">
-        <p>By signing up, you agree to our Terms of Service and Privacy Policy</p>
-        <p className="mt-1">🇳🇬 Proudly serving Nigerian mothers and families</p>
+      <div className="mt-8 text-center space-y-3">
+        <p className="text-xs text-gray-500 leading-relaxed">
+          By signing up, you agree to our{' '}
+          <span className="text-teal-600 hover:text-teal-700 cursor-pointer underline">
+            Terms of Service
+          </span>{' '}
+          and{' '}
+          <span className="text-teal-600 hover:text-teal-700 cursor-pointer underline">
+            Privacy Policy
+          </span>
+        </p>
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span className="text-base">🇳🇬</span>
+          <span className="font-medium">Proudly serving Nigerian mothers and families</span>
+        </div>
       </div>
     </>
   );
