@@ -43,95 +43,49 @@ class AdminDataService {
       loadedServices: []
     };
 
-    // Hospital stats
-    try {
-      console.log('AdminDataService: Fetching hospital stats...');
-      const { count, error } = await supabase
-        .from('hospitals')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) throw error;
-      
-      stats.totalHospitals = count || 0;
-      stats.loadedServices.push('Hospitals');
-      console.log('AdminDataService: Hospital stats loaded successfully:', count);
-    } catch (error) {
-      console.error('AdminDataService: Hospital stats error:', error);
-      stats.errors.push('Hospitals: Failed to load data');
-    }
+    // Helper function to safely get count
+    const getTableCount = async (tableName: string, displayName: string): Promise<number> => {
+      try {
+        console.log(`AdminDataService: Fetching ${displayName} stats...`);
+        const { count, error } = await supabase
+          .from(tableName)
+          .select('*', { count: 'exact', head: true });
+        
+        if (error) {
+          console.error(`AdminDataService: ${displayName} error:`, error);
+          stats.errors.push(`${displayName}: ${error.message}`);
+          return 0;
+        }
+        
+        const totalCount = count || 0;
+        stats.loadedServices.push(displayName);
+        console.log(`AdminDataService: ${displayName} loaded successfully:`, totalCount);
+        return totalCount;
+      } catch (error) {
+        console.error(`AdminDataService: ${displayName} unexpected error:`, error);
+        stats.errors.push(`${displayName}: Unexpected error occurred`);
+        return 0;
+      }
+    };
 
-    // Pharmacy stats
-    try {
-      console.log('AdminDataService: Fetching pharmacy stats...');
-      const { count, error } = await supabase
-        .from('pharmacies')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) throw error;
-      
-      stats.totalPharmacies = count || 0;
-      stats.loadedServices.push('Pharmacies');
-      console.log('AdminDataService: Pharmacy stats loaded successfully:', count);
-    } catch (error) {
-      console.error('AdminDataService: Pharmacy stats error:', error);
-      stats.errors.push('Pharmacies: Database access denied or table not found');
-    }
-
-    // Lab stats
-    try {
-      console.log('AdminDataService: Fetching lab stats...');
-      const { count, error } = await supabase
-        .from('labs')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) throw error;
-      
-      stats.totalLabs = count || 0;
-      stats.loadedServices.push('Labs');
-      console.log('AdminDataService: Lab stats loaded successfully:', count);
-    } catch (error) {
-      console.error('AdminDataService: Lab stats error:', error);
-      stats.errors.push('Labs: Database access denied or table not found');
-    }
-
-    // Insurance stats
-    try {
-      console.log('AdminDataService: Fetching insurance stats...');
-      const { count, error } = await supabase
-        .from('insurance_plans')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) throw error;
-      
-      stats.totalInsurancePlans = count || 0;
-      stats.loadedServices.push('Insurance Plans');
-      console.log('AdminDataService: Insurance stats loaded successfully:', count);
-    } catch (error) {
-      console.error('AdminDataService: Insurance stats error:', error);
-      stats.errors.push('Insurance Plans: Failed to load data');
-    }
-
-    // Telemedicine stats
-    try {
-      console.log('AdminDataService: Fetching telemedicine stats...');
-      const { count, error } = await supabase
-        .from('telemedicine_providers')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) throw error;
-      
-      stats.totalTelemedicineProviders = count || 0;
-      stats.loadedServices.push('Telemedicine Providers');
-      console.log('AdminDataService: Telemedicine stats loaded successfully:', count);
-    } catch (error) {
-      console.error('AdminDataService: Telemedicine stats error:', error);
-      stats.errors.push('Telemedicine Providers: Database access denied or table not found');
-    }
+    // Load all stats with proper error handling
+    stats.totalHospitals = await getTableCount('hospitals', 'Hospitals');
+    stats.totalPharmacies = await getTableCount('pharmacies', 'Pharmacies');
+    stats.totalLabs = await getTableCount('labs', 'Labs');
+    stats.totalInsurancePlans = await getTableCount('insurance_plans', 'Insurance Plans');
+    stats.totalTelemedicineProviders = await getTableCount('telemedicine_providers', 'Telemedicine Providers');
 
     console.log('AdminDataService: Final stats collected:', {
       loadedServices: stats.loadedServices.length,
       totalServices: 5,
-      errors: stats.errors.length
+      errors: stats.errors.length,
+      stats: {
+        hospitals: stats.totalHospitals,
+        pharmacies: stats.totalPharmacies,
+        labs: stats.totalLabs,
+        insurance: stats.totalInsurancePlans,
+        telemedicine: stats.totalTelemedicineProviders
+      }
     });
 
     return stats;

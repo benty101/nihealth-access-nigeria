@@ -56,26 +56,38 @@ const SuperAdminDashboard = () => {
       const systemStats = await adminDataService.getSystemStats();
       setStats(systemStats);
 
-      // Show status toast
+      // Show appropriate status toast
       if (systemStats.errors.length > 0) {
         toast({
           title: "Partial System Load",
-          description: `${systemStats.loadedServices.length}/5 services loaded successfully.`,
+          description: `${systemStats.loadedServices.length}/5 services loaded. ${systemStats.errors.length} error(s) detected.`,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "System Status",
-          description: "All services loaded successfully.",
+          title: "System Ready",
+          description: "All services loaded successfully. Dashboard is fully operational.",
         });
       }
+
+      console.log('SuperAdminDashboard: Dashboard initialization complete', {
+        servicesLoaded: systemStats.loadedServices.length,
+        errorsCount: systemStats.errors.length,
+        totalData: {
+          hospitals: systemStats.totalHospitals,
+          pharmacies: systemStats.totalPharmacies,
+          labs: systemStats.totalLabs,
+          insurance: systemStats.totalInsurancePlans,
+          telemedicine: systemStats.totalTelemedicineProviders
+        }
+      });
 
     } catch (error) {
       console.error('SuperAdminDashboard: Critical initialization error:', error);
       setConnectionStatus('disconnected');
       toast({
         title: "System Error",
-        description: "Failed to initialize dashboard. Please refresh the page.",
+        description: "Failed to initialize dashboard. Please refresh the page or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -85,6 +97,10 @@ const SuperAdminDashboard = () => {
 
   const handleRefresh = async () => {
     console.log('SuperAdminDashboard: Manual refresh triggered');
+    toast({
+      title: "Refreshing Data",
+      description: "Updating all service statistics...",
+    });
     await initializeDashboard();
   };
 
