@@ -137,6 +137,68 @@ export type Database = {
         }
         Relationships: []
       }
+      lab_tests: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_fasting_required: boolean | null
+          lab_id: string | null
+          name: string
+          normal_range: string | null
+          preparation_required: string | null
+          price: number
+          sample_type: string | null
+          test_code: string | null
+          turnaround_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_fasting_required?: boolean | null
+          lab_id?: string | null
+          name: string
+          normal_range?: string | null
+          preparation_required?: string | null
+          price: number
+          sample_type?: string | null
+          test_code?: string | null
+          turnaround_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_fasting_required?: boolean | null
+          lab_id?: string | null
+          name?: string
+          normal_range?: string | null
+          preparation_required?: string | null
+          price?: number
+          sample_type?: string | null
+          test_code?: string | null
+          turnaround_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_tests_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       labs: {
         Row: {
           address: string | null
@@ -252,6 +314,80 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medications: {
+        Row: {
+          active_ingredient: string | null
+          brand: string | null
+          category: string
+          contraindications: string[] | null
+          created_at: string | null
+          description: string | null
+          dosage: string | null
+          id: string
+          in_stock: boolean | null
+          is_active: boolean | null
+          name: string
+          pack_size: string | null
+          pharmacy_id: string | null
+          prescription_required: boolean | null
+          price: number
+          rating: number | null
+          side_effects: string[] | null
+          storage_instructions: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_ingredient?: string | null
+          brand?: string | null
+          category: string
+          contraindications?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          dosage?: string | null
+          id?: string
+          in_stock?: boolean | null
+          is_active?: boolean | null
+          name: string
+          pack_size?: string | null
+          pharmacy_id?: string | null
+          prescription_required?: boolean | null
+          price: number
+          rating?: number | null
+          side_effects?: string[] | null
+          storage_instructions?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_ingredient?: string | null
+          brand?: string | null
+          category?: string
+          contraindications?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          dosage?: string | null
+          id?: string
+          in_stock?: boolean | null
+          is_active?: boolean | null
+          name?: string
+          pack_size?: string | null
+          pharmacy_id?: string | null
+          prescription_required?: boolean | null
+          price?: number
+          rating?: number | null
+          side_effects?: string[] | null
+          storage_instructions?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medications_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
             referencedColumns: ["id"]
           },
         ]

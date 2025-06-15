@@ -11,6 +11,8 @@ import InsuranceManagement from './InsuranceManagement';
 import PharmacyManagement from './PharmacyManagement';
 import LabManagement from './LabManagement';
 import TelemedicineManagement from './TelemedicineManagement';
+import MedicationManagement from './MedicationManagement';
+import LabTestManagement from './LabTestManagement';
 
 const SuperAdminDashboard = () => {
   const [stats, setStats] = useState<SystemStats>({
@@ -155,11 +157,13 @@ const SuperAdminDashboard = () => {
 
         {/* Management Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
             <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
+            <TabsTrigger value="medications">Medications</TabsTrigger>
             <TabsTrigger value="labs">Labs</TabsTrigger>
+            <TabsTrigger value="lab-tests">Lab Tests</TabsTrigger>
             <TabsTrigger value="telemedicine">Telemedicine</TabsTrigger>
             <TabsTrigger value="insurance">Insurance</TabsTrigger>
           </TabsList>
@@ -176,8 +180,16 @@ const SuperAdminDashboard = () => {
             <PharmacyManagement onStatsChange={handleRefresh} />
           </TabsContent>
 
+          <TabsContent value="medications">
+            <MedicationManagement onStatsChange={handleRefresh} />
+          </TabsContent>
+
           <TabsContent value="labs">
             <LabManagement onStatsChange={handleRefresh} />
+          </TabsContent>
+
+          <TabsContent value="lab-tests">
+            <LabTestManagement onStatsChange={handleRefresh} />
           </TabsContent>
 
           <TabsContent value="telemedicine">
