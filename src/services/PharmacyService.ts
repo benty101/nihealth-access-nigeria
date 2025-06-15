@@ -1,5 +1,7 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { Pharmacy, CreatePharmacyRequest } from './AdminService';
+import { adminService } from '@/services/AdminService';
 
 class PharmacyService {
   async getActivePharmacies(): Promise<Pharmacy[]> {
@@ -18,6 +20,11 @@ class PharmacyService {
 
     console.log('PharmacyService: Successfully fetched', data?.length || 0, 'active pharmacies');
     return data || [];
+  }
+
+  async getAllPharmacies(): Promise<Pharmacy[]> {
+    // Proxy the call to adminService
+    return adminService.getAllPharmacies();
   }
 
   async createPharmacy(pharmacy: CreatePharmacyRequest): Promise<void> {

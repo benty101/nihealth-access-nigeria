@@ -93,7 +93,7 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
             <AlertDescription>Failed to load medications</AlertDescription>
           </Alert>
           <div className="flex justify-center mt-4">
-            <Button onClick={refetch} variant="outline">
+            <Button onClick={() => refetch()} variant="outline">
               Try Again
             </Button>
           </div>

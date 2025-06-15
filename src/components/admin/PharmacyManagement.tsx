@@ -93,7 +93,7 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
             <AlertDescription>Failed to load pharmacies</AlertDescription>
           </Alert>
           <div className="flex justify-center mt-4">
-            <Button onClick={refetch} variant="outline">
+            <Button onClick={() => refetch()} variant="outline">
               Try Again
             </Button>
           </div>
