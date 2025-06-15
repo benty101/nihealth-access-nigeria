@@ -24,7 +24,7 @@ const AuthFooter = () => {
         </p>
         <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
           <span className="text-base">🇳🇬</span>
-          <span className="font-medium">Proudly serving Nigerian mothers and families</span>
+          <span className="font-medium">Proudly Nigerian • MeddyPal © 2025</span>
         </div>
       </div>
     </>
