@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Search, Calendar, FileText, Shield, CheckCircle, Stethoscope, Pill, TestTube, CreditCard, Users, Star, Baby, UserCheck } from 'lucide-react';
@@ -41,7 +40,7 @@ const Hero = () => {
           <div className="text-center">
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-8 shadow-sm animate-fade-in hover:shadow-md transition-all duration-300">
               <Shield className="h-4 w-4 mr-2" />
-              🇳🇬 Ministry of Science and Technology
+              🇳🇬 In Partnership with the Ministry
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in animation-delay-200">
