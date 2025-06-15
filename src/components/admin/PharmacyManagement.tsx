@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Pill, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { adminService, type Pharmacy } from '@/services/AdminService';
-import { pharmacyService } from '@/services/PharmacyService';
 import { useToast } from '@/hooks/use-toast';
 import PharmacyForm from './forms/PharmacyForm';
 import PharmacyCard from './pharmacy/PharmacyCard';
@@ -74,7 +72,7 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
 
   const togglePharmacyStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await pharmacyService.updatePharmacy(id, { is_active: !currentStatus });
+      await adminService.updatePharmacy(id, { is_active: !currentStatus });
       await loadPharmacies();
       
       if (onStatsChange) {

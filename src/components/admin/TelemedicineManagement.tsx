@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Video, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { adminService, type TelemedicineProvider } from '@/services/AdminService';
-import { telemedicineService } from '@/services/TelemedicineService';
 import { useToast } from '@/hooks/use-toast';
 
 interface TelemedicineManagementProps {
@@ -50,7 +50,7 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
 
   const toggleProviderStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await telemedicineService.updateProvider(id, { is_active: !currentStatus });
+      await adminService.updateTelemedicineProvider(id, { is_active: !currentStatus });
       await loadProviders();
       
       if (onStatsChange) {

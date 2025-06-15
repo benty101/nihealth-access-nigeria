@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Hospital {
@@ -170,7 +171,7 @@ class AdminService {
     return data || [];
   }
 
-  async createPharmacy(pharmacy: Omit<Pharmacy, 'id' | 'created_at'>): Promise<void> {
+  async createPharmacy(pharmacy: Omit<Pharmacy, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
     const { error } = await supabase
       .from('pharmacies')
       .insert([pharmacy]);
@@ -207,7 +208,7 @@ class AdminService {
     return data || [];
   }
 
-  async createLab(lab: Omit<Lab, 'id' | 'created_at'>): Promise<void> {
+  async createLab(lab: Omit<Lab, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
     const { error } = await supabase
       .from('labs')
       .insert([lab]);
@@ -244,7 +245,7 @@ class AdminService {
     return data || [];
   }
 
-  async createTelemedicineProvider(provider: Omit<TelemedicineProvider, 'id' | 'created_at'>): Promise<void> {
+  async createTelemedicineProvider(provider: Omit<TelemedicineProvider, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
     const { error } = await supabase
       .from('telemedicine_providers')
       .insert([provider]);
@@ -318,6 +319,32 @@ class AdminService {
     return data || [];
   }
 
+  async createLabTest(labTest: Omit<LabTest, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
+    const { error } = await supabase
+      .from('lab_tests')
+      .insert([labTest]);
+    
+    if (error) throw error;
+  }
+
+  async updateLabTest(id: string, updates: Partial<LabTest>): Promise<void> {
+    const { error } = await supabase
+      .from('lab_tests')
+      .update(updates)
+      .eq('id', id);
+    
+    if (error) throw error;
+  }
+
+  async deleteLabTest(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('lab_tests')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  }
+
   // Insurance Management
   async getAllInsurancePlans(): Promise<InsurancePlan[]> {
     const { data, error } = await supabase
@@ -329,7 +356,7 @@ class AdminService {
     return data || [];
   }
 
-  async createInsurancePlan(plan: Omit<InsurancePlan, 'id' | 'created_at'>): Promise<void> {
+  async createInsurancePlan(plan: Omit<InsurancePlan, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
     const { error } = await supabase
       .from('insurance_plans')
       .insert([plan]);

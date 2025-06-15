@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { TestTube, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { adminService, type LabTest } from '@/services/AdminService';
-import { labTestService } from '@/services/LabTestService';
 import { useToast } from '@/hooks/use-toast';
 import LabTestForm from './forms/LabTestForm';
 import LabTestTableRow from './labtest/LabTestTableRow';
@@ -72,7 +72,7 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
 
   const toggleLabTestStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await labTestService.updateLabTest(id, { is_active: !currentStatus });
+      await adminService.updateLabTest(id, { is_active: !currentStatus });
       await loadLabTests();
       
       if (onStatsChange) {
