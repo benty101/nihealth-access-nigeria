@@ -4,11 +4,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import NavLogo from './navbar/NavLogo';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
-import { useNavigationItems, DesktopNavigation } from './navbar/NavigationItems';
+import { useStreamlinedNavigation, StreamlinedDesktopNavigation } from './navbar/StreamlinedNavigation';
 
 const Navbar = () => {
   const { user } = useAuth();
-  const navigationItems = useNavigationItems();
+  const { primaryItems, secondaryItems } = useStreamlinedNavigation();
+  
+  // Combine for mobile menu
+  const allItems = [...primaryItems, ...secondaryItems];
 
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
@@ -20,7 +23,10 @@ const Navbar = () => {
           {/* Desktop Navigation - Center */}
           {user && (
             <div className="hidden md:flex flex-1 justify-center">
-              <DesktopNavigation items={navigationItems} />
+              <StreamlinedDesktopNavigation 
+                primaryItems={primaryItems} 
+                secondaryItems={secondaryItems} 
+              />
             </div>
           )}
 
@@ -31,7 +37,7 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           <div className="md:hidden">
-            <MobileMenu items={navigationItems} />
+            <MobileMenu items={allItems} />
           </div>
         </div>
       </div>
