@@ -3,23 +3,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Star, Clock, Users, Shield, Navigation } from 'lucide-react';
+import { MapPin, Phone, Shield, Navigation } from 'lucide-react';
 import HospitalSpecialtyBadge from './HospitalSpecialtyBadge';
-
-interface Hospital {
-  id: number;
-  name: string;
-  location: string;
-  state: string;
-  type: string;
-  specialties: string[];
-  rating: number;
-  verified: boolean;
-  emergency: boolean;
-  insurance: string[];
-  phone: string;
-  beds: number;
-}
+import type { Hospital } from '@/services/HospitalService';
 
 interface HospitalCardProps {
   hospital: Hospital;
@@ -46,67 +32,58 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
             <CardTitle className="text-lg leading-tight mb-2">{hospital.name}</CardTitle>
             <div className="flex items-center text-sm text-gray-600 mb-1">
               <MapPin className="h-4 w-4 mr-1" />
-              {hospital.location}
+              {hospital.address || `${hospital.lga || ''}, ${hospital.state || ''}`}
             </div>
-            <div className="flex items-center text-sm text-gray-600">
-              <Phone className="h-4 w-4 mr-1" />
-              {hospital.phone}
-            </div>
+            {hospital.phone && (
+              <div className="flex items-center text-sm text-gray-600">
+                <Phone className="h-4 w-4 mr-1" />
+                {hospital.phone}
+              </div>
+            )}
           </div>
           <div className="flex flex-col items-end gap-1">
-            {hospital.verified && (
-              <Badge className="bg-green-100 text-green-800 text-xs">
-                <Shield className="h-3 w-3 mr-1" />
-                Verified
-              </Badge>
-            )}
-            <div className="flex items-center">
-              <Star className="h-4 w-4 text-yellow-500 fill-current" />
-              <span className="text-sm font-medium ml-1">{hospital.rating}</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2 mb-3">
-          <Badge variant="outline" className="text-xs">{hospital.type}</Badge>
-          {hospital.emergency && (
-            <Badge className="bg-red-100 text-red-800 text-xs">
-              <Clock className="h-3 w-3 mr-1" />
-              24/7
+            <Badge className="bg-green-100 text-green-800 text-xs">
+              <Shield className="h-3 w-3 mr-1" />
+              Active
             </Badge>
-          )}
-          <Badge variant="secondary" className="text-xs">
-            <Users className="h-3 w-3 mr-1" />
-            {hospital.beds} beds
-          </Badge>
+          </div>
         </div>
       </CardHeader>
       
       <CardContent>
-        <div className="mb-4">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">Specialties</h4>
-          <div className="flex flex-wrap gap-1">
-            {hospital.specialties.slice(0, 4).map((specialty, index) => (
-              <HospitalSpecialtyBadge key={index} specialty={specialty} />
-            ))}
-            {hospital.specialties.length > 4 && (
-              <Badge variant="secondary" className="text-xs">
-                +{hospital.specialties.length - 4} more
-              </Badge>
-            )}
+        {hospital.specialties && hospital.specialties.length > 0 && (
+          <div className="mb-4">
+            <h4 className="text-sm font-medium text-gray-900 mb-2">Specialties</h4>
+            <div className="flex flex-wrap gap-1">
+              {hospital.specialties.slice(0, 4).map((specialty, index) => (
+                <HospitalSpecialtyBadge key={index} specialty={specialty} />
+              ))}
+              {hospital.specialties.length > 4 && (
+                <Badge variant="secondary" className="text-xs">
+                  +{hospital.specialties.length - 4} more
+                </Badge>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         
-        <div className="mb-4">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">Insurance Accepted</h4>
-          <div className="flex flex-wrap gap-1">
-            {hospital.insurance.map((ins, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {ins}
-              </Badge>
-            ))}
+        {hospital.facilities && hospital.facilities.length > 0 && (
+          <div className="mb-4">
+            <h4 className="text-sm font-medium text-gray-900 mb-2">Facilities</h4>
+            <div className="flex flex-wrap gap-1">
+              {hospital.facilities.slice(0, 4).map((facility, index) => (
+                 <Badge key={index} variant="outline" className="text-xs">
+                  {facility}
+                </Badge>
+              ))}
+              {hospital.facilities.length > 4 && (
+                <Badge variant="secondary" className="text-xs">
+                  +{hospital.facilities.length - 4} more
+                </Badge>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         
         <div className="space-y-2">
           <Button 
@@ -117,7 +94,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
             Get Directions
           </Button>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" size="sm" onClick={handleCall}>
+            <Button variant="outline" size="sm" onClick={handleCall} disabled={!hospital.phone}>
               <Phone className="mr-2 h-4 w-4" />
               Call
             </Button>

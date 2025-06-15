@@ -19,10 +19,11 @@ export interface Hospital {
 
 class HospitalService {
   async getAllHospitals(): Promise<Hospital[]> {
-    console.log('Fetching hospitals...');
+    console.log('Fetching active hospitals...');
     const { data, error } = await supabase
       .from('hospitals')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -30,7 +31,7 @@ class HospitalService {
       throw error;
     }
 
-    console.log('Hospitals loaded:', data?.length || 0);
+    console.log('Active Hospitals loaded:', data?.length || 0);
     return data || [];
   }
 

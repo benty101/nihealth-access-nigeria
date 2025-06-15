@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { hospitalService, type Hospital } from '@/services/HospitalService';
+import { adminService, type Hospital } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
 
 interface HospitalManagementProps {
@@ -24,7 +24,7 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
 
   const loadHospitals = async () => {
     try {
-      const hospitalsData = await hospitalService.getAllHospitals();
+      const hospitalsData = await adminService.getAllHospitals();
       setHospitals(hospitalsData);
     } catch (error) {
       console.error('Error loading hospitals:', error);
@@ -40,7 +40,7 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
 
   const toggleHospitalStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await hospitalService.updateHospital(id, { is_active: !currentStatus });
+      await adminService.updateHospital(id, { is_active: !currentStatus });
       await loadHospitals();
       
       // Trigger stats refresh if callback provided
