@@ -58,6 +58,11 @@ const SignupForm = ({ error, setError, setSuccess, isLoading, setIsLoading }: Si
     updateActivity();
 
     try {
+      // Clear any existing onboarding data for fresh signup
+      localStorage.removeItem('onboardingCompleted');
+      localStorage.removeItem('userOnboardingData');
+      console.log('SignupForm: Cleared existing onboarding data for fresh signup');
+
       const { error } = await signUp(
         signupForm.email,
         signupForm.password,

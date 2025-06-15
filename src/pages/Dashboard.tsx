@@ -13,36 +13,21 @@ import ProgressTracker from '@/components/dashboard/ProgressTracker';
 import SmartRecommendations from '@/components/dashboard/SmartRecommendations';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import UserGuidance from '@/components/onboarding/UserGuidance';
-import OnboardingRedirect from '@/components/onboarding/OnboardingRedirect';
 import { PersonalizationService } from '@/services/PersonalizationService';
-import { useAuth } from '@/contexts/AuthContext';
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
-  
-  console.log('Dashboard: Auth state', { user: user?.id, loading });
-
-  // Don't render dashboard content until we know if user is authenticated
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  console.log('Dashboard: Component rendered');
 
   const onboardingData = PersonalizationService.getOnboardingData();
   const quickActions = PersonalizationService.getPersonalizedQuickActions(onboardingData);
   const recommendations = PersonalizationService.getPersonalizedRecommendations(onboardingData);
   const greeting = PersonalizationService.getPersonalizedGreeting(onboardingData);
 
+  console.log('Dashboard: Onboarding data', { onboardingData });
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <OnboardingRedirect />
       <UserGuidance />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

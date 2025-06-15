@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import OnboardingProtectedRoute from "@/components/OnboardingProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -47,68 +48,68 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/dashboard" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Dashboard />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/broker" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <BrokerDashboard />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/admin" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <AdminDashboard />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/hospital" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <HospitalDashboard />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/profile" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <UserProfile />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/appointments" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Appointments />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/records" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Records />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/insurance" element={<Insurance />} />
               <Route path="/hospitals" element={<Hospitals />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/telemedicine" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Telemedicine />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/emergency" element={<Emergency />} />
               <Route path="/diagnostics" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Diagnostics />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/labs" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Labs />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/pharmacy" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Pharmacy />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="/premium" element={
-                <ProtectedRoute>
+                <OnboardingProtectedRoute>
                   <Premium />
-                </ProtectedRoute>
+                </OnboardingProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
