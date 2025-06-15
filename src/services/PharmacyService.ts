@@ -1,6 +1,5 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import type { Pharmacy } from './AdminService';
+import type { Pharmacy, CreatePharmacyRequest } from './AdminService';
 
 class PharmacyService {
   async getActivePharmacies(): Promise<Pharmacy[]> {
@@ -20,6 +19,24 @@ class PharmacyService {
     console.log('PharmacyService: Successfully fetched', data?.length || 0, 'active pharmacies');
     return data || [];
   }
+
+  async createPharmacy(pharmacy: CreatePharmacyRequest): Promise<void> {
+    const { error } = await supabase
+      .from('pharmacies')
+      .insert([pharmacy]);
+    if (error) throw error;
+  }
+
+  async updatePharmacy(id: string, updates: Partial<Pharmacy>): Promise<void> {
+    const { error } = await supabase
+      .from('pharmacies')
+      .update(updates)
+      .eq('id', id);
+    if (error) throw error;
+  }
 }
 
 export const pharmacyService = new PharmacyService();
+
+// Export types for admin forms
+export type { Pharmacy, CreatePharmacyRequest };
