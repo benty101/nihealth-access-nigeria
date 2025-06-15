@@ -79,6 +79,28 @@ export interface InsurancePlan {
   created_at: string;
 }
 
+export interface Medication {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  description?: string;
+  brand?: string;
+  pack_size?: string;
+  prescription_required: boolean;
+  in_stock: boolean;
+  rating?: number;
+  pharmacy_id?: string;
+  active_ingredient?: string;
+  dosage?: string;
+  side_effects?: string[];
+  contraindications?: string[];
+  storage_instructions?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 class AdminService {
   // Hospital Management
   async getAllHospitals(): Promise<Hospital[]> {
@@ -222,6 +244,43 @@ class AdminService {
   async deleteTelemedicineProvider(id: string): Promise<void> {
     const { error } = await supabase
       .from('telemedicine_providers')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+  }
+
+  // Medication Management
+  async getAllMedications(): Promise<Medication[]> {
+    const { data, error } = await supabase
+      .from('medications')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createMedication(medication: Omit<Medication, 'id' | 'created_at' | 'updated_at' | 'rating' | 'side_effects' | 'contraindications'>): Promise<void> {
+    const { error } = await supabase
+      .from('medications')
+      .insert([medication]);
+    
+    if (error) throw error;
+  }
+
+  async updateMedication(id: string, updates: Partial<Medication>): Promise<void> {
+    const { error } = await supabase
+      .from('medications')
+      .update(updates)
+      .eq('id', id);
+    
+    if (error) throw error;
+  }
+
+  async deleteMedication(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('medications')
       .delete()
       .eq('id', id);
     

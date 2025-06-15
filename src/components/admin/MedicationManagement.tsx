@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Pill, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { medicationService, type Medication } from '@/services/MedicationService';
+import { adminService, type Medication } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
 import MedicationForm from './forms/MedicationForm';
 import MedicationTableRow from './medication/MedicationTableRow';
@@ -33,11 +32,11 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('MedicationManagement: Loading medications...');
+      console.log('MedicationManagement: Loading all medications for admin...');
       
-      const medicationsData = await medicationService.getAllMedications();
+      const medicationsData = await adminService.getAllMedications();
       setMedications(medicationsData);
-      console.log('MedicationManagement: Successfully loaded', medicationsData.length, 'medications');
+      console.log('MedicationManagement: Successfully loaded', medicationsData.length, 'medications for admin');
       
     } catch (error) {
       console.error('MedicationManagement: Error loading medications:', error);
@@ -72,7 +71,7 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
 
   const toggleMedicationStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await medicationService.updateMedication(id, { is_active: !currentStatus });
+      await adminService.updateMedication(id, { is_active: !currentStatus });
       await loadMedications();
       
       if (onStatsChange) {

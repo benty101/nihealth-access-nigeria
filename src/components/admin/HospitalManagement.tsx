@@ -64,8 +64,8 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
 
   const filteredHospitals = hospitals.filter(hospital =>
     hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    hospital.state?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    hospital.lga?.toLowerCase().includes(searchTerm.toLowerCase())
+    (hospital.state || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (hospital.lga || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
