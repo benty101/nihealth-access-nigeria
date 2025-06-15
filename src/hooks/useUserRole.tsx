@@ -20,51 +20,59 @@ export const useUserRole = () => {
 
     const fetchUserRole = async () => {
       try {
-        secureLogger.info('Fetching role for user', { userId: user.id, email: user.email });
+        secureLogger.info('Starting role fetch for user', { userId: user.id, email: user.email });
         
-        // FIRST: Check if this is the super admin by email
+        // CRITICAL: Check for super admin first - this must happen before any database calls
         if (user.email === 'kosyezenekwe@gmail.com') {
-          secureLogger.auth('super_admin_detected_by_email_first', user.id);
+          secureLogger.auth('super_admin_detected_immediately', user.id);
           setRole('super_admin');
           setLoading(false);
           return;
         }
 
-        // Try to use the security definer function
-        const { data: functionResult, error: functionError } = await supabase
+        // For all other users, try to get role from database
+        secureLogger.info('Attempting to fetch role from database', { userId: user.id });
+        
+        // Try the RPC function first
+        const { data: rpcResult, error: rpcError } = await supabase
           .rpc('get_user_role', { _user_id: user.id });
 
-        if (!functionError && functionResult) {
-          secureLogger.auth('user_role_retrieved_via_function', user.id, { role: functionResult });
-          setRole(functionResult as UserRole);
+        if (!rpcError && rpcResult) {
+          secureLogger.auth('role_fetched_via_rpc', user.id, { role: rpcResult });
+          setRole(rpcResult as UserRole);
           setLoading(false);
           return;
         }
 
-        secureLogger.info('Function failed, trying direct query', { userId: user.id, error: functionError });
-        
-        // Try direct query
-        const { data, error } = await supabase
+        secureLogger.info('RPC failed, trying direct query', { userId: user.id, error: rpcError });
+
+        // Try direct query as fallback
+        const { data: directResult, error: directError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
           .single();
 
-        if (error) {
-          secureLogger.error('Error fetching user role directly', error, { userId: user.id });
-          // Default fallback to patient
-          setRole('patient');
-        } else if (data) {
-          secureLogger.auth('user_role_retrieved_direct', user.id, { role: data.role });
-          setRole(data.role as UserRole);
+        if (!directError && directResult) {
+          secureLogger.auth('role_fetched_directly', user.id, { role: directResult.role });
+          setRole(directResult.role as UserRole);
         } else {
-          secureLogger.info('No role found, defaulting to patient', { userId: user.id });
+          secureLogger.info('No role found in database, defaulting to patient', { 
+            userId: user.id, 
+            error: directError 
+          });
           setRole('patient');
         }
+
       } catch (error) {
-        secureLogger.error('Error in fetchUserRole', error, { userId: user.id });
-        // Final fallback
-        setRole('patient');
+        secureLogger.error('Critical error in fetchUserRole', error, { userId: user.id });
+        // Even on error, check for super admin email
+        if (user.email === 'kosyezenekwe@gmail.com') {
+          secureLogger.auth('super_admin_detected_on_error', user.id);
+          setRole('super_admin');
+        } else {
+          setRole('patient');
+        }
       } finally {
         setLoading(false);
       }
@@ -72,6 +80,18 @@ export const useUserRole = () => {
 
     fetchUserRole();
   }, [user]);
+
+  // Debug logging
+  useEffect(() => {
+    if (!loading) {
+      secureLogger.info('Final role state', { 
+        userId: user?.id, 
+        email: user?.email, 
+        role,
+        loading 
+      });
+    }
+  }, [role, loading, user?.id, user?.email]);
 
   return { role, loading };
 };

@@ -39,7 +39,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        secureLogger.info('Auth state change', { event, userId: session?.user?.id });
+        secureLogger.info('Auth state change detected', { 
+          event, 
+          userId: session?.user?.id,
+          userEmail: session?.user?.email 
+        });
         
         if (event === 'SIGNED_OUT' || !session) {
           clearAuthState();
@@ -48,7 +52,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setSession(session);
           setUser(session?.user ?? null);
           updateActivity();
-          secureLogger.auth('user_authenticated', session.user?.id);
+          secureLogger.auth('user_authenticated', session.user?.id, {
+            email: session.user?.email
+          });
         }
         
         setLoading(false);
@@ -64,13 +70,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      secureLogger.info('Initial session check', { hasSession: !!session });
+      secureLogger.info('Initial session check', { 
+        hasSession: !!session,
+        userId: session?.user?.id,
+        userEmail: session?.user?.email
+      });
       
       if (session) {
         setSession(session);
         setUser(session?.user ?? null);
         updateActivity();
-        secureLogger.auth('session_restored', session.user?.id);
+        secureLogger.auth('session_restored', session.user?.id, {
+          email: session.user?.email
+        });
       } else {
         clearAuthState();
       }
@@ -98,7 +110,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signIn = async (email: string, password: string) => {
     secureLogger.auth('signin_attempt', undefined, { email: email.substring(0, 3) + '***' });
-    return AuthService.signIn(email, password);
+    const result = await AuthService.signIn(email, password);
+    
+    // Log the result for debugging
+    if (!result.error) {
+      secureLogger.auth('signin_successful', undefined, { email: email.substring(0, 3) + '***' });
+    } else {
+      secureLogger.auth('signin_failed', undefined, { 
+        email: email.substring(0, 3) + '***',
+        error: result.error.message 
+      });
+    }
+    
+    return result;
   };
 
   const signInWithGoogle = async () => {

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,29 +8,66 @@ import { User, AlertCircle, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import LoginForm from './LoginForm';
+import { secureLogger } from '@/lib/secureLogger';
 
 const RoleBasedAuth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { role } = useUserRole();
+  const { role, loading } = useUserRole();
   const [showSuperAdminLogin, setShowSuperAdminLogin] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLoginSuccess = () => {
-    // Navigate based on user's actual role after login
-    switch (role) {
-      case 'super_admin':
-        navigate('/admin');
-        break;
-      default:
-        navigate('/dashboard');
+  // Handle navigation after successful login
+  useEffect(() => {
+    if (user && role && !loading) {
+      secureLogger.info('Handling post-login navigation', { 
+        userId: user.id, 
+        email: user.email, 
+        role 
+      });
+
+      // Navigate based on role
+      switch (role) {
+        case 'super_admin':
+          secureLogger.auth('navigating_super_admin_to_admin', user.id);
+          navigate('/admin');
+          break;
+        case 'hospital_admin':
+          secureLogger.auth('navigating_hospital_admin_to_hospital', user.id);
+          navigate('/hospital');
+          break;
+        default:
+          secureLogger.auth('navigating_patient_to_dashboard', user.id);
+          navigate('/dashboard');
+      }
     }
+  }, [user, role, loading, navigate]);
+
+  const handleLoginSuccess = () => {
+    secureLogger.info('Login success triggered', { userId: user?.id });
+    // Navigation will be handled by the useEffect above
   };
 
+  // If user is logged in but we're still loading the role, show loading
+  if (user && loading) {
+    return (
+      <div className="text-center">
+        <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+          <Shield className="h-8 w-8 text-white" />
+        </div>
+        <p className="text-gray-600">Determining your access level...</p>
+      </div>
+    );
+  }
+
+  // If user is logged in and we have their role, they should be redirected
+  // This component should only show for non-authenticated users
   if (user && role) {
-    // User is already logged in, redirect them
-    handleLoginSuccess();
-    return null;
+    return (
+      <div className="text-center">
+        <p className="text-gray-600">Redirecting you to your dashboard...</p>
+      </div>
+    );
   }
 
   // Super Admin Login Form
