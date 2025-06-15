@@ -20,12 +20,18 @@ export interface TelemedicineProvider {
 
 class TelemedicineService {
   async getAllTelemedicineProviders(): Promise<TelemedicineProvider[]> {
+    console.log('Fetching telemedicine providers...');
     const { data, error } = await supabase
       .from('telemedicine_providers')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching telemedicine providers:', error);
+      throw error;
+    }
+    
+    console.log('Telemedicine providers loaded:', data?.length || 0);
     return data || [];
   }
 
@@ -35,23 +41,35 @@ class TelemedicineService {
   }
 
   async createTelemedicineProvider(provider: Omit<TelemedicineProvider, 'id' | 'created_at' | 'updated_at'>): Promise<TelemedicineProvider> {
+    console.log('Creating telemedicine provider:', provider);
     const { data, error } = await supabase
       .from('telemedicine_providers')
       .insert(provider)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error creating telemedicine provider:', error);
+      throw error;
+    }
+    
+    console.log('Telemedicine provider created:', data);
     return data;
   }
 
   async updateTelemedicineProvider(id: string, updates: Partial<TelemedicineProvider>): Promise<void> {
+    console.log('Updating telemedicine provider:', id, updates);
     const { error } = await supabase
       .from('telemedicine_providers')
       .update(updates)
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error updating telemedicine provider:', error);
+      throw error;
+    }
+    
+    console.log('Telemedicine provider updated successfully');
   }
 
   // Alias method for component compatibility
@@ -60,12 +78,18 @@ class TelemedicineService {
   }
 
   async deleteTelemedicineProvider(id: string): Promise<void> {
+    console.log('Deactivating telemedicine provider:', id);
     const { error } = await supabase
       .from('telemedicine_providers')
       .update({ is_active: false })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error deactivating telemedicine provider:', error);
+      throw error;
+    }
+    
+    console.log('Telemedicine provider deactivated successfully');
   }
 }
 

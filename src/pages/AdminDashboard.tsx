@@ -2,7 +2,7 @@
 import React from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Navigate } from 'react-router-dom';
-import AdminDashboard from '@/components/admin/AdminDashboard';
+import SuperAdminDashboard from '@/components/admin/SuperAdminDashboard';
 import Navbar from '@/components/Navbar';
 
 const AdminDashboardPage = () => {
@@ -28,7 +28,7 @@ const AdminDashboardPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <AdminDashboard />
+      <SuperAdminDashboard />
     </div>
   );
 };
