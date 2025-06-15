@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Users, Building2, Database, Activity, Settings } from 'lucide-react';
+import { Shield, Users, Building2, Database, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +19,7 @@ interface SystemStats {
   totalLabs: number;
   totalInsurancePlans: number;
   totalTelemedicineProviders: number;
+  errors: string[];
 }
 
 const SuperAdminDashboard = () => {
@@ -29,6 +30,7 @@ const SuperAdminDashboard = () => {
     totalLabs: 0,
     totalInsurancePlans: 0,
     totalTelemedicineProviders: 0,
+    errors: [],
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -40,51 +42,78 @@ const SuperAdminDashboard = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      console.log('Fetching system statistics...');
+      console.log('SuperAdmin: Fetching system statistics...');
       
-      // Fetch all stats in parallel with error handling for each
-      const [
-        usersResult,
-        hospitalsResult,
-        pharmaciesResult,
-        labsResult,
-        insuranceResult,
-        telemedicineResult
-      ] = await Promise.allSettled([
-        supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('hospitals').select('id', { count: 'exact', head: true }),
-        supabase.from('pharmacies').select('id', { count: 'exact', head: true }),
-        supabase.from('labs').select('id', { count: 'exact', head: true }),
-        supabase.from('insurance_plans').select('id', { count: 'exact', head: true }),
-        supabase.from('telemedicine_providers').select('id', { count: 'exact', head: true })
-      ]);
-
-      // Handle results with individual error logging
-      const newStats: SystemStats = {
-        totalUsers: usersResult.status === 'fulfilled' ? (usersResult.value.count || 0) : 0,
-        totalHospitals: hospitalsResult.status === 'fulfilled' ? (hospitalsResult.value.count || 0) : 0,
-        totalPharmacies: pharmaciesResult.status === 'fulfilled' ? (pharmaciesResult.value.count || 0) : 0,
-        totalLabs: labsResult.status === 'fulfilled' ? (labsResult.value.count || 0) : 0,
-        totalInsurancePlans: insuranceResult.status === 'fulfilled' ? (insuranceResult.value.count || 0) : 0,
-        totalTelemedicineProviders: telemedicineResult.status === 'fulfilled' ? (telemedicineResult.value.count || 0) : 0,
+      const errors: string[] = [];
+      
+      // Create individual fetch functions with error handling
+      const fetchCount = async (table: string, label: string): Promise<number> => {
+        try {
+          console.log(`SuperAdmin: Fetching ${table} count...`);
+          const { count, error } = await supabase
+            .from(table)
+            .select('id', { count: 'exact', head: true });
+          
+          if (error) {
+            console.error(`SuperAdmin: Error fetching ${table}:`, error);
+            errors.push(`Failed to load ${label}: ${error.message}`);
+            return 0;
+          }
+          
+          console.log(`SuperAdmin: ${table} count:`, count);
+          return count || 0;
+        } catch (err) {
+          console.error(`SuperAdmin: Exception fetching ${table}:`, err);
+          errors.push(`Failed to load ${label}`);
+          return 0;
+        }
       };
 
-      // Log any failed queries
-      [usersResult, hospitalsResult, pharmaciesResult, labsResult, insuranceResult, telemedicineResult].forEach((result, index) => {
-        const tables = ['profiles', 'hospitals', 'pharmacies', 'labs', 'insurance_plans', 'telemedicine_providers'];
-        if (result.status === 'rejected') {
-          console.error(`Failed to fetch ${tables[index]} count:`, result.reason);
-        }
-      });
+      // Fetch all counts with individual error handling
+      const [
+        totalUsers,
+        totalHospitals,
+        totalPharmacies,
+        totalLabs,
+        totalInsurancePlans,
+        totalTelemedicineProviders
+      ] = await Promise.all([
+        fetchCount('profiles', 'Users'),
+        fetchCount('hospitals', 'Hospitals'),
+        fetchCount('pharmacies', 'Pharmacies'),
+        fetchCount('labs', 'Labs'),
+        fetchCount('insurance_plans', 'Insurance Plans'),
+        fetchCount('telemedicine_providers', 'Telemedicine Providers')
+      ]);
+
+      const newStats: SystemStats = {
+        totalUsers,
+        totalHospitals,
+        totalPharmacies,
+        totalLabs,
+        totalInsurancePlans,
+        totalTelemedicineProviders,
+        errors
+      };
 
       setStats(newStats);
-      console.log('System statistics loaded:', newStats);
+      console.log('SuperAdmin: System statistics loaded:', newStats);
+
+      // Show errors if any
+      if (errors.length > 0) {
+        console.warn('SuperAdmin: Some data failed to load:', errors);
+        toast({
+          title: "Partial Data Load",
+          description: `${errors.length} service(s) failed to load. Check console for details.`,
+          variant: "destructive",
+        });
+      }
 
     } catch (error) {
-      console.error('Error fetching system statistics:', error);
+      console.error('SuperAdmin: Critical error fetching system statistics:', error);
       toast({
-        title: "Warning",
-        description: "Some statistics may not be available",
+        title: "System Error",
+        description: "Failed to load dashboard data. Please refresh the page.",
         variant: "destructive",
       });
     } finally {
@@ -103,9 +132,24 @@ const SuperAdminDashboard = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">System Administration</h1>
-              <p className="text-gray-600">Manage all platform services and system configurations</p>
+              <p className="text-gray-600">Manage all platform services and configurations</p>
             </div>
           </div>
+          
+          {/* Error Summary */}
+          {stats.errors.length > 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-2 text-yellow-800">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="font-medium">System Warnings</span>
+              </div>
+              <ul className="mt-2 text-sm text-yellow-700">
+                {stats.errors.map((error, index) => (
+                  <li key={index}>• {error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* System Overview Cards */}

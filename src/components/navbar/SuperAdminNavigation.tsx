@@ -1,15 +1,13 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Settings, Users, Database } from 'lucide-react';
+import { Shield, Settings } from 'lucide-react';
 
 export const useSuperAdminNavigation = () => {
   const getNavigationItems = () => {
     return [
       { path: '/admin', label: 'System Admin', icon: Shield },
-      { path: '/dashboard', label: 'User View', icon: Users },
-      { path: '/broker', label: 'Broker Tools', icon: Database },
-      { path: '/hospital', label: 'Hospital Tools', icon: Settings }
+      { path: '/admin/settings', label: 'Settings', icon: Settings }
     ];
   };
 
