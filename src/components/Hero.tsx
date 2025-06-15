@@ -39,14 +39,14 @@ const Hero = () => {
       <div className="bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-pink-100 to-teal-100 text-teal-800 text-sm font-medium mb-8 shadow-sm animate-fade-in hover:shadow-md transition-all duration-300">
-              <Baby className="h-4 w-4 mr-2 animate-pulse" />
-              🇳🇬 Funded by Maternal Mortality Action (MAMA) Fund
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-8 shadow-sm animate-fade-in hover:shadow-md transition-all duration-300">
+              <Shield className="h-4 w-4 mr-2" />
+              🇳🇬 Ministry of Science and Technology
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in animation-delay-200">
               Your Complete{' '}
-              <span className="bg-gradient-to-r from-pink-600 to-teal-600 bg-clip-text text-transparent hover:from-teal-600 hover:to-pink-600 transition-all duration-500">
+              <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent hover:from-emerald-600 hover:to-teal-600 transition-all duration-500">
                 Maternal & Child Health
               </span>{' '}
               Companion
@@ -62,16 +62,16 @@ const Hero = () => {
               <Button 
                 size="lg" 
                 onClick={handleGetStarted}
-                className="bg-gradient-to-r from-pink-600 to-teal-700 hover:from-pink-700 hover:to-teal-800 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform"
+                className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform"
               >
-                <Baby className="mr-2 h-5 w-5 animate-pulse" />
+                <Baby className="mr-2 h-5 w-5" />
                 Start Your Journey
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
                 onClick={handleExploreServices}
-                className="border-2 border-pink-600 text-pink-600 hover:bg-pink-50 px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 transform hover:border-pink-700"
+                className="border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 transform hover:border-teal-700"
               >
                 <Search className="mr-2 h-5 w-5" />
                 Explore Services
@@ -80,16 +80,16 @@ const Hero = () => {
 
             {/* Trust Indicators */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-600 animate-fade-in animation-delay-800">
-              <div className="flex items-center hover:text-pink-600 transition-colors duration-300">
-                <CheckCircle className="h-5 w-5 text-pink-500 mr-2 hover:scale-110 transition-transform duration-300" />
+              <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
+                <CheckCircle className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
                 500+ Maternal Care Centers
               </div>
               <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
                 <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
-                MAMA Fund Approved
+                Government Approved
               </div>
-              <div className="flex items-center hover:text-pink-600 transition-colors duration-300">
-                <Users className="h-5 w-5 text-pink-500 mr-2 hover:scale-110 transition-transform duration-300" />
+              <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
+                <Users className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
                 15,000+ Mothers & Children
               </div>
             </div>
@@ -111,11 +111,11 @@ const Hero = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Maternal Care */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-pink-100 hover:shadow-2xl hover:border-pink-300 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-300">
-              <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
-                <Baby className="h-8 w-8 text-pink-600 group-hover:animate-pulse" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-teal-200 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-teal-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Baby className="h-8 w-8 text-teal-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-pink-600 transition-colors duration-300">Maternal Care</h3>
+              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-teal-600 transition-colors duration-300">Maternal Care</h3>
               <p className="text-gray-600 text-center leading-relaxed mb-4">
                 Comprehensive antenatal care, delivery services, postnatal support, and maternal health monitoring.
               </p>
@@ -124,7 +124,7 @@ const Hero = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleServiceNavigation('/hospitals')}
-                  className="text-pink-600 border-pink-600 hover:bg-pink-50 hover:scale-105 transition-all duration-300"
+                  className="text-teal-600 border-teal-600 hover:bg-teal-50 hover:scale-105 transition-all duration-300"
                 >
                   Find Maternal Care
                 </Button>
@@ -132,11 +132,11 @@ const Hero = () => {
             </div>
 
             {/* Child Health & Vaccinations */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-teal-100 hover:shadow-2xl hover:border-teal-300 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-400">
-              <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-teal-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
-                <UserCheck className="h-8 w-8 text-teal-600 group-hover:animate-pulse" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-400">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <UserCheck className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-teal-600 transition-colors duration-300">Child Health & Vaccinations</h3>
+              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-emerald-600 transition-colors duration-300">Child Health & Vaccinations</h3>
               <p className="text-gray-600 text-center leading-relaxed mb-4">
                 Pediatric care, immunization schedules, growth monitoring, and child development tracking.
               </p>
@@ -145,7 +145,7 @@ const Hero = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleServiceNavigation('/pediatric')}
-                  className="text-teal-600 border-teal-600 hover:bg-teal-50 hover:scale-105 transition-all duration-300"
+                  className="text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
                 >
                   Book Vaccination
                 </Button>
@@ -153,11 +153,11 @@ const Hero = () => {
             </div>
             
             {/* Family Insurance */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 hover:shadow-2xl hover:border-emerald-300 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-500">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
-                <Shield className="h-8 w-8 text-emerald-600 group-hover:animate-pulse" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-teal-200 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-500">
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Shield className="h-8 w-8 text-teal-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-emerald-600 transition-colors duration-300">Maternal & Family Insurance</h3>
+              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-teal-600 transition-colors duration-300">Maternal & Family Insurance</h3>
               <p className="text-gray-600 text-center leading-relaxed mb-4">
                 Specialized insurance plans covering pregnancy, childbirth, child health, and family wellness.
               </p>
@@ -166,7 +166,7 @@ const Hero = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleServiceNavigation('/insurance')}
-                  className="text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
+                  className="text-teal-600 border-teal-600 hover:bg-teal-50 hover:scale-105 transition-all duration-300"
                 >
                   Compare Plans
                 </Button>
@@ -174,11 +174,11 @@ const Hero = () => {
             </div>
 
             {/* Specialist Appointments */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-purple-100 hover:shadow-2xl hover:border-purple-300 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-600">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
-                <Calendar className="h-8 w-8 text-purple-600 group-hover:animate-pulse" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-600">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Calendar className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-purple-600 transition-colors duration-300">Specialist Appointments</h3>
+              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-emerald-600 transition-colors duration-300">Specialist Appointments</h3>
               <p className="text-gray-600 text-center leading-relaxed mb-4">
                 Book with obstetricians, pediatricians, lactation consultants, and child development specialists.
               </p>
@@ -187,7 +187,7 @@ const Hero = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleServiceNavigation('/appointments')}
-                  className="text-purple-600 border-purple-600 hover:bg-purple-50 hover:scale-105 transition-all duration-300"
+                  className="text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
                 >
                   Book Now
                 </Button>
@@ -195,11 +195,11 @@ const Hero = () => {
             </div>
 
             {/* Pharmacy & Supplements */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl hover:border-green-300 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-700">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
-                <Pill className="h-8 w-8 text-green-600 group-hover:animate-pulse" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-teal-200 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-700">
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Pill className="h-8 w-8 text-teal-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-green-600 transition-colors duration-300">Maternal & Child Pharmacy</h3>
+              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-teal-600 transition-colors duration-300">Maternal & Child Pharmacy</h3>
               <p className="text-gray-600 text-center leading-relaxed mb-4">
                 Prenatal vitamins, children's medications, baby formula, and health supplements with delivery.
               </p>
@@ -208,7 +208,7 @@ const Hero = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleServiceNavigation('/pharmacy')}
-                  className="text-green-600 border-green-600 hover:bg-green-50 hover:scale-105 transition-all duration-300"
+                  className="text-teal-600 border-teal-600 hover:bg-teal-50 hover:scale-105 transition-all duration-300"
                 >
                   Shop Now
                 </Button>
@@ -216,11 +216,11 @@ const Hero = () => {
             </div>
 
             {/* Health Records */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-blue-100 hover:shadow-2xl hover:border-blue-300 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-800">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-3">
-                <FileText className="h-8 w-8 text-blue-600 group-hover:animate-pulse" />
+            <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 hover:-translate-y-3 transform animate-fade-in animation-delay-800">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-blue-600 transition-colors duration-300">Family Health Records</h3>
+              <h3 className="text-xl font-bold mb-4 text-center group-hover:text-emerald-600 transition-colors duration-300">Family Health Records</h3>
               <p className="text-gray-600 text-center leading-relaxed mb-4">
                 Secure storage for pregnancy records, child immunization cards, growth charts, and family medical history.
               </p>
@@ -229,7 +229,7 @@ const Hero = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleServiceNavigation('/records')}
-                  className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:scale-105 transition-all duration-300"
+                  className="text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
                 >
                   Manage Records
                 </Button>
@@ -240,21 +240,21 @@ const Hero = () => {
       </div>
 
       {/* Call to Action */}
-      <div className="py-20 bg-gradient-to-br from-pink-600 via-teal-600 to-pink-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-teal-600/20 animate-pulse"></div>
+      <div className="py-20 bg-gradient-to-br from-teal-600 via-emerald-600 to-teal-700 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-600/20 to-emerald-600/20 animate-pulse"></div>
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 animate-fade-in">
             Empowering Mothers and Children Across Nigeria
           </h2>
-          <p className="text-xl text-pink-100 mb-8 animate-fade-in animation-delay-200">
+          <p className="text-xl text-teal-100 mb-8 animate-fade-in animation-delay-200">
             Join thousands of families who trust MeddyPal for comprehensive maternal and child healthcare
           </p>
           <Button 
             size="lg" 
             onClick={handleGetStarted}
-            className="bg-white text-pink-600 hover:bg-gray-50 px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform animate-fade-in animation-delay-400"
+            className="bg-white text-teal-600 hover:bg-gray-50 px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform animate-fade-in animation-delay-400"
           >
-            <Baby className="mr-2 h-5 w-5 animate-pulse" />
+            <Baby className="mr-2 h-5 w-5" />
             Start Your Family's Health Journey
           </Button>
         </div>
