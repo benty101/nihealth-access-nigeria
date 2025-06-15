@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { medicationService, type Medication } from '@/services/MedicationService';
 import { useToast } from '@/hooks/use-toast';
+import MedicationForm from './forms/MedicationForm';
 
 interface MedicationManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -19,6 +20,8 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingMedication, setEditingMedication] = useState<Medication | undefined>();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -46,6 +49,23 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddMedication = () => {
+    setEditingMedication(undefined);
+    setIsFormOpen(true);
+  };
+
+  const handleEditMedication = (medication: Medication) => {
+    setEditingMedication(medication);
+    setIsFormOpen(true);
+  };
+
+  const handleFormSuccess = async () => {
+    await loadMedications();
+    if (onStatsChange) {
+      await onStatsChange();
     }
   };
 
@@ -110,123 +130,132 @@ const MedicationManagement = ({ onStatsChange }: MedicationManagementProps) => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Pill className="h-5 w-5" />
-              Medication Management
-            </CardTitle>
-            <CardDescription>
-              Manage all medications available across pharmacy listings
-            </CardDescription>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Pill className="h-5 w-5" />
+                Medication Management
+              </CardTitle>
+              <CardDescription>
+                Manage all medications available across pharmacy listings
+              </CardDescription>
+            </div>
+            <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleAddMedication}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Medication
+            </Button>
           </div>
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Medication
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Search */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search medications..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        </CardHeader>
+        <CardContent>
+          {/* Search */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search medications..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Badge variant="secondary">
+              {filteredMedications.length} found
+            </Badge>
           </div>
-          <Badge variant="secondary">
-            {filteredMedications.length} found
-          </Badge>
-        </div>
 
-        {/* Medications Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price (₦)</TableHead>
-                <TableHead>Brand</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead>Prescription</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMedications.map((medication) => (
-                <TableRow key={medication.id}>
-                  <TableCell className="font-medium">
-                    <div>
-                      <p className="font-semibold">{medication.name}</p>
-                      <p className="text-sm text-gray-500">{medication.dosage}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{medication.category}</Badge>
-                  </TableCell>
-                  <TableCell>₦{medication.price.toLocaleString()}</TableCell>
-                  <TableCell>{medication.brand || 'N/A'}</TableCell>
-                  <TableCell>
-                    <Badge className={medication.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                      {medication.in_stock ? 'In Stock' : 'Out of Stock'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={medication.prescription_required ? 'destructive' : 'secondary'}>
-                      {medication.prescription_required ? 'Required' : 'OTC'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={medication.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                      {medication.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-3 w-3 mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant={medication.is_active ? "destructive" : "default"}
-                        size="sm"
-                        onClick={() => toggleMedicationStatus(medication.id, medication.is_active)}
-                      >
-                        {medication.is_active ? (
-                          <>
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Deactivate
-                          </>
-                        ) : (
-                          'Activate'
-                        )}
-                      </Button>
-                    </div>
-                  </TableCell>
+          {/* Medications Table */}
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Price (₦)</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead>Stock</TableHead>
+                  <TableHead>Prescription</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {filteredMedications.length === 0 && (
-          <div className="text-center py-8">
-            <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">
-              {searchTerm ? 'No medications found matching your criteria' : 'No medications available'}
-            </p>
+              </TableHeader>
+              <TableBody>
+                {filteredMedications.map((medication) => (
+                  <TableRow key={medication.id}>
+                    <TableCell className="font-medium">
+                      <div>
+                        <p className="font-semibold">{medication.name}</p>
+                        <p className="text-sm text-gray-500">{medication.dosage}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{medication.category}</Badge>
+                    </TableCell>
+                    <TableCell>₦{medication.price.toLocaleString()}</TableCell>
+                    <TableCell>{medication.brand || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Badge className={medication.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                        {medication.in_stock ? 'In Stock' : 'Out of Stock'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={medication.prescription_required ? 'destructive' : 'secondary'}>
+                        {medication.prescription_required ? 'Required' : 'OTC'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={medication.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                        {medication.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleEditMedication(medication)}>
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant={medication.is_active ? "destructive" : "default"}
+                          size="sm"
+                          onClick={() => toggleMedicationStatus(medication.id, medication.is_active)}
+                        >
+                          {medication.is_active ? (
+                            <>
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              Deactivate
+                            </>
+                          ) : (
+                            'Activate'
+                          )}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {filteredMedications.length === 0 && (
+            <div className="text-center py-8">
+              <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">
+                {searchTerm ? 'No medications found matching your criteria' : 'No medications available'}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <MedicationForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        medication={editingMedication}
+        onSuccess={handleFormSuccess}
+      />
+    </>
   );
 };
 

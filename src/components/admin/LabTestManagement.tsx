@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { labTestService, type LabTest } from '@/services/LabTestService';
 import { useToast } from '@/hooks/use-toast';
+import LabTestForm from './forms/LabTestForm';
 
 interface LabTestManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -19,6 +20,8 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingLabTest, setEditingLabTest] = useState<LabTest | undefined>();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -46,6 +49,23 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddLabTest = () => {
+    setEditingLabTest(undefined);
+    setIsFormOpen(true);
+  };
+
+  const handleEditLabTest = (labTest: LabTest) => {
+    setEditingLabTest(labTest);
+    setIsFormOpen(true);
+  };
+
+  const handleFormSuccess = async () => {
+    await loadLabTests();
+    if (onStatsChange) {
+      await onStatsChange();
     }
   };
 
@@ -110,130 +130,139 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <TestTube className="h-5 w-5" />
-              Lab Test Management
-            </CardTitle>
-            <CardDescription>
-              Manage all lab tests available across laboratory listings
-            </CardDescription>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <TestTube className="h-5 w-5" />
+                Lab Test Management
+              </CardTitle>
+              <CardDescription>
+                Manage all lab tests available across laboratory listings
+              </CardDescription>
+            </div>
+            <Button className="bg-teal-600 hover:bg-teal-700" onClick={handleAddLabTest}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Lab Test
+            </Button>
           </div>
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Lab Test
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Search */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search lab tests..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        </CardHeader>
+        <CardContent>
+          {/* Search */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search lab tests..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Badge variant="secondary">
+              {filteredLabTests.length} found
+            </Badge>
           </div>
-          <Badge variant="secondary">
-            {filteredLabTests.length} found
-          </Badge>
-        </div>
 
-        {/* Lab Tests Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Test Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price (₦)</TableHead>
-                <TableHead>Test Code</TableHead>
-                <TableHead>Sample Type</TableHead>
-                <TableHead>Turnaround</TableHead>
-                <TableHead>Fasting</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredLabTests.map((labTest) => (
-                <TableRow key={labTest.id}>
-                  <TableCell className="font-medium">
-                    <div>
-                      <p className="font-semibold">{labTest.name}</p>
-                      <p className="text-sm text-gray-500">{labTest.description}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{labTest.category}</Badge>
-                  </TableCell>
-                  <TableCell>₦{labTest.price.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs">
-                      {labTest.test_code || 'N/A'}
-                    </code>
-                  </TableCell>
-                  <TableCell>{labTest.sample_type || 'N/A'}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-gray-400" />
-                      <span className="text-sm">{labTest.turnaround_time || 'N/A'}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={labTest.is_fasting_required ? 'destructive' : 'secondary'}>
-                      {labTest.is_fasting_required ? 'Required' : 'Not Required'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={labTest.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                      {labTest.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-3 w-3 mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant={labTest.is_active ? "destructive" : "default"}
-                        size="sm"
-                        onClick={() => toggleLabTestStatus(labTest.id, labTest.is_active)}
-                      >
-                        {labTest.is_active ? (
-                          <>
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Deactivate
-                          </>
-                        ) : (
-                          'Activate'
-                        )}
-                      </Button>
-                    </div>
-                  </TableCell>
+          {/* Lab Tests Table */}
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Test Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Price (₦)</TableHead>
+                  <TableHead>Test Code</TableHead>
+                  <TableHead>Sample Type</TableHead>
+                  <TableHead>Turnaround</TableHead>
+                  <TableHead>Fasting</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {filteredLabTests.length === 0 && (
-          <div className="text-center py-8">
-            <TestTube className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">
-              {searchTerm ? 'No lab tests found matching your criteria' : 'No lab tests available'}
-            </p>
+              </TableHeader>
+              <TableBody>
+                {filteredLabTests.map((labTest) => (
+                  <TableRow key={labTest.id}>
+                    <TableCell className="font-medium">
+                      <div>
+                        <p className="font-semibold">{labTest.name}</p>
+                        <p className="text-sm text-gray-500">{labTest.description}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{labTest.category}</Badge>
+                    </TableCell>
+                    <TableCell>₦{labTest.price.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                        {labTest.test_code || 'N/A'}
+                      </code>
+                    </TableCell>
+                    <TableCell>{labTest.sample_type || 'N/A'}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3 text-gray-400" />
+                        <span className="text-sm">{labTest.turnaround_time || 'N/A'}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={labTest.is_fasting_required ? 'destructive' : 'secondary'}>
+                        {labTest.is_fasting_required ? 'Required' : 'Not Required'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={labTest.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                        {labTest.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleEditLabTest(labTest)}>
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant={labTest.is_active ? "destructive" : "default"}
+                          size="sm"
+                          onClick={() => toggleLabTestStatus(labTest.id, labTest.is_active)}
+                        >
+                          {labTest.is_active ? (
+                            <>
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              Deactivate
+                            </>
+                          ) : (
+                            'Activate'
+                          )}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {filteredLabTests.length === 0 && (
+            <div className="text-center py-8">
+              <TestTube className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">
+                {searchTerm ? 'No lab tests found matching your criteria' : 'No lab tests available'}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <LabTestForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        labTest={editingLabTest}
+        onSuccess={handleFormSuccess}
+      />
+    </>
   );
 };
 
