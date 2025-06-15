@@ -17,16 +17,22 @@ const Navbar = () => {
           {/* Logo */}
           <NavLogo />
 
-          {/* Desktop Navigation */}
-          {user && <DesktopNavigation items={navigationItems} />}
+          {/* Desktop Navigation - Center */}
+          {user && (
+            <div className="hidden md:flex flex-1 justify-center">
+              <DesktopNavigation items={navigationItems} />
+            </div>
+          )}
 
-          {/* Desktop User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Desktop User Menu - Right */}
+          <div className="hidden md:flex items-center">
             <UserMenu />
           </div>
 
           {/* Mobile Menu */}
-          <MobileMenu items={navigationItems} />
+          <div className="md:hidden">
+            <MobileMenu items={navigationItems} />
+          </div>
         </div>
       </div>
     </nav>

@@ -52,15 +52,15 @@ export const DesktopNavigation: React.FC<DesktopNavigationProps> = ({ items }) =
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="hidden md:flex items-center space-x-8">
+    <div className="flex items-center space-x-1">
       {items.map((item) => (
         <Link
           key={item.path}
           to={item.path}
-          className={`text-sm font-medium transition-colors flex items-center gap-2 ${
+          className={`px-3 py-2 text-sm font-medium transition-colors flex items-center gap-2 rounded-md ${
             isActive(item.path)
-              ? 'text-teal-600 border-b-2 border-teal-600 pb-4'
-              : 'text-gray-700 hover:text-teal-600'
+              ? 'text-teal-600 bg-teal-50'
+              : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50'
           }`}
         >
           {item.icon && <item.icon className="h-4 w-4" />}

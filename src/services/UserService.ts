@@ -37,7 +37,6 @@ class UserService {
 
       if (rolesError) {
         console.error('Error fetching user roles:', rolesError);
-        // Don't throw here, just log and continue with default roles
         console.log('Continuing without roles data...');
       }
 
@@ -50,7 +49,7 @@ class UserService {
         
         return {
           id: profile.id,
-          email: 'Protected for privacy', // We can't access auth.users directly
+          email: 'Protected for privacy',
           full_name: profile.full_name || '',
           phone_number: profile.phone_number || '',
           role: role as UserRole,
@@ -71,18 +70,42 @@ class UserService {
     try {
       console.log('Updating user role:', { userId, newRole });
       
-      const { error } = await supabase
+      // First, check if the user role exists
+      const { data: existingRole, error: checkError } = await supabase
         .from('user_roles')
-        .upsert({
-          user_id: userId,
-          role: newRole
-        }, {
-          onConflict: 'user_id'
-        });
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
 
-      if (error) {
-        console.error('Error updating user role:', error);
-        throw error;
+      if (checkError) {
+        console.error('Error checking existing role:', checkError);
+        throw checkError;
+      }
+
+      if (existingRole) {
+        // Update existing role
+        const { error: updateError } = await supabase
+          .from('user_roles')
+          .update({ role: newRole })
+          .eq('user_id', userId);
+
+        if (updateError) {
+          console.error('Error updating user role:', updateError);
+          throw updateError;
+        }
+      } else {
+        // Insert new role
+        const { error: insertError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: newRole
+          });
+
+        if (insertError) {
+          console.error('Error inserting user role:', insertError);
+          throw insertError;
+        }
       }
       
       console.log('User role updated successfully');
