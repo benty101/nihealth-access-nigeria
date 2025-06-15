@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface FrontendSyncData {
@@ -54,6 +55,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('pharmacies')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -64,6 +66,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('hospitals')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -74,6 +77,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('labs')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -84,6 +88,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('medications')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -94,6 +99,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('lab_tests')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -104,6 +110,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('insurance_plans')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -114,6 +121,7 @@ class FrontendDataService {
     const { data, error } = await supabase
       .from('telemedicine_providers')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     
     if (error) throw error;
