@@ -48,11 +48,12 @@ export interface UpdatePharmacyRequest {
 
 class PharmacyService {
   async getAllPharmacies(): Promise<Pharmacy[]> {
-    console.log('PharmacyService: Fetching all pharmacies...');
+    console.log('PharmacyService: Fetching all active pharmacies...');
     
     const { data, error } = await supabase
       .from('pharmacies')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -60,7 +61,7 @@ class PharmacyService {
       throw error;
     }
 
-    console.log('PharmacyService: Successfully fetched', data?.length || 0, 'pharmacies');
+    console.log('PharmacyService: Successfully fetched', data?.length || 0, 'active pharmacies');
     return data || [];
   }
 

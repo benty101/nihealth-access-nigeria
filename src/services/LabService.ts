@@ -21,10 +21,11 @@ export interface Lab {
 
 class LabService {
   async getAllLabs(): Promise<Lab[]> {
-    console.log('Fetching labs...');
+    console.log('Fetching active labs for frontend...');
     const { data, error } = await supabase
       .from('labs')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -32,7 +33,7 @@ class LabService {
       throw error;
     }
 
-    console.log('Labs loaded:', data?.length || 0);
+    console.log('Active labs loaded:', data?.length || 0);
     return data || [];
   }
 

@@ -20,10 +20,11 @@ export interface TelemedicineProvider {
 
 class TelemedicineService {
   async getAllTelemedicineProviders(): Promise<TelemedicineProvider[]> {
-    console.log('Fetching telemedicine providers...');
+    console.log('Fetching active telemedicine providers...');
     const { data, error } = await supabase
       .from('telemedicine_providers')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -31,7 +32,7 @@ class TelemedicineService {
       throw error;
     }
     
-    console.log('Telemedicine providers loaded:', data?.length || 0);
+    console.log('Active telemedicine providers loaded:', data?.length || 0);
     return data || [];
   }
 
