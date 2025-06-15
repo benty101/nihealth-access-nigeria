@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { frontendDataService } from './FrontendDataService';
 
@@ -54,7 +55,7 @@ class AdminDataService {
       throw new Error('No data returned from get_system_stats_for_admin RPC');
     }
     
-    const fetchedStats = data;
+    const fetchedStats = data as any;
 
     const stats: SystemStats = {
       totalHospitals: fetchedStats.totalHospitals || 0,
