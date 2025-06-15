@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Video, Plus, Search, Edit, Trash2, Star } from 'lucide-react';
+import { Video, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { telemedicineService, type TelemedicineProvider } from '@/services/TelemedicineService';
 import { useToast } from '@/hooks/use-toast';
 
-const TelemedicineManagement = () => {
+interface TelemedicineManagementProps {
+  onStatsChange?: () => Promise<void>;
+}
+
+const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) => {
   const [providers, setProviders] = useState<TelemedicineProvider[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +24,7 @@ const TelemedicineManagement = () => {
 
   const loadProviders = async () => {
     try {
-      const providersData = await telemedicineService.getAllTelemedicineProviders();
+      const providersData = await telemedicineService.getAllProviders();
       setProviders(providersData);
     } catch (error) {
       console.error('Error loading telemedicine providers:', error);
@@ -35,8 +40,14 @@ const TelemedicineManagement = () => {
 
   const toggleProviderStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await telemedicineService.updateTelemedicineProvider(id, { is_active: !currentStatus });
+      await telemedicineService.updateProvider(id, { is_active: !currentStatus });
       await loadProviders();
+      
+      // Trigger stats refresh if callback provided
+      if (onStatsChange) {
+        await onStatsChange();
+      }
+      
       toast({
         title: "Success",
         description: `Provider ${!currentStatus ? 'activated' : 'deactivated'} successfully`
@@ -79,7 +90,7 @@ const TelemedicineManagement = () => {
               Telemedicine Management
             </CardTitle>
             <CardDescription>
-              Manage telemedicine providers and virtual consultation services
+              Manage online healthcare providers and virtual consultations
             </CardDescription>
           </div>
           <Button className="bg-teal-600 hover:bg-teal-700">
@@ -111,10 +122,7 @@ const TelemedicineManagement = () => {
                   <div>
                     <CardTitle className="text-lg">{provider.name}</CardTitle>
                     <p className="text-sm text-gray-600">{provider.specialization}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                      <span className="text-xs text-gray-500">{provider.rating || 0}/5</span>
-                    </div>
+                    <p className="text-xs text-gray-500">{provider.experience_years} years experience</p>
                   </div>
                   <Badge className={provider.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
                     {provider.is_active ? 'Active' : 'Inactive'}
@@ -128,16 +136,12 @@ const TelemedicineManagement = () => {
                     <span className="text-gray-600">{provider.license_number || 'N/A'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Experience:</span>
-                    <span className="text-gray-600">{provider.experience_years || 0} years</span>
+                    <span className="font-medium">Fee:</span>
+                    <span className="text-gray-600">₦{provider.consultation_fee?.toLocaleString() || 'N/A'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Consultation Fee:</span>
-                    <span className="text-gray-600">₦{provider.consultation_fee || 0}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Phone:</span>
-                    <span className="text-gray-600">{provider.phone || 'N/A'}</span>
+                    <span className="font-medium">Rating:</span>
+                    <span className="text-gray-600">{provider.rating}/5.0</span>
                   </div>
                 </div>
 

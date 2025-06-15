@@ -1,31 +1,21 @@
+
 import React, { useState, useEffect } from 'react';
-import { Building2, Plus, MapPin, Phone, Mail, Edit, Trash2 } from 'lucide-react';
+import { Building2, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { hospitalService, type Hospital } from '@/services/HospitalService';
 import { useToast } from '@/hooks/use-toast';
 
-const HospitalManagement = () => {
+interface HospitalManagementProps {
+  onStatsChange?: () => Promise<void>;
+}
+
+const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingHospital, setEditingHospital] = useState<Hospital | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    address: '',
-    phone: '',
-    email: '',
-    license_number: '',
-    state: '',
-    lga: '',
-    specialties: '',
-    facilities: ''
-  });
+  const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -48,94 +38,35 @@ const HospitalManagement = () => {
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      address: '',
-      phone: '',
-      email: '',
-      license_number: '',
-      state: '',
-      lga: '',
-      specialties: '',
-      facilities: ''
-    });
-    setEditingHospital(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const toggleHospitalStatus = async (id: string, currentStatus: boolean) => {
     try {
-      const hospitalData = {
-        ...formData,
-        specialties: formData.specialties.split(',').map(s => s.trim()).filter(Boolean),
-        facilities: formData.facilities.split(',').map(f => f.trim()).filter(Boolean),
-        is_active: true
-      };
-
-      if (editingHospital) {
-        await hospitalService.updateHospital(editingHospital.id, hospitalData);
-        toast({
-          title: "Success",
-          description: "Hospital updated successfully"
-        });
-      } else {
-        await hospitalService.createHospital(hospitalData);
-        toast({
-          title: "Success",
-          description: "Hospital created successfully"
-        });
+      await hospitalService.updateHospital(id, { is_active: !currentStatus });
+      await loadHospitals();
+      
+      // Trigger stats refresh if callback provided
+      if (onStatsChange) {
+        await onStatsChange();
       }
-
-      await loadHospitals();
-      setIsCreateModalOpen(false);
-      resetForm();
-    } catch (error) {
-      console.error('Error saving hospital:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save hospital",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleEdit = (hospital: Hospital) => {
-    setEditingHospital(hospital);
-    setFormData({
-      name: hospital.name,
-      address: hospital.address || '',
-      phone: hospital.phone || '',
-      email: hospital.email || '',
-      license_number: hospital.license_number || '',
-      state: hospital.state || '',
-      lga: hospital.lga || '',
-      specialties: hospital.specialties?.join(', ') || '',
-      facilities: hospital.facilities?.join(', ') || ''
-    });
-    setIsCreateModalOpen(true);
-  };
-
-  const handleDelete = async (hospitalId: string) => {
-    if (!confirm('Are you sure you want to deactivate this hospital?')) return;
-
-    try {
-      await hospitalService.deleteHospital(hospitalId);
-      await loadHospitals();
+      
       toast({
         title: "Success",
-        description: "Hospital deactivated successfully"
+        description: `Hospital ${!currentStatus ? 'activated' : 'deactivated'} successfully`
       });
     } catch (error) {
-      console.error('Error deleting hospital:', error);
+      console.error('Error updating hospital status:', error);
       toast({
         title: "Error",
-        description: "Failed to deactivate hospital",
+        description: "Failed to update hospital status",
         variant: "destructive"
       });
     }
   };
+
+  const filteredHospitals = hospitals.filter(hospital =>
+    hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    hospital.state?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    hospital.lga?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -153,229 +84,115 @@ const HospitalManagement = () => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5" />
               Hospital Management
             </CardTitle>
             <CardDescription>
-              Manage hospitals and healthcare facilities in the platform
+              Manage hospital listings and medical services across the platform
             </CardDescription>
           </div>
-          
-          <Dialog open={isCreateModalOpen} onOpenChange={(open) => {
-            setIsCreateModalOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Hospital
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingHospital ? 'Edit Hospital' : 'Add New Hospital'}
-                </DialogTitle>
-                <DialogDescription>
-                  {editingHospital ? 'Update hospital information' : 'Enter the details for the new hospital'}
-                </DialogDescription>
-              </DialogHeader>
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Hospital Name *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="license_number">License Number</Label>
-                    <Input
-                      id="license_number"
-                      value={formData.license_number}
-                      onChange={(e) => setFormData({ ...formData, license_number: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="address">Address</Label>
-                  <Textarea
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="state">State</Label>
-                    <Input
-                      id="state"
-                      value={formData.state}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="lga">LGA</Label>
-                    <Input
-                      id="lga"
-                      value={formData.lga}
-                      onChange={(e) => setFormData({ ...formData, lga: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="specialties">Specialties (comma separated)</Label>
-                  <Input
-                    id="specialties"
-                    value={formData.specialties}
-                    onChange={(e) => setFormData({ ...formData, specialties: e.target.value })}
-                    placeholder="Cardiology, Neurology, Pediatrics"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="facilities">Facilities (comma separated)</Label>
-                  <Input
-                    id="facilities"
-                    value={formData.facilities}
-                    onChange={(e) => setFormData({ ...formData, facilities: e.target.value })}
-                    placeholder="ICU, Emergency Room, Laboratory"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">
-                    {editingHospital ? 'Update Hospital' : 'Create Hospital'}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button className="bg-teal-600 hover:bg-teal-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Hospital
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {hospitals.map((hospital) => (
-            <Card key={hospital.id} className="relative">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
+        {/* Search */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search hospitals..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
+        {/* Hospitals Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredHospitals.map((hospital) => (
+            <Card key={hospital.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {hospital.name}
-                    </h3>
-                    <div className="space-y-1 text-sm text-gray-600">
-                      {hospital.address && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          <span>{hospital.address}</span>
-                        </div>
-                      )}
-                      {hospital.phone && (
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4" />
-                          <span>{hospital.phone}</span>
-                        </div>
-                      )}
-                      {hospital.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4" />
-                          <span>{hospital.email}</span>
-                        </div>
-                      )}
-                    </div>
+                    <CardTitle className="text-lg">{hospital.name}</CardTitle>
+                    <p className="text-sm text-gray-600">{hospital.address}</p>
+                    <p className="text-xs text-gray-500">{hospital.state}, {hospital.lga}</p>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Badge variant={hospital.is_active ? "default" : "secondary"}>
-                      {hospital.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(hospital)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(hospital.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <Badge className={hospital.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                    {hospital.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">License:</span>
+                    <span className="text-gray-600">{hospital.license_number || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">Phone:</span>
+                    <span className="text-gray-600">{hospital.phone || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">Email:</span>
+                    <span className="text-gray-600">{hospital.email || 'N/A'}</span>
                   </div>
                 </div>
 
                 {hospital.specialties && hospital.specialties.length > 0 && (
-                  <div className="mb-3">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Specialties:</p>
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">Specialties:</p>
                     <div className="flex flex-wrap gap-1">
-                      {hospital.specialties.map((specialty, index) => (
+                      {hospital.specialties.slice(0, 3).map((specialty, index) => (
                         <Badge key={index} variant="outline" className="text-xs">
                           {specialty}
                         </Badge>
                       ))}
+                      {hospital.specialties.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{hospital.specialties.length - 3} more
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {hospital.facilities && hospital.facilities.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 mb-2">Facilities:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {hospital.facilities.map((facility, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {facility}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 pt-2">
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant={hospital.is_active ? "destructive" : "default"}
+                    size="sm"
+                    onClick={() => toggleHospitalStatus(hospital.id, hospital.is_active)}
+                  >
+                    {hospital.is_active ? (
+                      <>
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Deactivate
+                      </>
+                    ) : (
+                      'Activate'
+                    )}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {hospitals.length === 0 && (
+        {filteredHospitals.length === 0 && (
           <div className="text-center py-8">
             <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No hospitals found</p>
-            <p className="text-sm text-gray-500">Add your first hospital to get started</p>
+            <p className="text-gray-600">No hospitals found matching your criteria</p>
           </div>
         )}
       </CardContent>

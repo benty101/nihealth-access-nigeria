@@ -1,31 +1,34 @@
+
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, Edit, Trash2, DollarSign } from 'lucide-react';
+import { FileText, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { insuranceService, type InsurancePlan } from '@/services/InsuranceService';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-const InsuranceManagement = () => {
+interface InsurancePlan {
+  id: string;
+  name: string;
+  provider: string;
+  plan_type: string;
+  coverage_amount: number;
+  premium_annual: number;
+  premium_monthly: number;
+  features: string[];
+  is_active: boolean;
+  terms: string;
+}
+
+interface InsuranceManagementProps {
+  onStatsChange?: () => Promise<void>;
+}
+
+const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
   const [plans, setPlans] = useState<InsurancePlan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<InsurancePlan | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    provider: '',
-    plan_type: '',
-    premium_monthly: '',
-    premium_annual: '',
-    coverage_amount: '',
-    features: '',
-    terms: ''
-  });
+  const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,8 +37,13 @@ const InsuranceManagement = () => {
 
   const loadPlans = async () => {
     try {
-      const plansData = await insuranceService.getAllInsurancePlans();
-      setPlans(plansData);
+      const { data, error } = await supabase
+        .from('insurance_plans')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPlans(data || []);
     } catch (error) {
       console.error('Error loading insurance plans:', error);
       toast({
@@ -48,99 +56,41 @@ const InsuranceManagement = () => {
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      provider: '',
-      plan_type: '',
-      premium_monthly: '',
-      premium_annual: '',
-      coverage_amount: '',
-      features: '',
-      terms: ''
-    });
-    setEditingPlan(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const togglePlanStatus = async (id: string, currentStatus: boolean) => {
     try {
-      const planData = {
-        ...formData,
-        premium_monthly: formData.premium_monthly ? parseFloat(formData.premium_monthly) : undefined,
-        premium_annual: formData.premium_annual ? parseFloat(formData.premium_annual) : undefined,
-        coverage_amount: formData.coverage_amount ? parseFloat(formData.coverage_amount) : undefined,
-        features: formData.features.split(',').map(f => f.trim()).filter(Boolean),
-        is_active: true
-      };
+      const { error } = await supabase
+        .from('insurance_plans')
+        .update({ is_active: !currentStatus })
+        .eq('id', id);
 
-      if (editingPlan) {
-        await insuranceService.updateInsurancePlan(editingPlan.id, planData);
-        toast({
-          title: "Success",
-          description: "Insurance plan updated successfully"
-        });
-      } else {
-        await insuranceService.createInsurancePlan(planData);
-        toast({
-          title: "Success",
-          description: "Insurance plan created successfully"
-        });
+      if (error) throw error;
+
+      await loadPlans();
+      
+      // Trigger stats refresh if callback provided
+      if (onStatsChange) {
+        await onStatsChange();
       }
-
-      await loadPlans();
-      setIsCreateModalOpen(false);
-      resetForm();
-    } catch (error) {
-      console.error('Error saving insurance plan:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save insurance plan",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleEdit = (plan: InsurancePlan) => {
-    setEditingPlan(plan);
-    setFormData({
-      name: plan.name,
-      provider: plan.provider,
-      plan_type: plan.plan_type,
-      premium_monthly: plan.premium_monthly?.toString() || '',
-      premium_annual: plan.premium_annual?.toString() || '',
-      coverage_amount: plan.coverage_amount?.toString() || '',
-      features: plan.features?.join(', ') || '',
-      terms: plan.terms || ''
-    });
-    setIsCreateModalOpen(true);
-  };
-
-  const handleDelete = async (planId: string) => {
-    if (!confirm('Are you sure you want to deactivate this insurance plan?')) return;
-
-    try {
-      await insuranceService.deleteInsurancePlan(planId);
-      await loadPlans();
+      
       toast({
         title: "Success",
-        description: "Insurance plan deactivated successfully"
+        description: `Insurance plan ${!currentStatus ? 'activated' : 'deactivated'} successfully`
       });
     } catch (error) {
-      console.error('Error deleting insurance plan:', error);
+      console.error('Error updating insurance plan status:', error);
       toast({
         title: "Error",
-        description: "Failed to deactivate insurance plan",
+        description: "Failed to update insurance plan status",
         variant: "destructive"
       });
     }
   };
 
-  const formatCurrency = (amount?: number) => {
-    if (!amount) return 'N/A';
-    return `₦${amount.toLocaleString()}`;
-  };
+  const filteredPlans = plans.filter(plan =>
+    plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    plan.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    plan.plan_type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -158,225 +108,115 @@ const InsuranceManagement = () => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              Insurance Plan Management
+              Insurance Management
             </CardTitle>
             <CardDescription>
-              Manage insurance plans available on the platform
+              Manage insurance plans and coverage options
             </CardDescription>
           </div>
-          
-          <Dialog open={isCreateModalOpen} onOpenChange={(open) => {
-            setIsCreateModalOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Plan
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingPlan ? 'Edit Insurance Plan' : 'Add New Insurance Plan'}
-                </DialogTitle>
-                <DialogDescription>
-                  {editingPlan ? 'Update insurance plan details' : 'Enter the details for the new insurance plan'}
-                </DialogDescription>
-              </DialogHeader>
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Plan Name *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="provider">Provider *</Label>
-                    <Input
-                      id="provider"
-                      value={formData.provider}
-                      onChange={(e) => setFormData({ ...formData, provider: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="plan_type">Plan Type *</Label>
-                  <Select value={formData.plan_type} onValueChange={(value) => setFormData({ ...formData, plan_type: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select plan type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="individual">Individual</SelectItem>
-                      <SelectItem value="family">Family</SelectItem>
-                      <SelectItem value="corporate">Corporate</SelectItem>
-                      <SelectItem value="hmo">HMO</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="premium_monthly">Monthly Premium (₦)</Label>
-                    <Input
-                      id="premium_monthly"
-                      type="number"
-                      step="0.01"
-                      value={formData.premium_monthly}
-                      onChange={(e) => setFormData({ ...formData, premium_monthly: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="premium_annual">Annual Premium (₦)</Label>
-                    <Input
-                      id="premium_annual"
-                      type="number"
-                      step="0.01"
-                      value={formData.premium_annual}
-                      onChange={(e) => setFormData({ ...formData, premium_annual: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="coverage_amount">Coverage Amount (₦)</Label>
-                    <Input
-                      id="coverage_amount"
-                      type="number"
-                      step="0.01"
-                      value={formData.coverage_amount}
-                      onChange={(e) => setFormData({ ...formData, coverage_amount: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="features">Features (comma separated)</Label>
-                  <Input
-                    id="features"
-                    value={formData.features}
-                    onChange={(e) => setFormData({ ...formData, features: e.target.value })}
-                    placeholder="Outpatient Care, Emergency Services, Prescription Coverage"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="terms">Terms & Conditions</Label>
-                  <Textarea
-                    id="terms"
-                    value={formData.terms}
-                    onChange={(e) => setFormData({ ...formData, terms: e.target.value })}
-                    placeholder="Terms and conditions for this insurance plan"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">
-                    {editingPlan ? 'Update Plan' : 'Create Plan'}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button className="bg-teal-600 hover:bg-teal-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Plan
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
+        {/* Search */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search insurance plans..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
+        {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <Card key={plan.id} className="relative">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
+          {filteredPlans.map((plan) => (
+            <Card key={plan.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      {plan.name}
-                    </h3>
+                    <CardTitle className="text-lg">{plan.name}</CardTitle>
                     <p className="text-sm text-gray-600">{plan.provider}</p>
+                    <p className="text-xs text-gray-500">{plan.plan_type}</p>
                   </div>
-                  
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(plan)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(plan.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <Badge className={plan.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                    {plan.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">Coverage:</span>
+                    <span className="text-gray-600">₦{plan.coverage_amount?.toLocaleString() || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">Annual Premium:</span>
+                    <span className="text-gray-600">₦{plan.premium_annual?.toLocaleString() || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">Monthly Premium:</span>
+                    <span className="text-gray-600">₦{plan.premium_monthly?.toLocaleString() || 'N/A'}</span>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <Badge variant="outline" className="capitalize">
-                      {plan.plan_type}
-                    </Badge>
-                    <Badge variant={plan.is_active ? "default" : "secondary"}>
-                      {plan.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
-
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Monthly:</span>
-                      <span className="font-medium">{formatCurrency(plan.premium_monthly)}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Annual:</span>
-                      <span className="font-medium">{formatCurrency(plan.premium_annual)}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Coverage:</span>
-                      <span className="font-medium">{formatCurrency(plan.coverage_amount)}</span>
+                {plan.features && plan.features.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">Features:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {plan.features.slice(0, 3).map((feature, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {feature}
+                        </Badge>
+                      ))}
+                      {plan.features.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{plan.features.length - 3} more
+                        </Badge>
+                      )}
                     </div>
                   </div>
+                )}
 
-                  {plan.features && plan.features.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Features:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {plan.features.slice(0, 3).map((feature, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {feature}
-                          </Badge>
-                        ))}
-                        {plan.features.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{plan.features.length - 3} more
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                <div className="flex items-center gap-2 pt-2">
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant={plan.is_active ? "destructive" : "default"}
+                    size="sm"
+                    onClick={() => togglePlanStatus(plan.id, plan.is_active)}
+                  >
+                    {plan.is_active ? (
+                      <>
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Deactivate
+                      </>
+                    ) : (
+                      'Activate'
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {plans.length === 0 && (
+        {filteredPlans.length === 0 && (
           <div className="text-center py-8">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No insurance plans found</p>
-            <p className="text-sm text-gray-500">Add your first insurance plan to get started</p>
+            <p className="text-gray-600">No insurance plans found matching your criteria</p>
           </div>
         )}
       </CardContent>
