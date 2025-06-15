@@ -19,68 +19,103 @@ export interface LabTest {
   updated_at: string;
 }
 
+export interface CreateLabTestRequest {
+  name: string;
+  category: string;
+  price: number;
+  description?: string;
+  sample_type?: string;
+  preparation_required?: string;
+  turnaround_time?: string;
+  normal_range?: string;
+  test_code?: string;
+  is_fasting_required: boolean;
+  is_active: boolean;
+}
+
+export interface UpdateLabTestRequest {
+  name?: string;
+  category?: string;
+  price?: number;
+  description?: string;
+  sample_type?: string;
+  preparation_required?: string;
+  turnaround_time?: string;
+  normal_range?: string;
+  test_code?: string;
+  is_fasting_required?: boolean;
+  is_active?: boolean;
+}
+
 class LabTestService {
   async getAllLabTests(): Promise<LabTest[]> {
-    console.log('Fetching lab tests...');
+    console.log('LabTestService: Fetching all lab tests...');
+    
     const { data, error } = await supabase
       .from('lab_tests')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching lab tests:', error);
+      console.error('LabTestService: Error fetching lab tests:', error);
       throw error;
     }
 
-    console.log('Lab tests loaded:', data?.length || 0);
+    console.log('LabTestService: Successfully fetched', data?.length || 0, 'lab tests');
     return data || [];
   }
 
-  async createLabTest(labTest: Omit<LabTest, 'id' | 'created_at' | 'updated_at'>): Promise<LabTest> {
-    console.log('Creating lab test:', labTest);
+  async createLabTest(labTest: CreateLabTestRequest): Promise<LabTest> {
+    console.log('LabTestService: Creating lab test:', labTest);
+    
     const { data, error } = await supabase
       .from('lab_tests')
-      .insert(labTest)
+      .insert([labTest])
       .select()
       .single();
 
     if (error) {
-      console.error('Error creating lab test:', error);
+      console.error('LabTestService: Error creating lab test:', error);
       throw error;
     }
 
-    console.log('Lab test created:', data);
+    console.log('LabTestService: Successfully created lab test:', data);
     return data;
   }
 
-  async updateLabTest(id: string, updates: Partial<LabTest>): Promise<void> {
-    console.log('Updating lab test:', id, updates);
-    const { error } = await supabase
+  async updateLabTest(id: string, updates: UpdateLabTestRequest): Promise<LabTest> {
+    console.log('LabTestService: Updating lab test:', id, updates);
+    
+    const { data, error } = await supabase
       .from('lab_tests')
       .update(updates)
-      .eq('id', id);
+      .eq('id', id)
+      .select()
+      .single();
 
     if (error) {
-      console.error('Error updating lab test:', error);
+      console.error('LabTestService: Error updating lab test:', error);
       throw error;
     }
 
-    console.log('Lab test updated successfully');
+    console.log('LabTestService: Successfully updated lab test:', data);
+    return data;
   }
 
   async deleteLabTest(id: string): Promise<void> {
-    console.log('Deactivating lab test:', id);
+    console.log('LabTestService: Deleting lab test:', id);
+    
     const { error } = await supabase
       .from('lab_tests')
-      .update({ is_active: false })
+      .delete()
       .eq('id', id);
 
     if (error) {
-      console.error('Error deactivating lab test:', error);
+      console.error('LabTestService: Error deleting lab test:', error);
       throw error;
     }
 
-    console.log('Lab test deactivated successfully');
+    console.log('LabTestService: Successfully deleted lab test');
   }
 }
 

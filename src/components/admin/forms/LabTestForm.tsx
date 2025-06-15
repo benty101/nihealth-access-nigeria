@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { labTestService, type LabTest } from '@/services/LabTestService';
+import { labTestService, type LabTest, type CreateLabTestRequest } from '@/services/LabTestService';
 import { useToast } from '@/hooks/use-toast';
 
 const labTestSchema = z.object({
@@ -78,7 +78,20 @@ const LabTestForm = ({ isOpen, onClose, labTest, onSuccess }: LabTestFormProps) 
           description: "Lab test updated successfully",
         });
       } else {
-        await labTestService.createLabTest(data);
+        const createData: CreateLabTestRequest = {
+          name: data.name,
+          category: data.category,
+          price: data.price,
+          description: data.description,
+          sample_type: data.sample_type,
+          preparation_required: data.preparation_required,
+          turnaround_time: data.turnaround_time,
+          normal_range: data.normal_range,
+          test_code: data.test_code,
+          is_fasting_required: data.is_fasting_required,
+          is_active: data.is_active,
+        };
+        await labTestService.createLabTest(createData);
         toast({
           title: "Success", 
           description: "Lab test created successfully",

@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { medicationService, type Medication } from '@/services/MedicationService';
+import { medicationService, type Medication, type CreateMedicationRequest } from '@/services/MedicationService';
 import { useToast } from '@/hooks/use-toast';
 
 const medicationSchema = z.object({
@@ -81,7 +81,21 @@ const MedicationForm = ({ isOpen, onClose, medication, onSuccess }: MedicationFo
           description: "Medication updated successfully",
         });
       } else {
-        await medicationService.createMedication(data);
+        const createData: CreateMedicationRequest = {
+          name: data.name,
+          category: data.category,
+          price: data.price,
+          description: data.description,
+          brand: data.brand,
+          pack_size: data.pack_size,
+          dosage: data.dosage,
+          active_ingredient: data.active_ingredient,
+          storage_instructions: data.storage_instructions,
+          prescription_required: data.prescription_required,
+          in_stock: data.in_stock,
+          is_active: data.is_active,
+        };
+        await medicationService.createMedication(createData);
         toast({
           title: "Success", 
           description: "Medication created successfully",

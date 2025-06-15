@@ -21,6 +21,8 @@ const SuperAdminDashboard = () => {
     totalLabs: 0,
     totalInsurancePlans: 0,
     totalTelemedicineProviders: 0,
+    totalMedications: 0,
+    totalLabTests: 0,
     errors: [],
     loadedServices: [],
   });
