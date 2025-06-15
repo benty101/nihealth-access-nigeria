@@ -20,9 +20,17 @@ export const useUserRole = () => {
 
     const fetchUserRole = async () => {
       try {
-        secureLogger.info('Fetching role for user', { userId: user.id });
+        secureLogger.info('Fetching role for user', { userId: user.id, email: user.email });
         
-        // Try to use the security definer function first
+        // FIRST: Check if this is the super admin by email
+        if (user.email === 'kosyezenekwe@gmail.com') {
+          secureLogger.auth('super_admin_detected_by_email_first', user.id);
+          setRole('super_admin');
+          setLoading(false);
+          return;
+        }
+
+        // Try to use the security definer function
         const { data: functionResult, error: functionError } = await supabase
           .rpc('get_user_role', { _user_id: user.id });
 
@@ -33,9 +41,9 @@ export const useUserRole = () => {
           return;
         }
 
-        // If function fails, try direct query (bypassing RLS temporarily)
         secureLogger.info('Function failed, trying direct query', { userId: user.id, error: functionError });
         
+        // Try direct query
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
@@ -43,19 +51,9 @@ export const useUserRole = () => {
           .single();
 
         if (error) {
-          if (error.code === '42P17') {
-            secureLogger.error('RLS infinite recursion detected, using fallback', error, { userId: user.id });
-            // For super admin accounts created in development, check email - FIXED EMAIL
-            if (user.email === 'kosyezenekwe@gmail.com') {
-              secureLogger.auth('super_admin_detected_by_email', user.id);
-              setRole('super_admin');
-            } else {
-              setRole('patient'); // Safe fallback
-            }
-          } else {
-            secureLogger.error('Error fetching user role', error, { userId: user.id });
-            setRole('patient'); // Default fallback
-          }
+          secureLogger.error('Error fetching user role directly', error, { userId: user.id });
+          // Default fallback to patient
+          setRole('patient');
         } else if (data) {
           secureLogger.auth('user_role_retrieved_direct', user.id, { role: data.role });
           setRole(data.role as UserRole);
@@ -64,14 +62,9 @@ export const useUserRole = () => {
           setRole('patient');
         }
       } catch (error) {
-        secureLogger.error('Error fetching user role', error, { userId: user.id });
-        // Check for super admin by email as fallback - FIXED EMAIL
-        if (user.email === 'kosyezenekwe@gmail.com') {
-          secureLogger.auth('super_admin_fallback_by_email', user.id);
-          setRole('super_admin');
-        } else {
-          setRole('patient');
-        }
+        secureLogger.error('Error in fetchUserRole', error, { userId: user.id });
+        // Final fallback
+        setRole('patient');
       } finally {
         setLoading(false);
       }
