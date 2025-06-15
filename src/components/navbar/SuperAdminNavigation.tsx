@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Shield, Settings, Building2, TrendingUp } from 'lucide-react';
@@ -7,8 +6,8 @@ export const useSuperAdminNavigation = () => {
   const getNavigationItems = () => {
     return [
       { path: '/admin', label: 'System Admin', icon: Shield },
-      { path: '/hospital-dashboard', label: 'Hospital Tools', icon: Building2 },
-      { path: '/broker-dashboard', label: 'Broker Tools', icon: TrendingUp },
+      { path: '/hospital', label: 'Hospital Tools', icon: Building2 },
+      { path: '/broker', label: 'Broker Tools', icon: TrendingUp },
     ];
   };
 
