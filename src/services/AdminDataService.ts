@@ -43,8 +43,8 @@ class AdminDataService {
       loadedServices: []
     };
 
-    // Helper function to safely get count
-    const getTableCount = async (tableName: string, displayName: string): Promise<number> => {
+    // Helper function to safely get count from specific tables
+    const getTableCount = async (tableName: 'hospitals' | 'pharmacies' | 'labs' | 'insurance_plans' | 'telemedicine_providers', displayName: string): Promise<number> => {
       try {
         console.log(`AdminDataService: Fetching ${displayName} stats...`);
         const { count, error } = await supabase
