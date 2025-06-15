@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import SuperAdminDashboard from '@/components/admin/SuperAdminDashboard';
 import Navbar from '@/components/Navbar';
 
-const AdminDashboardPage = () => {
+const AdminDashboard = () => {
   const { role, loading } = useUserRole();
 
   if (loading) {
@@ -33,4 +33,4 @@ const AdminDashboardPage = () => {
   );
 };
 
-export default AdminDashboardPage;
+export default AdminDashboard;
