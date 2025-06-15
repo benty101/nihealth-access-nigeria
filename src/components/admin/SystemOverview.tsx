@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Building2, Pill, TestTube, Video, FileText, AlertTriangle, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import type { SystemStats } from '@/services/AdminDataService';
 import StatCard from './overview/StatCard';
 import ServiceStatusDetails from './overview/ServiceStatusDetails';
+import { format } from 'date-fns';
 
 interface SystemOverviewProps {
   stats: SystemStats;
@@ -66,7 +66,7 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold text-orange-800">
-                {new Date(stats.lastSyncTime).toLocaleTimeString()}
+                {stats.lastSyncTime ? format(new Date(stats.lastSyncTime), 'p') : 'N/A'}
               </div>
               <div className="text-sm text-orange-600">Last Sync</div>
             </div>
