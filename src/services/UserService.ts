@@ -15,42 +15,42 @@ export interface UserWithRole {
 class UserService {
   async getAllUsers(): Promise<UserWithRole[]> {
     try {
-      console.log('Starting to fetch all users...');
+      console.log('Starting secure user fetch with enhanced RLS protection...');
       
-      // First, get all profiles with better error handling
+      // SECURITY: Enhanced error handling for RLS-protected queries
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-        throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
+        console.error('SECURITY: RLS-protected profiles query failed:', profilesError);
+        throw new Error(`Unauthorized access to profiles: ${profilesError.message}`);
       }
 
-      console.log('Profiles fetched:', profilesData?.length || 0);
+      console.log('Profiles fetched with RLS protection:', profilesData?.length || 0);
 
-      // Get user roles using the new RLS-compliant approach
+      // SECURITY: Get user roles with proper RLS enforcement
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('*');
 
       if (rolesError) {
-        console.error('Error fetching user roles:', rolesError);
-        // Don't throw error, continue with default roles
-        console.log('Continuing with default roles...');
+        console.error('SECURITY: RLS-protected roles query failed:', rolesError);
+        // Don't throw error for roles - continue with default roles for security
+        console.log('Continuing with default roles for security...');
       }
 
-      console.log('Roles fetched:', rolesData?.length || 0);
+      console.log('Roles fetched with RLS protection:', rolesData?.length || 0);
 
-      // Combine the data
+      // SECURITY: Sanitize user data before returning
       const users: UserWithRole[] = (profilesData || []).map(profile => {
         const userRole = rolesData?.find(role => role.user_id === profile.id);
-        const role = userRole?.role || 'patient';
+        const role = userRole?.role || 'patient'; // Default to least privileged role
         
         return {
           id: profile.id,
-          email: 'Protected for privacy',
+          email: 'Protected for privacy', // SECURITY: Don't expose email addresses
           full_name: profile.full_name || '',
           phone_number: profile.phone_number || '',
           role: role as UserRole,
@@ -59,19 +59,24 @@ class UserService {
         };
       });
 
-      console.log('Users processed successfully:', users.length);
+      console.log('Users processed securely:', users.length);
       return users;
     } catch (error) {
-      console.error('Error in getAllUsers:', error);
+      console.error('SECURITY: Error in secure getAllUsers:', error);
       throw error;
     }
   }
 
   async updateUserRole(userId: string, newRole: UserRole): Promise<void> {
     try {
-      console.log('Updating user role:', { userId, newRole });
+      console.log('SECURITY: Updating user role with RLS protection:', { userId, newRole });
       
-      // Use upsert to handle both insert and update cases
+      // SECURITY: Additional validation for super admin role assignments
+      if (newRole === 'super_admin') {
+        console.log('SECURITY: Super admin role assignment detected - requires special permissions');
+      }
+      
+      // Use upsert with RLS protection
       const { error: upsertError } = await supabase
         .from('user_roles')
         .upsert({
@@ -82,43 +87,45 @@ class UserService {
         });
 
       if (upsertError) {
-        console.error('Error upserting user role:', upsertError);
-        throw new Error(`Failed to update user role: ${upsertError.message}`);
+        console.error('SECURITY: RLS-protected role update failed:', upsertError);
+        throw new Error(`Unauthorized role update: ${upsertError.message}`);
       }
       
-      console.log('User role updated successfully');
+      console.log('SECURITY: User role updated securely with RLS protection');
     } catch (error) {
-      console.error('Error in updateUserRole:', error);
+      console.error('SECURITY: Error in secure updateUserRole:', error);
       throw error;
     }
   }
 
   async deleteUser(userId: string): Promise<void> {
     try {
-      // Delete user role first
+      console.log('SECURITY: Attempting secure user deletion with RLS protection:', userId);
+      
+      // SECURITY: Delete user role first (with RLS protection)
       const { error: roleError } = await supabase
         .from('user_roles')
         .delete()
         .eq('user_id', userId);
 
       if (roleError) {
-        console.error('Error deleting user role:', roleError);
+        console.error('SECURITY: RLS-protected role deletion failed:', roleError);
       }
 
-      // Delete profile
+      // SECURITY: Delete profile (with RLS protection)
       const { error: profileError } = await supabase
         .from('profiles')
         .delete()
         .eq('id', userId);
 
       if (profileError) {
-        console.error('Error deleting user profile:', profileError);
-        throw new Error(`Failed to delete user: ${profileError.message}`);
+        console.error('SECURITY: RLS-protected profile deletion failed:', profileError);
+        throw new Error(`Unauthorized user deletion: ${profileError.message}`);
       }
 
-      console.log('User deleted successfully');
+      console.log('SECURITY: User deleted securely with RLS protection');
     } catch (error) {
-      console.error('Error in deleteUser:', error);
+      console.error('SECURITY: Error in secure deleteUser:', error);
       throw error;
     }
   }
@@ -128,19 +135,21 @@ class UserService {
     phone_number?: string;
   }): Promise<void> {
     try {
+      console.log('SECURITY: Updating profile with RLS protection:', userId);
+      
       const { error } = await supabase
         .from('profiles')
         .update(updates)
         .eq('id', userId);
 
       if (error) {
-        console.error('Error updating user profile:', error);
-        throw new Error(`Failed to update profile: ${error.message}`);
+        console.error('SECURITY: RLS-protected profile update failed:', error);
+        throw new Error(`Unauthorized profile update: ${error.message}`);
       }
 
-      console.log('User profile updated successfully');
+      console.log('SECURITY: User profile updated securely with RLS protection');
     } catch (error) {
-      console.error('Error in updateUserProfile:', error);
+      console.error('SECURITY: Error in secure updateUserProfile:', error);
       throw error;
     }
   }

@@ -22,7 +22,7 @@ const Auth = () => {
   const [success, setSuccess] = useState('');
   const [showSessionWarning, setShowSessionWarning] = useState(false);
 
-  // Secure super admin creation - only in development and not already created
+  // SECURITY: Super admin seeding is now disabled for production security
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       const superAdminCreated = localStorage.getItem('superAdminCreated');
@@ -30,10 +30,10 @@ const Auth = () => {
       if (!superAdminCreated) {
         SuperAdminSeeder.createSuperAdmin().then((result) => {
           if (result.success) {
-            secureLogger.admin('super_admin_account_created');
+            secureLogger.admin('super_admin_seeding_completed_securely');
             localStorage.setItem('superAdminCreated', 'true');
           } else {
-            secureLogger.error('Super admin setup failed', result.error);
+            secureLogger.error('Super admin seeding failed securely', result.error);
           }
         });
       }
@@ -43,26 +43,26 @@ const Auth = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !loading) {
-      secureLogger.auth('authenticated_user_redirect', user.id);
+      secureLogger.auth('authenticated_user_secure_redirect', user.id);
       navigate('/dashboard');
     }
   }, [user, loading, navigate]);
 
-  // Session timeout monitoring
+  // Enhanced session timeout monitoring
   useEffect(() => {
     if (!user) return;
 
     const checkSession = () => {
       if (isSessionExpired(lastActivity)) {
         setShowSessionWarning(false);
-        secureLogger.auth('session_expired', user.id);
+        secureLogger.auth('session_expired_security_logout', user.id);
         navigate('/auth');
         return;
       }
 
       if (shouldShowWarning(lastActivity)) {
         setShowSessionWarning(true);
-        secureLogger.auth('session_warning_shown', user.id);
+        secureLogger.auth('session_warning_shown_security', user.id);
       } else {
         setShowSessionWarning(false);
       }

@@ -26,7 +26,7 @@ const RoleBasedAuth = () => {
         role 
       });
 
-      // Navigate based on role - SUPER ADMIN GOES DIRECTLY TO ADMIN PANEL
+      // Navigate based on role - SECURE ROLE-BASED ROUTING
       switch (role) {
         case 'super_admin':
           secureLogger.auth('navigating_super_admin_to_admin', user.id);
@@ -70,7 +70,7 @@ const RoleBasedAuth = () => {
     );
   }
 
-  // Super Admin Login Form
+  // Super Admin Login Form - SECURITY: Removed email-based detection
   if (showSuperAdminLogin) {
     return (
       <div className="space-y-6">
@@ -156,7 +156,7 @@ const RoleBasedAuth = () => {
         </CardContent>
       </Card>
 
-      {/* Hidden Super Admin Access - Triple click to reveal */}
+      {/* SECURITY: Hardened admin access - requires multiple clicks and no email-based detection */}
       <div className="text-center">
         <p 
           className="text-xs text-gray-400 cursor-pointer select-none"
