@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
-import { Users, Shield, Building2, User, Search, Filter } from 'lucide-react';
+import { Users, Shield, Building2, User, Search, Filter, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { userService, type UserWithRole } from '@/services/UserService';
 import type { UserRole } from '@/hooks/useUserRole';
@@ -18,6 +20,7 @@ interface UserManagementProps {
 const UserManagement = ({ onStatsChange }: UserManagementProps) => {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const { toast } = useToast();
@@ -29,15 +32,28 @@ const UserManagement = ({ onStatsChange }: UserManagementProps) => {
 
   const loadUsers = async () => {
     try {
+      setLoading(true);
+      setError(null);
       secureLogger.admin('users_list_accessed', currentUser?.id);
+      
       const usersData = await userService.getAllUsers();
       setUsers(usersData);
+      
       secureLogger.admin('users_list_loaded', currentUser?.id, { count: usersData.length });
-    } catch (error) {
+      
+      toast({
+        title: "Success",
+        description: `Loaded ${usersData.length} users successfully`
+      });
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Failed to load users';
+      setError(errorMessage);
+      
       secureLogger.error('Error loading users', error, { adminId: currentUser?.id });
+      
       toast({
         title: "Error",
-        description: "Failed to load users",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -69,7 +85,9 @@ const UserManagement = ({ onStatsChange }: UserManagementProps) => {
         title: "Success",
         description: "User role updated successfully"
       });
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Failed to update user role';
+      
       secureLogger.error('Error updating user role', error, { 
         adminId: currentUser?.id,
         targetUserId: userId,
@@ -78,7 +96,7 @@ const UserManagement = ({ onStatsChange }: UserManagementProps) => {
       
       toast({
         title: "Error",
-        description: "Failed to update user role",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -138,6 +156,23 @@ const UserManagement = ({ onStatsChange }: UserManagementProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {error && (
+          <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {error}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={loadUsers}
+                className="ml-2 text-red-600 hover:text-red-700"
+              >
+                Retry
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
@@ -211,7 +246,7 @@ const UserManagement = ({ onStatsChange }: UserManagementProps) => {
           ))}
         </div>
 
-        {filteredUsers.length === 0 && (
+        {filteredUsers.length === 0 && !error && (
           <div className="text-center py-8">
             <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600">No users found matching your criteria</p>

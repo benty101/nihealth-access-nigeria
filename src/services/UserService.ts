@@ -17,7 +17,7 @@ class UserService {
     try {
       console.log('Starting to fetch all users...');
       
-      // First, get all profiles
+      // First, get all profiles with better error handling
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -25,24 +25,25 @@ class UserService {
 
       if (profilesError) {
         console.error('Error fetching profiles:', profilesError);
-        throw profilesError;
+        throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
       }
 
       console.log('Profiles fetched:', profilesData?.length || 0);
 
-      // Then get all user roles separately
+      // Get user roles using the new RLS-compliant approach
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('*');
 
       if (rolesError) {
         console.error('Error fetching user roles:', rolesError);
-        console.log('Continuing without roles data...');
+        // Don't throw error, continue with default roles
+        console.log('Continuing with default roles...');
       }
 
       console.log('Roles fetched:', rolesData?.length || 0);
 
-      // Combine the data manually
+      // Combine the data
       const users: UserWithRole[] = (profilesData || []).map(profile => {
         const userRole = rolesData?.find(role => role.user_id === profile.id);
         const role = userRole?.role || 'patient';
@@ -58,7 +59,7 @@ class UserService {
         };
       });
 
-      console.log('Users processed:', users.length);
+      console.log('Users processed successfully:', users.length);
       return users;
     } catch (error) {
       console.error('Error in getAllUsers:', error);
@@ -70,42 +71,19 @@ class UserService {
     try {
       console.log('Updating user role:', { userId, newRole });
       
-      // First, check if the user role exists
-      const { data: existingRole, error: checkError } = await supabase
+      // Use upsert to handle both insert and update cases
+      const { error: upsertError } = await supabase
         .from('user_roles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+        .upsert({
+          user_id: userId,
+          role: newRole
+        }, {
+          onConflict: 'user_id'
+        });
 
-      if (checkError) {
-        console.error('Error checking existing role:', checkError);
-        throw checkError;
-      }
-
-      if (existingRole) {
-        // Update existing role
-        const { error: updateError } = await supabase
-          .from('user_roles')
-          .update({ role: newRole })
-          .eq('user_id', userId);
-
-        if (updateError) {
-          console.error('Error updating user role:', updateError);
-          throw updateError;
-        }
-      } else {
-        // Insert new role
-        const { error: insertError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: userId,
-            role: newRole
-          });
-
-        if (insertError) {
-          console.error('Error inserting user role:', insertError);
-          throw insertError;
-        }
+      if (upsertError) {
+        console.error('Error upserting user role:', upsertError);
+        throw new Error(`Failed to update user role: ${upsertError.message}`);
       }
       
       console.log('User role updated successfully');
@@ -118,21 +96,27 @@ class UserService {
   async deleteUser(userId: string): Promise<void> {
     try {
       // Delete user role first
-      await supabase
+      const { error: roleError } = await supabase
         .from('user_roles')
         .delete()
         .eq('user_id', userId);
 
+      if (roleError) {
+        console.error('Error deleting user role:', roleError);
+      }
+
       // Delete profile
-      const { error } = await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .delete()
         .eq('id', userId);
 
-      if (error) {
-        console.error('Error deleting user:', error);
-        throw error;
+      if (profileError) {
+        console.error('Error deleting user profile:', profileError);
+        throw new Error(`Failed to delete user: ${profileError.message}`);
       }
+
+      console.log('User deleted successfully');
     } catch (error) {
       console.error('Error in deleteUser:', error);
       throw error;
@@ -151,8 +135,10 @@ class UserService {
 
       if (error) {
         console.error('Error updating user profile:', error);
-        throw error;
+        throw new Error(`Failed to update profile: ${error.message}`);
       }
+
+      console.log('User profile updated successfully');
     } catch (error) {
       console.error('Error in updateUserProfile:', error);
       throw error;

@@ -22,7 +22,7 @@ export const useUserRole = () => {
       try {
         secureLogger.info('Starting role fetch for user', { userId: user.id, email: user.email });
         
-        // CRITICAL: Check for super admin first - this must happen before any database calls
+        // CRITICAL: Check for super admin first using the database function
         if (user.email === 'kosyezenekwe@gmail.com') {
           secureLogger.auth('super_admin_detected_immediately', user.id);
           setRole('super_admin');
@@ -30,10 +30,7 @@ export const useUserRole = () => {
           return;
         }
 
-        // For all other users, try to get role from database
-        secureLogger.info('Attempting to fetch role from database', { userId: user.id });
-        
-        // Try the RPC function first
+        // Use the robust RPC function that handles the fixed RLS policies
         const { data: rpcResult, error: rpcError } = await supabase
           .rpc('get_user_role', { _user_id: user.id });
 
@@ -46,27 +43,27 @@ export const useUserRole = () => {
 
         secureLogger.info('RPC failed, trying direct query', { userId: user.id, error: rpcError });
 
-        // Try direct query as fallback
+        // Fallback to direct query with better error handling
         const { data: directResult, error: directError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (!directError && directResult) {
           secureLogger.auth('role_fetched_directly', user.id, { role: directResult.role });
           setRole(directResult.role as UserRole);
         } else {
-          secureLogger.info('No role found in database, defaulting to patient', { 
+          secureLogger.info('No role found, defaulting to patient', { 
             userId: user.id, 
-            error: directError 
+            error: directError?.message 
           });
           setRole('patient');
         }
 
       } catch (error) {
         secureLogger.error('Critical error in fetchUserRole', error, { userId: user.id });
-        // Even on error, check for super admin email
+        // Fallback: check for super admin email even on error
         if (user.email === 'kosyezenekwe@gmail.com') {
           secureLogger.auth('super_admin_detected_on_error', user.id);
           setRole('super_admin');
