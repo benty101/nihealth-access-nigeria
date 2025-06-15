@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { TestTube, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { TestTube, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { labService, type Lab } from '@/services/LabService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,6 +15,7 @@ interface LabManagementProps {
 const LabManagement = ({ onStatsChange }: LabManagementProps) => {
   const [labs, setLabs] = useState<Lab[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
@@ -23,13 +25,21 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
 
   const loadLabs = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      console.log('LabManagement: Loading labs...');
+      
       const labsData = await labService.getAllLabs();
       setLabs(labsData);
+      console.log('LabManagement: Successfully loaded', labsData.length, 'labs');
+      
     } catch (error) {
-      console.error('Error loading labs:', error);
+      console.error('LabManagement: Error loading labs:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(`Failed to load labs: ${errorMessage}`);
       toast({
         title: "Error",
-        description: "Failed to load labs",
+        description: "Failed to load labs. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -42,7 +52,6 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
       await labService.updateLab(id, { is_active: !currentStatus });
       await loadLabs();
       
-      // Trigger stats refresh if callback provided
       if (onStatsChange) {
         await onStatsChange();
       }
@@ -52,7 +61,7 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
         description: `Lab ${!currentStatus ? 'activated' : 'deactivated'} successfully`
       });
     } catch (error) {
-      console.error('Error updating lab status:', error);
+      console.error('LabManagement: Error updating lab status:', error);
       toast({
         title: "Error",
         description: "Failed to update lab status",
@@ -74,6 +83,24 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading labs...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="py-16">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadLabs} variant="outline">
+              Try Again
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -111,6 +138,9 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
               className="pl-10"
             />
           </div>
+          <Badge variant="secondary">
+            {filteredLabs.length} found
+          </Badge>
         </div>
 
         {/* Labs Grid */}
@@ -191,7 +221,9 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
         {filteredLabs.length === 0 && (
           <div className="text-center py-8">
             <TestTube className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No labs found matching your criteria</p>
+            <p className="text-gray-600">
+              {searchTerm ? 'No labs found matching your criteria' : 'No labs available'}
+            </p>
           </div>
         )}
       </CardContent>

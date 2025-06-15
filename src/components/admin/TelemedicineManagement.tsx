@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-import { Video, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Video, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { telemedicineService, type TelemedicineProvider } from '@/services/TelemedicineService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,6 +15,7 @@ interface TelemedicineManagementProps {
 const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) => {
   const [providers, setProviders] = useState<TelemedicineProvider[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
@@ -24,13 +25,21 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
 
   const loadProviders = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      console.log('TelemedicineManagement: Loading providers...');
+      
       const providersData = await telemedicineService.getAllProviders();
       setProviders(providersData);
+      console.log('TelemedicineManagement: Successfully loaded', providersData.length, 'providers');
+      
     } catch (error) {
-      console.error('Error loading telemedicine providers:', error);
+      console.error('TelemedicineManagement: Error loading providers:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(`Failed to load telemedicine providers: ${errorMessage}`);
       toast({
         title: "Error",
-        description: "Failed to load telemedicine providers",
+        description: "Failed to load telemedicine providers. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -43,7 +52,6 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
       await telemedicineService.updateProvider(id, { is_active: !currentStatus });
       await loadProviders();
       
-      // Trigger stats refresh if callback provided
       if (onStatsChange) {
         await onStatsChange();
       }
@@ -53,7 +61,7 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
         description: `Provider ${!currentStatus ? 'activated' : 'deactivated'} successfully`
       });
     } catch (error) {
-      console.error('Error updating provider status:', error);
+      console.error('TelemedicineManagement: Error updating provider status:', error);
       toast({
         title: "Error",
         description: "Failed to update provider status",
@@ -74,6 +82,24 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading telemedicine providers...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="py-16">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadProviders} variant="outline">
+              Try Again
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -111,6 +137,9 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
               className="pl-10"
             />
           </div>
+          <Badge variant="secondary">
+            {filteredProviders.length} found
+          </Badge>
         </div>
 
         {/* Providers Grid */}
@@ -191,7 +220,9 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
         {filteredProviders.length === 0 && (
           <div className="text-center py-8">
             <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No telemedicine providers found matching your criteria</p>
+            <p className="text-gray-600">
+              {searchTerm ? 'No telemedicine providers found matching your criteria' : 'No telemedicine providers available'}
+            </p>
           </div>
         )}
       </CardContent>

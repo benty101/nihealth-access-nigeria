@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Pill, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Pill, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { pharmacyService, type Pharmacy } from '@/services/PharmacyService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,6 +15,7 @@ interface PharmacyManagementProps {
 const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
@@ -23,13 +25,21 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
 
   const loadPharmacies = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      console.log('PharmacyManagement: Loading pharmacies...');
+      
       const pharmaciesData = await pharmacyService.getAllPharmacies();
       setPharmacies(pharmaciesData);
+      console.log('PharmacyManagement: Successfully loaded', pharmaciesData.length, 'pharmacies');
+      
     } catch (error) {
-      console.error('Error loading pharmacies:', error);
+      console.error('PharmacyManagement: Error loading pharmacies:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(`Failed to load pharmacies: ${errorMessage}`);
       toast({
         title: "Error",
-        description: "Failed to load pharmacies",
+        description: "Failed to load pharmacies. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -42,7 +52,6 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
       await pharmacyService.updatePharmacy(id, { is_active: !currentStatus });
       await loadPharmacies();
       
-      // Trigger stats refresh if callback provided
       if (onStatsChange) {
         await onStatsChange();
       }
@@ -52,7 +61,7 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
         description: `Pharmacy ${!currentStatus ? 'activated' : 'deactivated'} successfully`
       });
     } catch (error) {
-      console.error('Error updating pharmacy status:', error);
+      console.error('PharmacyManagement: Error updating pharmacy status:', error);
       toast({
         title: "Error",
         description: "Failed to update pharmacy status",
@@ -74,6 +83,24 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading pharmacies...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="py-16">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <div className="flex justify-center mt-4">
+            <Button onClick={loadPharmacies} variant="outline">
+              Try Again
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -111,6 +138,9 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
               className="pl-10"
             />
           </div>
+          <Badge variant="secondary">
+            {filteredPharmacies.length} found
+          </Badge>
         </div>
 
         {/* Pharmacies Grid */}
@@ -191,7 +221,9 @@ const PharmacyManagement = ({ onStatsChange }: PharmacyManagementProps) => {
         {filteredPharmacies.length === 0 && (
           <div className="text-center py-8">
             <Pill className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No pharmacies found matching your criteria</p>
+            <p className="text-gray-600">
+              {searchTerm ? 'No pharmacies found matching your criteria' : 'No pharmacies available'}
+            </p>
           </div>
         )}
       </CardContent>
