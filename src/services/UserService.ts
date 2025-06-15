@@ -2,6 +2,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { UserRole } from '@/hooks/useUserRole';
 
+export type { UserRole };
+
 export interface UserWithRole {
   id: string;
   email: string;
