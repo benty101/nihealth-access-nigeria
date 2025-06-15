@@ -23,8 +23,16 @@ const SuperAdminDashboard = () => {
     totalTelemedicineProviders: 0,
     totalMedications: 0,
     totalLabTests: 0,
+    activeHospitals: 0,
+    activePharmacies: 0,
+    activeLabs: 0,
+    activeInsurancePlans: 0,
+    activeTelemedicineProviders: 0,
+    activeMedications: 0,
+    activeLabTests: 0,
     errors: [],
     loadedServices: [],
+    lastSyncTime: new Date().toISOString(),
   });
   const [loading, setLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
@@ -35,7 +43,7 @@ const SuperAdminDashboard = () => {
   }, []);
 
   const initializeDashboard = async () => {
-    console.log('SuperAdminDashboard: Initializing dashboard...');
+    console.log('SuperAdminDashboard: Initializing comprehensive dashboard with frontend sync...');
     setLoading(true);
     setConnectionStatus('checking');
 
@@ -56,7 +64,10 @@ const SuperAdminDashboard = () => {
 
       setConnectionStatus('connected');
       
-      // Fetch system statistics
+      // Sync frontend data first
+      await adminDataService.syncFrontendData();
+      
+      // Fetch comprehensive system statistics
       const systemStats = await adminDataService.getSystemStats();
       setStats(systemStats);
 
@@ -64,25 +75,26 @@ const SuperAdminDashboard = () => {
       if (systemStats.errors.length > 0) {
         toast({
           title: "Partial System Load",
-          description: `${systemStats.loadedServices.length}/5 services loaded. ${systemStats.errors.length} error(s) detected.`,
+          description: `${systemStats.loadedServices.length}/7 services loaded. ${systemStats.errors.length} error(s) detected.`,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "System Ready",
-          description: "All services loaded successfully. Dashboard is fully operational.",
+          title: "System Ready - Frontend Synced",
+          description: "All services loaded and synced with frontend data. Dashboard reflects real listings.",
         });
       }
 
-      console.log('SuperAdminDashboard: Dashboard initialization complete', {
+      console.log('SuperAdminDashboard: Dashboard initialization complete with frontend sync', {
         servicesLoaded: systemStats.loadedServices.length,
         errorsCount: systemStats.errors.length,
-        totalData: {
-          hospitals: systemStats.totalHospitals,
-          pharmacies: systemStats.totalPharmacies,
-          labs: systemStats.totalLabs,
-          insurance: systemStats.totalInsurancePlans,
-          telemedicine: systemStats.totalTelemedicineProviders
+        frontendData: {
+          activeHospitals: `${systemStats.activeHospitals}/${systemStats.totalHospitals}`,
+          activePharmacies: `${systemStats.activePharmacies}/${systemStats.totalPharmacies}`,
+          activeLabs: `${systemStats.activeLabs}/${systemStats.totalLabs}`,
+          activeMedications: `${systemStats.activeMedications}/${systemStats.totalMedications}`,
+          activeLabTests: `${systemStats.activeLabTests}/${systemStats.totalLabTests}`,
+          lastSync: systemStats.lastSyncTime
         }
       });
 
@@ -91,7 +103,7 @@ const SuperAdminDashboard = () => {
       setConnectionStatus('disconnected');
       toast({
         title: "System Error",
-        description: "Failed to initialize dashboard. Please refresh the page or contact support.",
+        description: "Failed to initialize dashboard or sync frontend data. Please refresh the page.",
         variant: "destructive",
       });
     } finally {
@@ -100,10 +112,10 @@ const SuperAdminDashboard = () => {
   };
 
   const handleRefresh = async () => {
-    console.log('SuperAdminDashboard: Manual refresh triggered');
+    console.log('SuperAdminDashboard: Manual refresh with frontend sync triggered');
     toast({
-      title: "Refreshing Data",
-      description: "Updating all service statistics...",
+      title: "Syncing Frontend Data",
+      description: "Updating all statistics to reflect current frontend listings...",
     });
     await initializeDashboard();
   };
@@ -142,7 +154,7 @@ const SuperAdminDashboard = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">System Administration</h1>
-                <p className="text-gray-600">Manage all platform services and configurations</p>
+                <p className="text-gray-600">Real-time management of all frontend listings and platform services</p>
               </div>
             </div>
             <Button 
@@ -152,7 +164,7 @@ const SuperAdminDashboard = () => {
               className="flex items-center gap-2"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh Data
+              Sync Frontend Data
             </Button>
           </div>
         </div>

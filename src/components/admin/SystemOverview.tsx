@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Building2, Shield, Pill, TestTube, Video, FileText, Users, AlertTriangle } from 'lucide-react';
+import { Building2, Shield, Pill, TestTube, Video, FileText, Users, AlertTriangle, Activity, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -31,8 +31,76 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
     );
   }
 
+  const StatCard = ({ title, icon: Icon, total, active, description }: {
+    title: string;
+    icon: any;
+    total: number;
+    active: number;
+    description: string;
+  }) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{active.toLocaleString()}</div>
+        <p className="text-xs text-muted-foreground mb-2">
+          {description} ({total.toLocaleString()} total)
+        </p>
+        <div className="flex items-center gap-2">
+          <Badge variant={active > 0 ? "default" : "secondary"} className="text-xs">
+            {active > 0 ? 'Active' : 'None Active'}
+          </Badge>
+          <span className="text-xs text-gray-500">
+            {total > 0 ? `${Math.round((active/total) * 100)}% active` : 'No data'}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="space-y-6">
+      {/* Frontend Sync Status */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-800">
+            <Database className="h-5 w-5" />
+            Frontend Data Sync Status
+          </CardTitle>
+          <CardDescription className="text-blue-600">
+            Real-time reflection of all frontend listings and data
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <div className="text-lg font-semibold text-blue-800">{stats.loadedServices.length}/7</div>
+              <div className="text-sm text-blue-600">Services Active</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-semibold text-green-800">
+                {stats.activePharmacies + stats.activeHospitals + stats.activeLabs}
+              </div>
+              <div className="text-sm text-green-600">Active Providers</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-semibold text-purple-800">
+                {stats.activeMedications + stats.activeLabTests}
+              </div>
+              <div className="text-sm text-purple-600">Active Services</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-semibold text-orange-800">
+                {new Date(stats.lastSyncTime).toLocaleTimeString()}
+              </div>
+              <div className="text-sm text-orange-600">Last Sync</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Error Alerts */}
       {stats.errors.length > 0 && (
         <Alert variant="destructive">
@@ -54,119 +122,100 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
           {stats.errors.length === 0 ? 'All Systems Operational' : `${stats.errors.length} Service(s) Down`}
         </Badge>
         <Badge variant="outline" className="text-sm">
-          {stats.loadedServices.length}/7 Services Active
+          Frontend Data: {stats.loadedServices.length}/7 Services Synced
         </Badge>
       </div>
 
-      {/* Statistics Grid */}
+      {/* Statistics Grid - Reflecting Frontend Data */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hospitals</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalHospitals.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Medical facilities</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Hospitals"
+          icon={Building2}
+          total={stats.totalHospitals}
+          active={stats.activeHospitals}
+          description="Active medical facilities"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pharmacies</CardTitle>
-            <Pill className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPharmacies.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Drug stores</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Pharmacies"
+          icon={Pill}
+          total={stats.totalPharmacies}
+          active={stats.activePharmacies}
+          description="Active drug stores"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Medications</CardTitle>
-            <Pill className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalMedications.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Available drugs</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Medications"
+          icon={Pill}
+          total={stats.totalMedications}
+          active={stats.activeMedications}
+          description="Available drugs"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Labs</CardTitle>
-            <TestTube className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalLabs.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Testing centers</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Labs"
+          icon={TestTube}
+          total={stats.totalLabs}
+          active={stats.activeLabs}
+          description="Active testing centers"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lab Tests</CardTitle>
-            <TestTube className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalLabTests.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Available tests</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Lab Tests"
+          icon={TestTube}
+          total={stats.totalLabTests}
+          active={stats.activeLabTests}
+          description="Available tests"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Insurance Plans</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalInsurancePlans.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Available plans</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Insurance Plans"
+          icon={FileText}
+          total={stats.totalInsurancePlans}
+          active={stats.activeInsurancePlans}
+          description="Available plans"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Telemedicine</CardTitle>
-            <Video className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalTelemedicineProviders.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Online doctors</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Telemedicine"
+          icon={Video}
+          total={stats.totalTelemedicineProviders}
+          active={stats.activeTelemedicineProviders}
+          description="Online doctors"
+        />
       </div>
 
       {/* Service Status Details */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Service Status
+            <Activity className="h-5 w-5" />
+            Live Frontend Data Status
           </CardTitle>
-          <CardDescription>Real-time status of all platform services</CardDescription>
+          <CardDescription>Real-time status reflecting all frontend listings</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { name: 'Hospitals', key: 'hospitals', count: stats.totalHospitals },
-              { name: 'Pharmacies', key: 'pharmacies', count: stats.totalPharmacies },
-              { name: 'Medications', key: 'medications', count: stats.totalMedications },
-              { name: 'Labs', key: 'labs', count: stats.totalLabs },
-              { name: 'Lab Tests', key: 'lab_tests', count: stats.totalLabTests },
-              { name: 'Insurance', key: 'insurance_plans', count: stats.totalInsurancePlans },
-              { name: 'Telemedicine', key: 'telemedicine_providers', count: stats.totalTelemedicineProviders },
+              { name: 'Hospitals', key: 'hospitals', total: stats.totalHospitals, active: stats.activeHospitals },
+              { name: 'Pharmacies', key: 'pharmacies', total: stats.totalPharmacies, active: stats.activePharmacies },
+              { name: 'Medications', key: 'medications', total: stats.totalMedications, active: stats.activeMedications },
+              { name: 'Labs', key: 'labs', total: stats.totalLabs, active: stats.activeLabs },
+              { name: 'Lab Tests', key: 'lab_tests', total: stats.totalLabTests, active: stats.activeLabTests },
+              { name: 'Insurance', key: 'insurance_plans', total: stats.totalInsurancePlans, active: stats.activeInsurancePlans },
+              { name: 'Telemedicine', key: 'telemedicine_providers', total: stats.totalTelemedicineProviders, active: stats.activeTelemedicineProviders },
             ].map((service) => (
               <div key={service.key} className="flex items-center justify-between p-3 border rounded-lg">
                 <span className="font-medium">{service.name}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">{service.count} records</span>
+                  <span className="text-sm text-gray-600">
+                    {service.active}/{service.total} active
+                  </span>
                   <Badge 
                     variant={stats.loadedServices.includes(service.key) ? "default" : "destructive"}
                     className="text-xs"
                   >
-                    {stats.loadedServices.includes(service.key) ? 'Online' : 'Error'}
+                    {stats.loadedServices.includes(service.key) ? 'Synced' : 'Error'}
                   </Badge>
                 </div>
               </div>

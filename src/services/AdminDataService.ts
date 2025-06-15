@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { frontendDataService } from './FrontendDataService';
 
 export interface SystemStats {
   totalHospitals: number;
@@ -9,8 +10,16 @@ export interface SystemStats {
   totalTelemedicineProviders: number;
   totalMedications: number;
   totalLabTests: number;
+  activeHospitals: number;
+  activePharmacies: number;
+  activeLabs: number;
+  activeInsurancePlans: number;
+  activeTelemedicineProviders: number;
+  activeMedications: number;
+  activeLabTests: number;
   errors: string[];
   loadedServices: string[];
+  lastSyncTime: string;
 }
 
 class AdminDataService {
@@ -33,7 +42,7 @@ class AdminDataService {
   }
 
   async getSystemStats(): Promise<SystemStats> {
-    console.log('AdminDataService: Starting system statistics collection...');
+    console.log('AdminDataService: Starting comprehensive system statistics collection...');
     
     const stats: SystemStats = {
       totalHospitals: 0,
@@ -43,8 +52,16 @@ class AdminDataService {
       totalTelemedicineProviders: 0,
       totalMedications: 0,
       totalLabTests: 0,
+      activeHospitals: 0,
+      activePharmacies: 0,
+      activeLabs: 0,
+      activeInsurancePlans: 0,
+      activeTelemedicineProviders: 0,
+      activeMedications: 0,
+      activeLabTests: 0,
       errors: [],
       loadedServices: [],
+      lastSyncTime: new Date().toISOString(),
     };
 
     const services = [
@@ -59,69 +76,90 @@ class AdminDataService {
 
     for (const service of services) {
       try {
-        console.log(`AdminDataService: Fetching ${service.name} count...`);
+        console.log(`AdminDataService: Fetching ${service.name} statistics...`);
         
-        const { count, error } = await supabase
-          .from(service.table)
-          .select('*', { count: 'exact', head: true });
+        // Get total count
+        const totalCount = await frontendDataService.getTotalCount(service.table);
+        
+        // Get active count
+        const activeCount = await frontendDataService.getActiveCount(service.table);
 
-        if (error) {
-          console.error(`AdminDataService: Error fetching ${service.name}:`, error);
-          stats.errors.push(`Failed to load ${service.name}: ${error.message}`);
-          continue;
-        }
-
-        const totalCount = count || 0;
-        console.log(`AdminDataService: ${service.name} count: ${totalCount}`);
+        console.log(`AdminDataService: ${service.name} - Total: ${totalCount}, Active: ${activeCount}`);
 
         // Map counts to the correct properties
         switch (service.name) {
           case 'hospitals':
             stats.totalHospitals = totalCount;
+            stats.activeHospitals = activeCount;
             break;
           case 'pharmacies':
             stats.totalPharmacies = totalCount;
+            stats.activePharmacies = activeCount;
             break;
           case 'labs':
             stats.totalLabs = totalCount;
+            stats.activeLabs = activeCount;
             break;
           case 'insurance_plans':
             stats.totalInsurancePlans = totalCount;
+            stats.activeInsurancePlans = activeCount;
             break;
           case 'telemedicine_providers':
             stats.totalTelemedicineProviders = totalCount;
+            stats.activeTelemedicineProviders = activeCount;
             break;
           case 'medications':
             stats.totalMedications = totalCount;
+            stats.activeMedications = activeCount;
             break;
           case 'lab_tests':
             stats.totalLabTests = totalCount;
+            stats.activeLabTests = activeCount;
             break;
         }
 
         stats.loadedServices.push(service.name);
         
       } catch (error) {
-        console.error(`AdminDataService: Unexpected error loading ${service.name}:`, error);
-        stats.errors.push(`Unexpected error loading ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.error(`AdminDataService: Error loading ${service.name}:`, error);
+        stats.errors.push(`Failed to load ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
-    console.log('AdminDataService: System statistics collection complete', {
+    console.log('AdminDataService: Comprehensive system statistics collection complete', {
       loadedServices: stats.loadedServices.length,
       errors: stats.errors.length,
-      stats: {
-        hospitals: stats.totalHospitals,
-        pharmacies: stats.totalPharmacies,
-        labs: stats.totalLabs,
-        insurance: stats.totalInsurancePlans,
-        telemedicine: stats.totalTelemedicineProviders,
-        medications: stats.totalMedications,
-        labTests: stats.totalLabTests
+      totalStats: {
+        hospitals: `${stats.activeHospitals}/${stats.totalHospitals}`,
+        pharmacies: `${stats.activePharmacies}/${stats.totalPharmacies}`,
+        labs: `${stats.activeLabs}/${stats.totalLabs}`,
+        insurance: `${stats.activeInsurancePlans}/${stats.totalInsurancePlans}`,
+        telemedicine: `${stats.activeTelemedicineProviders}/${stats.totalTelemedicineProviders}`,
+        medications: `${stats.activeMedications}/${stats.totalMedications}`,
+        labTests: `${stats.activeLabTests}/${stats.totalLabTests}`
       }
     });
 
     return stats;
+  }
+
+  async syncFrontendData(): Promise<void> {
+    console.log('AdminDataService: Syncing frontend data...');
+    try {
+      const syncData = await frontendDataService.syncAllFrontendData();
+      console.log('AdminDataService: Frontend data sync complete:', {
+        pharmacies: syncData.pharmacies.length,
+        hospitals: syncData.hospitals.length,
+        labs: syncData.labs.length,
+        medications: syncData.medications.length,
+        labTests: syncData.labTests.length,
+        insurance: syncData.insurancePlans.length,
+        telemedicine: syncData.telemedicineProviders.length
+      });
+    } catch (error) {
+      console.error('AdminDataService: Frontend data sync failed:', error);
+      throw error;
+    }
   }
 }
 
