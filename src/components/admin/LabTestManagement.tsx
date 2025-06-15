@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TestTube, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { labTestService, type LabTest } from '@/services/LabTestService';
+import { adminService, type LabTest } from '@/services/AdminService';
+import { labTestService } from '@/services/LabTestService';
 import { useToast } from '@/hooks/use-toast';
 import LabTestForm from './forms/LabTestForm';
 import LabTestTableRow from './labtest/LabTestTableRow';
@@ -33,11 +33,11 @@ const LabTestManagement = ({ onStatsChange }: LabTestManagementProps) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('LabTestManagement: Loading lab tests...');
+      console.log('LabTestManagement: Loading all lab tests for admin...');
       
-      const labTestsData = await labTestService.getAllLabTests();
+      const labTestsData = await adminService.getAllLabTests();
       setLabTests(labTestsData);
-      console.log('LabTestManagement: Successfully loaded', labTestsData.length, 'lab tests');
+      console.log('LabTestManagement: Successfully loaded', labTestsData.length, 'lab tests for admin');
       
     } catch (error) {
       console.error('LabTestManagement: Error loading lab tests:', error);

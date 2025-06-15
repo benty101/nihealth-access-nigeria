@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TestTube, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { labService, type Lab } from '@/services/LabService';
+import { adminService, type Lab } from '@/services/AdminService';
+import { labService } from '@/services/LabService';
 import { useToast } from '@/hooks/use-toast';
 import LabCard from './lab/LabCard';
 
@@ -29,11 +29,11 @@ const LabManagement = ({ onStatsChange }: LabManagementProps) => {
     try {
       setLoading(true);
       setError(null);
-      console.log('LabManagement: Loading labs...');
+      console.log('LabManagement: Loading all labs for admin...');
       
-      const labsData = await labService.getAllLabs();
+      const labsData = await adminService.getAllLabs();
       setLabs(labsData);
-      console.log('LabManagement: Successfully loaded', labsData.length, 'labs');
+      console.log('LabManagement: Successfully loaded', labsData.length, 'labs for admin');
       
     } catch (error) {
       console.error('LabManagement: Error loading labs:', error);

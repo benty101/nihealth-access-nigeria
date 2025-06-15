@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { telemedicineService, type TelemedicineProvider } from '@/services/TelemedicineService';
+import { adminService, type TelemedicineProvider } from '@/services/AdminService';
+import { telemedicineService } from '@/services/TelemedicineService';
 import { useToast } from '@/hooks/use-toast';
 
 interface TelemedicineManagementProps {
@@ -27,11 +28,11 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
     try {
       setLoading(true);
       setError(null);
-      console.log('TelemedicineManagement: Loading providers...');
+      console.log('TelemedicineManagement: Loading all providers for admin...');
       
-      const providersData = await telemedicineService.getAllProviders();
+      const providersData = await adminService.getAllTelemedicineProviders();
       setProviders(providersData);
-      console.log('TelemedicineManagement: Successfully loaded', providersData.length, 'providers');
+      console.log('TelemedicineManagement: Successfully loaded', providersData.length, 'providers for admin');
       
     } catch (error) {
       console.error('TelemedicineManagement: Error loading providers:', error);

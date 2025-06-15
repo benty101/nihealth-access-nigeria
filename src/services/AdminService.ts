@@ -101,6 +101,22 @@ export interface Medication {
   updated_at: string;
 }
 
+export interface LabTest {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  description?: string;
+  test_code?: string;
+  sample_type?: string;
+  turnaround_time?: string;
+  is_fasting_required: boolean;
+  lab_id?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 class AdminService {
   // Hospital Management
   async getAllHospitals(): Promise<Hospital[]> {
@@ -285,6 +301,17 @@ class AdminService {
       .eq('id', id);
     
     if (error) throw error;
+  }
+
+  // Lab Test Management
+  async getAllLabTests(): Promise<LabTest[]> {
+    const { data, error } = await supabase
+      .from('lab_tests')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
   }
 
   // Insurance Management

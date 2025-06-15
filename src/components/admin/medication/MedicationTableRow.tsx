@@ -4,7 +4,7 @@ import { Edit, Trash2 } from 'lucide-react';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { Medication } from '@/services/MedicationService';
+import type { Medication } from '@/services/AdminService';
 
 interface MedicationTableRowProps {
   medication: Medication;
