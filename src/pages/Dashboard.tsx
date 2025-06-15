@@ -9,6 +9,7 @@ import HealthReminders from '@/components/dashboard/HealthReminders';
 import RecentActivity from '@/components/dashboard/RecentActivity';
 import PersonalizedQuickActions from '@/components/dashboard/PersonalizedQuickActions';
 import PersonalizedRecommendations from '@/components/dashboard/PersonalizedRecommendations';
+import PersonalizedInsights from '@/components/dashboard/PersonalizedInsights';
 import ProgressTracker from '@/components/dashboard/ProgressTracker';
 import SmartRecommendations from '@/components/dashboard/SmartRecommendations';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
@@ -36,6 +37,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-3 space-y-8">
+            <PersonalizedInsights onboardingData={onboardingData} />
             <ProgressTracker onboardingData={onboardingData} />
             <SmartRecommendations onboardingData={onboardingData} />
             <HealthStats />

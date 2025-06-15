@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,9 +89,13 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     ]
   };
 
+  // All 36 Nigerian states
   const nigerianStates = [
-    'Lagos', 'Abuja', 'Kano', 'Rivers', 'Oyo', 'Kaduna', 'Anambra', 
-    'Delta', 'Edo', 'Ogun', 'Cross River', 'Enugu', 'Plateau', 'Other'
+    'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue',
+    'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu',
+    'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi',
+    'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo',
+    'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara', 'FCT (Abuja)'
   ];
 
   const handleLifeStageSelect = (stage: string) => {
@@ -249,12 +252,12 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               </p>
 
               <RadioGroup value={formData.location} onValueChange={handleLocationSelect}>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-96 overflow-y-auto">
                   {nigerianStates.map((state, index) => (
                     <div 
                       key={state} 
                       className="animate-fade-in"
-                      style={{ animationDelay: `${index * 50}ms` }}
+                      style={{ animationDelay: `${index * 30}ms` }}
                     >
                       <Label
                         htmlFor={state}
@@ -265,7 +268,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                         }`}
                       >
                         <RadioGroupItem value={state} id={state} />
-                        <span className="font-medium">{state}</span>
+                        <span className="font-medium text-sm">{state}</span>
                       </Label>
                     </div>
                   ))}
