@@ -5,26 +5,39 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Menu, X, User, Shield, Building2 } from 'lucide-react';
+import { Menu, X, User, Shield, Building2, Home, Calendar, FileText, MapPin, Heart } from 'lucide-react';
 
 interface MobileMenuProps {
-  items: Array<{
+  items?: Array<{
     path: string;
     label: string;
     icon?: React.ComponentType<{ className?: string }>;
   }>;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
+const MobileMenu: React.FC<MobileMenuProps> = ({ items = [] }) => {
   const { user, signOut } = useAuth();
   const { role } = useUserRole();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  // Default navigation items when no items are provided or user is not logged in
+  const defaultNavItems = [
+    { path: '/', label: 'Home', icon: Home },
+    { path: '/hospitals', label: 'Hospitals', icon: MapPin },
+    { path: '/insurance', label: 'Insurance', icon: Shield },
+    { path: '/resources', label: 'Resources', icon: FileText },
+    { path: '/emergency', label: 'Emergency', icon: Heart },
+  ];
+
+  // Use provided items or fall back to default navigation
+  const navigationItems = items.length > 0 ? items : (user ? [] : defaultNavItems);
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+    setIsMenuOpen(false);
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -53,7 +66,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button - always visible */}
       <div className="md:hidden">
         <Button
           variant="ghost"
@@ -64,48 +77,83 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
         </Button>
       </div>
 
-      {/* Mobile Navigation */}
-      {isMenuOpen && user && (
-        <div className="md:hidden py-4 border-t">
-          <div className="space-y-2">
-            {items.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
-                  isActive(item.path)
-                    ? 'bg-teal-50 text-teal-600'
-                    : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.icon && <item.icon className="h-4 w-4" />}
-                {item.label}
-              </Link>
-            ))}
-            <div className="px-3 py-2 border-t mt-4 pt-4">
-              {role && (
-                <Badge className={`${getRoleColor(role)} text-xs flex items-center gap-1 mb-2 w-fit`}>
-                  {getRoleIcon(role)}
-                  {role.replace('_', ' ').toUpperCase()}
-                </Badge>
-              )}
-              <Link
-                to="/profile"
-                className="block py-2 text-sm font-medium text-gray-700"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Profile
-              </Link>
-              <button
-                onClick={() => {
-                  handleSignOut();
-                  setIsMenuOpen(false);
-                }}
-                className="block py-2 text-sm font-medium text-gray-700"
-              >
-                Sign Out
-              </button>
+      {/* Mobile Navigation Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div 
+            className="fixed inset-0 bg-black/50" 
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg overflow-y-auto">
+            <div className="p-4">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg font-semibold">Menu</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Navigation Items */}
+              <div className="space-y-2">
+                {navigationItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+                      isActive(item.path)
+                        ? 'bg-teal-50 text-teal-600'
+                        : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.icon && <item.icon className="h-4 w-4" />}
+                    {item.label}
+                  </Link>
+                ))}
+
+                {/* User-specific actions */}
+                {user && (
+                  <div className="border-t mt-4 pt-4">
+                    {role && (
+                      <Badge className={`${getRoleColor(role)} text-xs flex items-center gap-1 mb-2 w-fit`}>
+                        {getRoleIcon(role)}
+                        {role.replace('_', ' ').toUpperCase()}
+                      </Badge>
+                    )}
+                    <Link
+                      to="/profile"
+                      className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md flex items-center gap-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+
+                {/* Auth actions for non-logged in users */}
+                {!user && (
+                  <div className="border-t mt-4 pt-4">
+                    <Link
+                      to="/auth"
+                      className="block px-3 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-md text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

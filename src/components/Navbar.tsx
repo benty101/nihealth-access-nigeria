@@ -48,9 +48,9 @@ const Navbar = () => {
             <UserMenu />
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - Always visible on mobile */}
           <div className="md:hidden animate-fade-in animation-delay-400">
-            <MobileMenu items={allItems} />
+            <MobileMenu items={user ? allItems : []} />
           </div>
         </div>
       </div>
