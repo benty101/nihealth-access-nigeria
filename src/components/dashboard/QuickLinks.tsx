@@ -13,8 +13,8 @@ const quickLinks = [
     path: '/records',
   },
   {
-    label: 'Child Health & Vaccination',
-    description: 'Pediatric care & vaccines',
+    label: 'Pediatric Care in Abuja',
+    description: 'Child health services',
     icon: Shield,
     color: 'bg-violet-500',
     path: '/pediatric',
@@ -34,10 +34,10 @@ const quickLinks = [
     path: '/labs',
   },
   {
-    label: 'Find Hospital',
+    label: 'Find Hospital in Rivers',
     description: 'Nearby facilities',
     icon: MapPin,
-    color: 'bg-blue-500',
+    color: 'bg-purple-500',
     path: '/hospitals',
   },
 ];
@@ -52,6 +52,11 @@ const QuickLinks = () => {
     try {
       navigate(path);
       console.log(`[QuickLinks] Successfully navigated to ${path}`);
+      
+      toast({
+        title: "Navigation Success",
+        description: `Navigated to ${label}`,
+      });
     } catch (error) {
       console.error(`[QuickLinks] Navigation to ${path} failed`, error);
       toast({

@@ -1,11 +1,18 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
-import { Shield, Calendar, Heart, Baby, Stethoscope, Syringe } from 'lucide-react';
+import { Shield, Calendar, Heart, Baby, Stethoscope, Syringe, User, Users, Activity } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Pediatric = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -13,14 +20,35 @@ const Pediatric = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Child Health & Vaccination
+            Mother & Child Health Care
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive pediatric care and vaccination services for your child's healthy development
+            Comprehensive maternal and pediatric care services for you and your child's healthy development
           </p>
         </div>
 
+        {/* Mother & Child Services */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-pink-600" />
+                Maternal Care
+              </CardTitle>
+              <CardDescription>
+                Prenatal, delivery, and postnatal care for expecting mothers
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                className="w-full bg-pink-600 hover:bg-pink-700"
+                onClick={() => handleNavigation('/appointments')}
+              >
+                Book Maternal Visit
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -32,7 +60,12 @@ const Pediatric = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full">Schedule Check-up</Button>
+              <Button 
+                className="w-full"
+                onClick={() => handleNavigation('/appointments')}
+              >
+                Schedule Check-up
+              </Button>
             </CardContent>
           </Card>
 
@@ -47,7 +80,12 @@ const Pediatric = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full">View Schedule</Button>
+              <Button 
+                className="w-full"
+                onClick={() => handleNavigation('/records')}
+              >
+                View Schedule
+              </Button>
             </CardContent>
           </Card>
 
@@ -62,7 +100,52 @@ const Pediatric = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full">Find Specialist</Button>
+              <Button 
+                className="w-full"
+                onClick={() => handleNavigation('/hospitals')}
+              >
+                Find Specialist
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-red-600" />
+                Family Planning
+              </CardTitle>
+              <CardDescription>
+                Contraception counseling and reproductive health services
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                className="w-full"
+                onClick={() => handleNavigation('/telemedicine')}
+              >
+                Get Consultation
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-orange-600" />
+                Health Monitoring
+              </CardTitle>
+              <CardDescription>
+                Track vital signs and developmental milestones
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                className="w-full"
+                onClick={() => handleNavigation('/records')}
+              >
+                View Records
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -78,7 +161,12 @@ const Pediatric = () => {
                 <h3 className="font-semibold">Birth - 2 months</h3>
                 <p className="text-gray-600">Hepatitis B, DTaP, Hib, PCV, IPV, Rotavirus</p>
               </div>
-              <Button variant="outline">Learn More</Button>
+              <Button 
+                variant="outline"
+                onClick={() => handleNavigation('/records')}
+              >
+                Track Progress
+              </Button>
             </div>
             
             <div className="flex items-center gap-4 p-4 border rounded-lg">
@@ -89,7 +177,12 @@ const Pediatric = () => {
                 <h3 className="font-semibold">4 - 6 months</h3>
                 <p className="text-gray-600">DTaP, Hib, PCV, IPV, Rotavirus</p>
               </div>
-              <Button variant="outline">Learn More</Button>
+              <Button 
+                variant="outline"
+                onClick={() => handleNavigation('/appointments')}
+              >
+                Schedule Vaccines
+              </Button>
             </div>
 
             <div className="flex items-center gap-4 p-4 border rounded-lg">
@@ -100,7 +193,12 @@ const Pediatric = () => {
                 <h3 className="font-semibold">12 - 15 months</h3>
                 <p className="text-gray-600">MMR, Varicella, Hepatitis A</p>
               </div>
-              <Button variant="outline">Learn More</Button>
+              <Button 
+                variant="outline"
+                onClick={() => handleNavigation('/hospitals')}
+              >
+                Find Clinic
+              </Button>
             </div>
           </div>
         </div>
