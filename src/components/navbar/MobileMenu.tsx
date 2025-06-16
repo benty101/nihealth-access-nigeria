@@ -66,28 +66,29 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items = [] }) => {
 
   return (
     <>
-      {/* Mobile menu button - always visible */}
-      <div className="md:hidden">
+      {/* Menu button - always visible on all screen sizes */}
+      <div>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="relative"
         >
           {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>
       </div>
 
-      {/* Mobile Navigation Overlay */}
+      {/* Navigation Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50">
           <div 
             className="fixed inset-0 bg-black/50" 
             onClick={() => setIsMenuOpen(false)}
           />
-          <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg overflow-y-auto">
-            <div className="p-4">
+          <div className="fixed top-0 right-0 w-80 max-w-[90vw] h-full bg-white shadow-xl overflow-y-auto">
+            <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-semibold">Menu</h2>
+                <h2 className="text-lg font-semibold">Navigation Menu</h2>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -103,53 +104,60 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items = [] }) => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+                    className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors flex items-center gap-3 ${
                       isActive(item.path)
-                        ? 'bg-teal-50 text-teal-600'
+                        ? 'bg-teal-50 text-teal-600 border border-teal-200'
                         : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {item.icon && <item.icon className="h-4 w-4" />}
+                    {item.icon && <item.icon className="h-5 w-5" />}
                     {item.label}
                   </Link>
                 ))}
 
                 {/* User-specific actions */}
                 {user && (
-                  <div className="border-t mt-4 pt-4">
-                    {role && (
-                      <Badge className={`${getRoleColor(role)} text-xs flex items-center gap-1 mb-2 w-fit`}>
-                        {getRoleIcon(role)}
-                        {role.replace('_', ' ').toUpperCase()}
-                      </Badge>
-                    )}
-                    <Link
-                      to="/profile"
-                      className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md flex items-center gap-2"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <User className="h-4 w-4" />
-                      Profile
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="block w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md"
-                    >
-                      Sign Out
-                    </button>
+                  <div className="border-t mt-6 pt-6">
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-2">Signed in as:</p>
+                      <p className="font-medium text-gray-900">{user.email}</p>
+                      {role && (
+                        <Badge className={`${getRoleColor(role)} text-xs flex items-center gap-1 mt-2 w-fit`}>
+                          {getRoleIcon(role)}
+                          {role.replace('_', ' ').toUpperCase()}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-lg flex items-center gap-3"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="h-5 w-5" />
+                        Profile Settings
+                      </Link>
+                      <button
+                        onClick={handleSignOut}
+                        className="block w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
                 )}
 
                 {/* Auth actions for non-logged in users */}
                 {!user && (
-                  <div className="border-t mt-4 pt-4">
+                  <div className="border-t mt-6 pt-6">
                     <Link
                       to="/auth"
-                      className="block px-3 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-md text-center"
+                      className="block px-4 py-3 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg text-center transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Sign In
+                      Sign In / Register
                     </Link>
                   </div>
                 )}

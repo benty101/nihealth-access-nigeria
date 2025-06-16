@@ -31,7 +31,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation - Center */}
           {user && (
-            <div className="hidden md:flex flex-1 justify-center animate-fade-in animation-delay-400">
+            <div className="hidden lg:flex flex-1 justify-center animate-fade-in animation-delay-400">
               {isSuperAdmin ? (
                 <SuperAdminDesktopNavigation items={superAdminItems} />
               ) : (
@@ -43,14 +43,17 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Desktop User Menu - Right */}
-          <div className="hidden md:flex items-center animate-fade-in animation-delay-600">
-            <UserMenu />
-          </div>
+          {/* Right side - User Menu and Hamburger Menu */}
+          <div className="flex items-center gap-4">
+            {/* Desktop User Menu - Hidden on smaller screens */}
+            <div className="hidden lg:flex items-center animate-fade-in animation-delay-600">
+              <UserMenu />
+            </div>
 
-          {/* Mobile Menu - Always visible on mobile */}
-          <div className="md:hidden animate-fade-in animation-delay-400">
-            <MobileMenu items={user ? allItems : []} />
+            {/* Hamburger Menu - Always visible for easy navigation */}
+            <div className="animate-fade-in animation-delay-400">
+              <MobileMenu items={user ? allItems : []} />
+            </div>
           </div>
         </div>
       </div>
