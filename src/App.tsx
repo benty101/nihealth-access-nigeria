@@ -26,6 +26,7 @@ import Diagnostics from "./pages/Diagnostics";
 import Labs from "./pages/Labs";
 import Pharmacy from "./pages/Pharmacy";
 import Premium from "./pages/Premium";
+import Pediatric from "./pages/Pediatric";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./components/UserProfile";
 
@@ -85,6 +86,11 @@ const App = () => {
               <Route path="/insurance" element={<Insurance />} />
               <Route path="/hospitals" element={<Hospitals />} />
               <Route path="/resources" element={<Resources />} />
+              <Route path="/pediatric" element={
+                <OnboardingProtectedRoute>
+                  <Pediatric />
+                </OnboardingProtectedRoute>
+              } />
               <Route path="/telemedicine" element={
                 <OnboardingProtectedRoute>
                   <Telemedicine />

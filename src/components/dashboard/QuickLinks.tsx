@@ -13,11 +13,11 @@ const quickLinks = [
     path: '/records',
   },
   {
-    label: 'Pediatric Care',
-    description: 'Child health services',
+    label: 'Child Health & Vaccination',
+    description: 'Pediatric care & vaccines',
     icon: Shield,
     color: 'bg-violet-500',
-    path: '/resources',
+    path: '/pediatric',
   },
   {
     label: 'Order Medicine',
@@ -31,7 +31,7 @@ const quickLinks = [
     description: 'Diagnostic services',
     icon: TestTube,
     color: 'bg-orange-500',
-    path: '/diagnostics',
+    path: '/labs',
   },
   {
     label: 'Find Hospital',
@@ -49,9 +49,9 @@ const QuickLinks = () => {
   const handleQuickLinkClick = (label: string, path: string) => {
     console.log(`[QuickLinks] User clicked '${label}': Navigating to ${path}`);
 
-    // Try navigating, and if there is an error, show toast feedback
     try {
       navigate(path);
+      console.log(`[QuickLinks] Successfully navigated to ${path}`);
     } catch (error) {
       console.error(`[QuickLinks] Navigation to ${path} failed`, error);
       toast({
@@ -86,4 +86,3 @@ const QuickLinks = () => {
 };
 
 export default QuickLinks;
-
