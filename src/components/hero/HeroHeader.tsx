@@ -55,7 +55,7 @@ const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-600 animate-fade-in animation-delay-800">
             <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
               <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
-              500+ Maternal Care Centers
+              500+ Care Centers
             </div>
             <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
               <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />

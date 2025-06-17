@@ -6,9 +6,9 @@ const TrustIndicators = () => {
   const trustStats = [
     {
       icon: Shield,
-      number: "200+",
-      label: "Verified Healthcare Providers",
-      description: "Ministry of Health approved facilities"
+      number: "1000+",
+      label: "Verified Health Providers",
+      description: "Extensive insurance network and partners"
     },
     {
       icon: Users,
@@ -18,15 +18,15 @@ const TrustIndicators = () => {
     },
     {
       icon: Heart,
-      number: "12,000+",
-      label: "Health Connections Made",
-      description: "Successful healthcare interactions"
+      number: "850+",
+      label: "NAFDAC Approved Pharmacies",
+      description: "Certified pharmaceutical partners"
     },
     {
       icon: Award,
-      number: "99.5%",
-      label: "Platform Reliability",
-      description: "Consistent service availability"
+      number: "99.9%",
+      label: "Service Guarantee",
+      description: "Reliable healthcare service delivery"
     }
   ];
 
