@@ -2,7 +2,6 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import DashboardTabs from '@/components/dashboard/DashboardTabs';
 import HealthStats from '@/components/dashboard/HealthStats';
 import QuickLinks from '@/components/dashboard/QuickLinks';
 import UpcomingAppointments from '@/components/dashboard/UpcomingAppointments';
@@ -30,7 +29,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <DashboardTabs />
       <UserGuidance />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
