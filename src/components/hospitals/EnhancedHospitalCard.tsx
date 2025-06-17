@@ -17,11 +17,6 @@ const EnhancedHospitalCard = ({
   onViewDetails, 
   onBookAppointment 
 }: EnhancedHospitalCardProps) => {
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
-  };
-
   return (
     <Card className="hover:shadow-lg transition-all duration-300 hover:scale-105 transform border-l-4 border-l-teal-500">
       <CardHeader className="pb-3">
@@ -140,13 +135,6 @@ const EnhancedHospitalCard = ({
               Book Visit
             </Button>
           </div>
-
-          {/* Creation Date */}
-          {hospital.created_at && (
-            <div className="text-xs text-gray-400 pt-2 border-t">
-              Listed: {formatDate(hospital.created_at)}
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
