@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Heart, Shield } from 'lucide-react';
 
 interface MeddyPalLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -20,16 +19,14 @@ const MeddyPalLogo = ({ size = 'md', showText = true, className = '' }: MeddyPal
 
   return (
     <div className={`flex items-center ${config.container} ${className}`}>
-      {/* Logo Icon */}
+      {/* Logo Icon - Medical Cross */}
       <div className={`${config.icon} relative`}>
-        {/* Medical Cross Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center">
-          <div className="w-full h-full relative flex items-center justify-center">
-            {/* Medical Cross */}
-            <div className="absolute w-1 h-4 bg-white rounded-full"></div>
-            <div className="absolute w-4 h-1 bg-white rounded-full"></div>
-            {/* Small Heart */}
-            <Heart className="absolute top-0 right-0 h-2 w-2 text-pink-300 fill-current transform translate-x-0.5 -translate-y-0.5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
+          <div className="relative">
+            {/* Medical Cross - Vertical bar */}
+            <div className="absolute w-1.5 h-5 bg-white rounded-full left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+            {/* Medical Cross - Horizontal bar */}
+            <div className="absolute w-5 h-1.5 bg-white rounded-full left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
           </div>
         </div>
       </div>
@@ -37,11 +34,11 @@ const MeddyPalLogo = ({ size = 'md', showText = true, className = '' }: MeddyPal
       {/* Text */}
       {showText && (
         <div className="flex flex-col">
-          <span className={`${config.text} font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent`}>
+          <span className={`${config.text} font-bold text-blue-700`}>
             MeddyPal
           </span>
           {size === 'lg' || size === 'xl' ? (
-            <span className="text-xs text-gray-500 -mt-1">Your Health Companion</span>
+            <span className="text-xs text-gray-600 -mt-1">Your Health Companion</span>
           ) : null}
         </div>
       )}
