@@ -63,7 +63,7 @@ const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
             </div>
             <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
               <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
-              15,000+ Mothers & Children
+              25,000+ Families Served
             </div>
           </div>
         </div>
