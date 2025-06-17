@@ -33,26 +33,27 @@ const Dashboard = () => {
       <DashboardTabs />
       <UserGuidance />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <DashboardHeader onboardingData={onboardingData} greeting={greeting} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mt-6">
           {/* Left Column - Main Content */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="xl:col-span-8 space-y-6">
             <PersonalizedInsights onboardingData={onboardingData} />
             <ProgressTracker onboardingData={onboardingData} />
-            <SmartRecommendations onboardingData={onboardingData} />
-            <HealthStats />
             <PersonalizedQuickActions quickActions={quickActions} />
-            <UpcomingAppointments />
+            <HealthStats />
+            <SmartRecommendations onboardingData={onboardingData} />
             <PersonalizedRecommendations recommendations={recommendations} />
+            <UpcomingAppointments />
             <RecentActivity />
           </div>
           
           {/* Right Column - Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <QuickLinks />
+          <div className="xl:col-span-4 space-y-6">
             <HealthReminders />
+            <QuickLinks />
           </div>
         </div>
       </div>
