@@ -19,14 +19,15 @@ const MeddyPalLogo = ({ size = 'md', showText = true, className = '' }: MeddyPal
 
   return (
     <div className={`flex items-center ${config.container} ${className}`}>
-      {/* Logo Icon - Medical Cross */}
+      {/* Logo Icon - Heart Shape */}
       <div className={`${config.icon} relative`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-md">
           <div className="relative">
-            {/* Medical Cross - Vertical bar */}
-            <div className="absolute w-1.5 h-5 bg-white rounded-full left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-            {/* Medical Cross - Horizontal bar */}
-            <div className="absolute w-5 h-1.5 bg-white rounded-full left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+            {/* Heart Shape using CSS */}
+            <div className="w-4 h-4 bg-white transform rotate-45 relative">
+              <div className="w-4 h-4 bg-white rounded-full absolute -left-2 top-0"></div>
+              <div className="w-4 h-4 bg-white rounded-full absolute left-0 -top-2"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -34,7 +35,7 @@ const MeddyPalLogo = ({ size = 'md', showText = true, className = '' }: MeddyPal
       {/* Text */}
       {showText && (
         <div className="flex flex-col">
-          <span className={`${config.text} font-bold text-blue-700`}>
+          <span className={`${config.text} font-bold text-teal-700`}>
             MeddyPal
           </span>
           {size === 'lg' || size === 'xl' ? (
