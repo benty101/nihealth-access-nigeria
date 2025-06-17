@@ -17,7 +17,6 @@ const HospitalStats = () => {
       try {
         setLoading(true);
         const statsData = await hospitalDataService.getHospitalStats();
-        console.log('HospitalStats: Fresh stats loaded:', statsData);
         setStats(statsData);
       } catch (error) {
         console.error('Error fetching hospital stats:', error);
