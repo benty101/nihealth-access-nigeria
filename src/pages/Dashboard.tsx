@@ -7,7 +7,6 @@ import QuickLinks from '@/components/dashboard/QuickLinks';
 import UpcomingAppointments from '@/components/dashboard/UpcomingAppointments';
 import HealthReminders from '@/components/dashboard/HealthReminders';
 import RecentActivity from '@/components/dashboard/RecentActivity';
-import PersonalizedQuickActions from '@/components/dashboard/PersonalizedQuickActions';
 import PersonalizedRecommendations from '@/components/dashboard/PersonalizedRecommendations';
 import PersonalizedInsights from '@/components/dashboard/PersonalizedInsights';
 import ProgressTracker from '@/components/dashboard/ProgressTracker';
@@ -20,7 +19,6 @@ const Dashboard = () => {
   console.log('Dashboard: Component rendered');
 
   const onboardingData = PersonalizationService.getOnboardingData();
-  const quickActions = PersonalizationService.getPersonalizedQuickActions(onboardingData);
   const recommendations = PersonalizationService.getPersonalizedRecommendations(onboardingData);
   const greeting = PersonalizationService.getPersonalizedGreeting(onboardingData);
 
@@ -40,7 +38,6 @@ const Dashboard = () => {
           <div className="xl:col-span-8 space-y-6">
             <PersonalizedInsights onboardingData={onboardingData} />
             <ProgressTracker onboardingData={onboardingData} />
-            <PersonalizedQuickActions quickActions={quickActions} />
             <HealthStats />
             <SmartRecommendations onboardingData={onboardingData} />
             <PersonalizedRecommendations recommendations={recommendations} />
