@@ -183,26 +183,31 @@ class HospitalDataService {
     stateCount: number;
     specialtyCount: number;
   }> {
-    console.log('HospitalDataService: Fetching hospital statistics...');
+    console.log('HospitalDataService: Fetching fresh hospital statistics...');
     
-    const [hospitalsResult, statesResult, specialtiesResult] = await Promise.all([
-      supabase.from('hospitals').select('id', { count: 'exact', head: true }).eq('is_active', true),
+    // Force fresh count with no cache
+    const { count: hospitalCount, error: countError } = await supabase
+      .from('hospitals')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true);
+
+    if (countError) {
+      console.error('HospitalDataService: Error fetching hospital count:', countError);
+      throw new Error(`Failed to fetch hospital statistics: ${countError.message}`);
+    }
+
+    const [statesResult, specialtiesResult] = await Promise.all([
       this.getHospitalStates(),
       this.getHospitalSpecialties()
     ]);
 
-    if (hospitalsResult.error) {
-      console.error('HospitalDataService: Error fetching hospital count:', hospitalsResult.error);
-      throw new Error(`Failed to fetch hospital statistics: ${hospitalsResult.error.message}`);
-    }
-
     const stats = {
-      totalHospitals: hospitalsResult.count || 0,
+      totalHospitals: hospitalCount || 0,
       stateCount: statesResult.length,
       specialtyCount: specialtiesResult.length
     };
 
-    console.log('HospitalDataService: Hospital statistics:', stats);
+    console.log('HospitalDataService: Fresh hospital statistics:', stats);
     return stats;
   }
 }
