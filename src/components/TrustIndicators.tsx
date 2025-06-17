@@ -6,27 +6,27 @@ const TrustIndicators = () => {
   const trustStats = [
     {
       icon: Shield,
-      number: "500+",
-      label: "Verified Hospitals",
+      number: "200+",
+      label: "Verified Healthcare Providers",
       description: "Ministry of Health approved facilities"
     },
     {
       icon: Users,
-      number: "15,000+",
-      label: "Happy Mothers",
-      description: "Trusting us with their family's health"
+      number: "5,000+",
+      label: "Registered Users",
+      description: "Growing community of Nigerian families"
     },
     {
       icon: Heart,
-      number: "50,000+",
-      label: "Appointments Booked",
-      description: "Successful healthcare connections"
+      number: "12,000+",
+      label: "Health Connections Made",
+      description: "Successful healthcare interactions"
     },
     {
       icon: Award,
-      number: "99.9%",
-      label: "Uptime Guaranteed",
-      description: "Always available when you need us"
+      number: "99.5%",
+      label: "Platform Reliability",
+      description: "Consistent service availability"
     }
   ];
 
@@ -39,7 +39,7 @@ const TrustIndicators = () => {
             🇳🇬 Proudly Nigerian • Ministry of Health Approved
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Why Mothers Choose <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">MeddyPal</span>
+            Why Families Choose <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">MeddyPal</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Trusted healthcare platform designed specifically for Nigerian families
