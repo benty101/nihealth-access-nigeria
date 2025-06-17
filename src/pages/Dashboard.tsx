@@ -3,7 +3,6 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import HealthStats from '@/components/dashboard/HealthStats';
-import QuickLinks from '@/components/dashboard/QuickLinks';
 import UpcomingAppointments from '@/components/dashboard/UpcomingAppointments';
 import HealthReminders from '@/components/dashboard/HealthReminders';
 import RecentActivity from '@/components/dashboard/RecentActivity';
@@ -51,7 +50,6 @@ const Dashboard = () => {
           {/* Right Column - Sidebar */}
           <div className="xl:col-span-4 space-y-6">
             <HealthReminders />
-            <QuickLinks />
           </div>
         </div>
       </div>
