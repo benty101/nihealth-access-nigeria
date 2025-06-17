@@ -1,10 +1,13 @@
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Minus, ShoppingCart, Star, Clock, Truck, AlertCircle } from 'lucide-react';
+import { Search, Plus, Minus, ShoppingCart, Star, Clock, Truck, AlertCircle, UserPlus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { medicationService } from '@/services/MedicationService';
 import type { Medication as MedicationType } from '@/services/AdminService';
@@ -15,6 +18,8 @@ import { usePharmacies } from '@/hooks/usePharmacies';
 import { useMedications } from '@/hooks/useMedications';
 
 const Pharmacy = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [cart, setCart] = useState<{[key: string]: number}>({});
@@ -43,6 +48,19 @@ const Pharmacy = () => {
     'Eye Care'
   ];
 
+  // Function to handle protected actions
+  const handleProtectedAction = (action: string) => {
+    if (!user) {
+      // Show registration prompt
+      const proceed = window.confirm(`You need to create an account to ${action}. Would you like to register now?`);
+      if (proceed) {
+        navigate('/auth');
+      }
+      return false;
+    }
+    return true;
+  };
+
   // Optionally filter medications by selected pharmacy
   const filteredMedications = medications
     .filter(med => 
@@ -62,6 +80,8 @@ const Pharmacy = () => {
     });
 
   const updateCart = (id: string, change: number) => {
+    if (!handleProtectedAction('add items to cart')) return;
+    
     setCart(prev => {
       const newCart = { ...prev };
       const currentQty = newCart[id] || 0;
@@ -73,6 +93,11 @@ const Pharmacy = () => {
       }
       return newCart;
     });
+  };
+
+  const handleCartClick = () => {
+    if (!handleProtectedAction('view cart')) return;
+    // Cart functionality for authenticated users
   };
 
   const getTotalItems = () => Object.values(cart).reduce((sum, qty) => sum + qty, 0);
@@ -95,8 +120,23 @@ const Pharmacy = () => {
               Online Pharmacy
             </h1>
             <p className="text-lg text-gray-600">
-              Order genuine medicines and health products with same-day delivery
+              Browse genuine medicines and health products with same-day delivery
             </p>
+            {!user && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center justify-center gap-2 text-blue-700">
+                  <UserPlus className="h-5 w-5" />
+                  <span>Create an account to purchase medicines and track your orders</span>
+                  <Button 
+                    onClick={() => navigate('/auth')} 
+                    size="sm" 
+                    className="ml-2 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              </div>
+            )}
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
               <div className="flex items-center">
                 <Truck className="h-4 w-4 mr-2 text-green-600" />
@@ -170,7 +210,7 @@ const Pharmacy = () => {
                 <option value="price-high">Price: High to Low</option>
                 <option value="rating">Highest Rated</option>
               </select>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button className="bg-green-600 hover:bg-green-700" onClick={handleCartClick}>
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Cart ({getTotalItems()}) - ₦{getTotalPrice().toLocaleString()}
               </Button>
@@ -279,7 +319,6 @@ const Pharmacy = () => {
                             size="sm" 
                             className="bg-blue-600 hover:bg-blue-700"
                             onClick={() => updateCart(medication.id, 1)}
-                            disabled={!cart[medication.id]}
                           >
                             Add to Cart
                           </Button>
@@ -314,7 +353,11 @@ const Pharmacy = () => {
               <p className="text-gray-600 mb-6">
                 Upload your prescription and we'll prepare your medicines for delivery
               </p>
-              <Button size="lg" variant="outline">
+              <Button 
+                size="lg" 
+                variant="outline"
+                onClick={() => handleProtectedAction('upload prescription')}
+              >
                 Upload Prescription
               </Button>
             </div>

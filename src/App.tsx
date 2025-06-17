@@ -73,6 +73,18 @@ const App = () => {
                   <UserProfile />
                 </OnboardingProtectedRoute>
               } />
+              
+              {/* Public routes - users can browse services without registration */}
+              <Route path="/insurance" element={<Insurance />} />
+              <Route path="/hospitals" element={<Hospitals />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/emergency" element={<Emergency />} />
+              <Route path="/pediatric" element={<Pediatric />} />
+              <Route path="/telemedicine" element={<Telemedicine />} />
+              <Route path="/labs" element={<Labs />} />
+              <Route path="/pharmacy" element={<Pharmacy />} />
+              
+              {/* Protected routes - require registration to access */}
               <Route path="/appointments" element={
                 <OnboardingProtectedRoute>
                   <Appointments />
@@ -83,33 +95,9 @@ const App = () => {
                   <Records />
                 </OnboardingProtectedRoute>
               } />
-              <Route path="/insurance" element={<Insurance />} />
-              <Route path="/hospitals" element={<Hospitals />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/pediatric" element={
-                <OnboardingProtectedRoute>
-                  <Pediatric />
-                </OnboardingProtectedRoute>
-              } />
-              <Route path="/telemedicine" element={
-                <OnboardingProtectedRoute>
-                  <Telemedicine />
-                </OnboardingProtectedRoute>
-              } />
-              <Route path="/emergency" element={<Emergency />} />
               <Route path="/diagnostics" element={
                 <OnboardingProtectedRoute>
                   <Diagnostics />
-                </OnboardingProtectedRoute>
-              } />
-              <Route path="/labs" element={
-                <OnboardingProtectedRoute>
-                  <Labs />
-                </OnboardingProtectedRoute>
-              } />
-              <Route path="/pharmacy" element={
-                <OnboardingProtectedRoute>
-                  <Pharmacy />
                 </OnboardingProtectedRoute>
               } />
               <Route path="/premium" element={
