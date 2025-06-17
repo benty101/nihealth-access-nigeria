@@ -1,15 +1,32 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
-import { Shield, Calendar, Heart, Baby, Stethoscope, Syringe, Users, Activity } from 'lucide-react';
+import { Shield, Calendar, Heart, Baby, Stethoscope, Syringe, Users, Activity, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 const Pediatric = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleNavigation = (path: string) => {
+  // Function to handle protected actions
+  const handleProtectedAction = (action: string) => {
+    if (!user) {
+      const proceed = window.confirm(`You need to create an account to ${action}. Would you like to register now?`);
+      if (proceed) {
+        navigate('/auth');
+      }
+      return false;
+    }
+    return true;
+  };
+
+  const handleNavigation = (path: string, requiresAuth: boolean = false) => {
+    if (requiresAuth && !handleProtectedAction('access this service')) {
+      return;
+    }
     navigate(path);
   };
 
@@ -25,6 +42,21 @@ const Pediatric = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Comprehensive maternal and pediatric care services for you and your child's healthy development
           </p>
+          {!user && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-center gap-2 text-blue-700">
+                <UserPlus className="h-5 w-5" />
+                <span>Create an account to book appointments and track vaccination records</span>
+                <Button 
+                  onClick={() => navigate('/auth')} 
+                  size="sm" 
+                  className="ml-2 bg-blue-600 hover:bg-blue-700"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Vaccination Quick Access - Prominent Section */}
@@ -41,13 +73,13 @@ const Pediatric = () => {
             </div>
             <div className="flex gap-3">
               <Button 
-                onClick={() => handleNavigation('/records')}
+                onClick={() => handleNavigation('/records', true)}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 View Vaccination Records
               </Button>
               <Button 
-                onClick={() => handleNavigation('/appointments')}
+                onClick={() => handleNavigation('/appointments', true)}
                 variant="outline"
                 className="border-blue-300 text-blue-600 hover:bg-blue-50"
               >
@@ -72,7 +104,7 @@ const Pediatric = () => {
             <CardContent>
               <Button 
                 className="w-full bg-pink-600 hover:bg-pink-700"
-                onClick={() => handleNavigation('/appointments')}
+                onClick={() => handleNavigation('/appointments', true)}
               >
                 Book Maternal Visit
               </Button>
@@ -92,7 +124,7 @@ const Pediatric = () => {
             <CardContent>
               <Button 
                 className="w-full"
-                onClick={() => handleNavigation('/appointments')}
+                onClick={() => handleNavigation('/appointments', true)}
               >
                 Schedule Check-up
               </Button>
@@ -113,14 +145,14 @@ const Pediatric = () => {
               <div className="space-y-2">
                 <Button 
                   className="w-full bg-green-600 hover:bg-green-700"
-                  onClick={() => handleNavigation('/records')}
+                  onClick={() => handleNavigation('/records', true)}
                 >
                   View Vaccination Records
                 </Button>
                 <Button 
                   variant="outline"
                   className="w-full border-green-300 text-green-600 hover:bg-green-50"
-                  onClick={() => handleNavigation('/appointments')}
+                  onClick={() => handleNavigation('/appointments', true)}
                 >
                   Book Vaccination
                 </Button>
@@ -141,7 +173,7 @@ const Pediatric = () => {
             <CardContent>
               <Button 
                 className="w-full"
-                onClick={() => handleNavigation('/hospitals')}
+                onClick={() => handleNavigation('/hospitals', false)}
               >
                 Find Specialist
               </Button>
@@ -161,7 +193,7 @@ const Pediatric = () => {
             <CardContent>
               <Button 
                 className="w-full"
-                onClick={() => handleNavigation('/telemedicine')}
+                onClick={() => handleNavigation('/telemedicine', false)}
               >
                 Get Consultation
               </Button>
@@ -181,7 +213,7 @@ const Pediatric = () => {
             <CardContent>
               <Button 
                 className="w-full"
-                onClick={() => handleNavigation('/records')}
+                onClick={() => handleNavigation('/records', true)}
               >
                 View Health Records
               </Button>
@@ -206,7 +238,7 @@ const Pediatric = () => {
               </div>
               <Button 
                 variant="outline"
-                onClick={() => handleNavigation('/records')}
+                onClick={() => handleNavigation('/records', true)}
               >
                 Track Progress
               </Button>
@@ -222,7 +254,7 @@ const Pediatric = () => {
               </div>
               <Button 
                 variant="outline"
-                onClick={() => handleNavigation('/appointments')}
+                onClick={() => handleNavigation('/appointments', true)}
               >
                 Schedule Vaccines
               </Button>
@@ -238,7 +270,7 @@ const Pediatric = () => {
               </div>
               <Button 
                 variant="outline"
-                onClick={() => handleNavigation('/hospitals')}
+                onClick={() => handleNavigation('/hospitals', false)}
               >
                 Find Clinic
               </Button>

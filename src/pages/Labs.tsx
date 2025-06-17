@@ -1,146 +1,137 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Monitor, Clock, MapPin, Heart, Search, Home, Building2, Star, Shield, Truck, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Search, TestTube, Clock, MapPin, Star, Calendar, UserPlus, Droplets, Activity, Zap } from 'lucide-react';
 
 const Labs = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
+  // Function to handle protected actions
+  const handleProtectedAction = (action: string) => {
+    if (!user) {
+      const proceed = window.confirm(`You need to create an account to ${action}. Would you like to register now?`);
+      if (proceed) {
+        navigate('/auth');
+      }
+      return false;
+    }
+    return true;
+  };
+
+  const categories = ['All', 'Blood Tests', 'Imaging', 'Specialized', 'Wellness', 'Infectious Disease'];
+
   const labTests = [
-    // Blood Tests
-    { id: 1, name: 'Complete Blood Count (CBC)', description: 'Comprehensive blood analysis including white cells, red cells, and platelets', price: 8500, duration: '24 hours', category: 'Blood Test', popular: true, homeTest: true, fasting: false },
-    { id: 2, name: 'Lipid Profile', description: 'Cholesterol and triglyceride levels assessment', price: 12000, duration: '48 hours', category: 'Blood Test', popular: false, homeTest: true, fasting: true },
-    { id: 3, name: 'Liver Function Test (LFT)', description: 'Comprehensive liver health assessment', price: 15000, duration: '24 hours', category: 'Blood Test', popular: true, homeTest: true, fasting: false },
-    { id: 4, name: 'Kidney Function Test', description: 'Creatinine, urea, and electrolyte levels', price: 13500, duration: '24 hours', category: 'Blood Test', popular: true, homeTest: true, fasting: false },
-    { id: 5, name: 'Thyroid Function Test (TFT)', description: 'TSH, T3, T4 hormone levels', price: 18000, duration: '48 hours', category: 'Blood Test', popular: true, homeTest: true, fasting: false },
-    
-    // Diabetes & Metabolic
-    { id: 6, name: 'HbA1c (Diabetes Screening)', description: 'Long-term blood sugar control assessment', price: 15000, duration: '24 hours', category: 'Diabetes', popular: true, homeTest: true, fasting: false },
-    { id: 7, name: 'Fasting Blood Sugar', description: 'Blood glucose level after fasting', price: 5000, duration: '2 hours', category: 'Diabetes', popular: true, homeTest: true, fasting: true },
-    { id: 8, name: 'Random Blood Sugar', description: 'Blood glucose level at any time', price: 4000, duration: '1 hour', category: 'Diabetes', popular: false, homeTest: true, fasting: false },
-    { id: 9, name: 'Oral Glucose Tolerance Test (OGTT)', description: 'Comprehensive diabetes screening', price: 8500, duration: '4 hours', category: 'Diabetes', popular: false, homeTest: false, fasting: true },
-    { id: 10, name: 'Insulin Level Test', description: 'Fasting insulin hormone measurement', price: 12000, duration: '24 hours', category: 'Diabetes', popular: false, homeTest: true, fasting: true },
-
-    // Cardiac & Cardiovascular
-    { id: 11, name: 'ECG (Electrocardiogram)', description: 'Heart rhythm and electrical activity monitoring', price: 4500, duration: '1 hour', category: 'Cardiac', popular: false, homeTest: false, fasting: false },
-    { id: 12, name: 'Echocardiogram', description: 'Ultrasound of the heart', price: 25000, duration: '2 hours', category: 'Cardiac', popular: false, homeTest: false, fasting: false },
-    { id: 13, name: 'Cardiac Enzymes', description: 'Heart attack and heart damage markers', price: 18000, duration: '4 hours', category: 'Cardiac', popular: false, homeTest: false, fasting: false },
-    { id: 14, name: 'D-Dimer Test', description: 'Blood clot formation marker', price: 15000, duration: '6 hours', category: 'Cardiac', popular: false, homeTest: true, fasting: false },
-    { id: 15, name: 'BNP/NT-proBNP', description: 'Heart failure biomarker', price: 22000, duration: '24 hours', category: 'Cardiac', popular: false, homeTest: false, fasting: false },
-
-    // Imaging & Radiology
-    { id: 16, name: 'Chest X-Ray', description: 'Lung and heart imaging examination', price: 6000, duration: '2 hours', category: 'Imaging', popular: false, homeTest: false, fasting: false },
-    { id: 17, name: 'Abdominal Ultrasound', description: 'Liver, gallbladder, kidney imaging', price: 18000, duration: '4 hours', category: 'Imaging', popular: true, homeTest: false, fasting: true },
-    { id: 18, name: 'Pelvic Ultrasound', description: 'Reproductive organ imaging', price: 15000, duration: '3 hours', category: 'Imaging', popular: false, homeTest: false, fasting: false },
-    { id: 19, name: 'CT Scan (Head)', description: 'Detailed brain imaging', price: 45000, duration: '2 hours', category: 'Imaging', popular: false, homeTest: false, fasting: false },
-    { id: 20, name: 'MRI Scan', description: 'Magnetic resonance imaging', price: 85000, duration: '4 hours', category: 'Imaging', popular: false, homeTest: false, fasting: false },
-
-    // Hormonal Tests
-    { id: 21, name: 'Testosterone Level', description: 'Male hormone assessment', price: 12000, duration: '24 hours', category: 'Hormonal', popular: false, homeTest: true, fasting: false },
-    { id: 22, name: 'Estrogen & Progesterone', description: 'Female hormone panel', price: 18000, duration: '24 hours', category: 'Hormonal', popular: false, homeTest: true, fasting: false },
-    { id: 23, name: 'Cortisol Level', description: 'Stress hormone measurement', price: 15000, duration: '24 hours', category: 'Hormonal', popular: false, homeTest: true, fasting: false },
-    { id: 24, name: 'Growth Hormone', description: 'HGH level assessment', price: 20000, duration: '24 hours', category: 'Hormonal', popular: false, homeTest: false, fasting: true },
-    { id: 25, name: 'Prolactin Level', description: 'Prolactin hormone test', price: 12000, duration: '24 hours', category: 'Hormonal', popular: false, homeTest: true, fasting: false },
-
-    // Infectious Disease
-    { id: 26, name: 'HIV Test (ELISA)', description: 'HIV antibody screening', price: 8000, duration: '24 hours', category: 'Infectious Disease', popular: true, homeTest: true, fasting: false },
-    { id: 27, name: 'Hepatitis B & C Panel', description: 'Hepatitis virus screening', price: 15000, duration: '48 hours', category: 'Infectious Disease', popular: true, homeTest: true, fasting: false },
-    { id: 28, name: 'Malaria Test (RDT)', description: 'Rapid malaria diagnosis', price: 3000, duration: '30 minutes', category: 'Infectious Disease', popular: true, homeTest: true, fasting: false },
-    { id: 29, name: 'Typhoid Test', description: 'Salmonella typhi detection', price: 5000, duration: '2 hours', category: 'Infectious Disease', popular: true, homeTest: true, fasting: false },
-    { id: 30, name: 'COVID-19 PCR Test', description: 'SARS-CoV-2 RNA detection', price: 25000, duration: '24 hours', category: 'Infectious Disease', popular: true, homeTest: true, fasting: false },
-
-    // Cancer Screening
-    { id: 31, name: 'PSA Test', description: 'Prostate cancer screening', price: 15000, duration: '24 hours', category: 'Cancer Screening', popular: true, homeTest: true, fasting: false },
-    { id: 32, name: 'CA 125', description: 'Ovarian cancer marker', price: 18000, duration: '48 hours', category: 'Cancer Screening', popular: false, homeTest: true, fasting: false },
-    { id: 33, name: 'CEA Test', description: 'Colorectal cancer marker', price: 16000, duration: '24 hours', category: 'Cancer Screening', popular: false, homeTest: true, fasting: false },
-    { id: 34, name: 'AFP Test', description: 'Liver cancer screening', price: 14000, duration: '24 hours', category: 'Cancer Screening', popular: false, homeTest: true, fasting: false },
-    { id: 35, name: 'Mammography', description: 'Breast cancer screening', price: 35000, duration: '2 hours', category: 'Cancer Screening', popular: true, homeTest: false, fasting: false },
-
-    // Nutritional & Vitamin Tests
-    { id: 36, name: 'Vitamin D Test', description: '25-hydroxyvitamin D level', price: 12000, duration: '24 hours', category: 'Nutritional', popular: true, homeTest: true, fasting: false },
-    { id: 37, name: 'Vitamin B12 Test', description: 'Cobalamin level assessment', price: 10000, duration: '24 hours', category: 'Nutritional', popular: true, homeTest: true, fasting: false },
-    { id: 38, name: 'Iron Studies', description: 'Iron, ferritin, TIBC levels', price: 15000, duration: '24 hours', category: 'Nutritional', popular: true, homeTest: true, fasting: false },
-    { id: 39, name: 'Folate Test', description: 'Folic acid level measurement', price: 8000, duration: '24 hours', category: 'Nutritional', popular: false, homeTest: true, fasting: false },
-    { id: 40, name: 'Magnesium Level', description: 'Serum magnesium test', price: 7000, duration: '24 hours', category: 'Nutritional', popular: false, homeTest: true, fasting: false },
-
-    // Specialized Tests
-    { id: 41, name: 'Allergy Panel (IgE)', description: 'Common allergen testing', price: 35000, duration: '48 hours', category: 'Specialized', popular: false, homeTest: true, fasting: false },
-    { id: 42, name: 'Autoimmune Panel', description: 'ANA, anti-dsDNA, RF tests', price: 28000, duration: '48 hours', category: 'Specialized', popular: false, homeTest: true, fasting: false },
-    { id: 43, name: 'Celiac Disease Test', description: 'Gluten sensitivity screening', price: 18000, duration: '48 hours', category: 'Specialized', popular: false, homeTest: true, fasting: false },
-    { id: 44, name: 'Genetic Testing', description: 'DNA analysis for health risks', price: 150000, duration: '2 weeks', category: 'Specialized', popular: false, homeTest: true, fasting: false },
-    { id: 45, name: 'Pharmacogenetic Test', description: 'Drug response prediction', price: 120000, duration: '1 week', category: 'Specialized', popular: false, homeTest: true, fasting: false },
-
-    // Health Packages
-    { id: 46, name: 'Basic Health Checkup', description: 'CBC, LFT, KFT, Lipids, Blood Sugar', price: 45000, duration: '24 hours', category: 'Health Packages', popular: true, homeTest: true, fasting: true },
-    { id: 47, name: 'Executive Health Package', description: 'Comprehensive health screening', price: 85000, duration: '48 hours', category: 'Health Packages', popular: true, homeTest: false, fasting: true },
-    { id: 48, name: 'Cardiac Risk Assessment', description: 'Heart health comprehensive panel', price: 65000, duration: '24 hours', category: 'Health Packages', popular: false, homeTest: true, fasting: true },
-    { id: 49, name: 'Women\'s Wellness Package', description: 'Female-specific health screening', price: 55000, duration: '48 hours', category: 'Health Packages', popular: true, homeTest: true, fasting: false },
-    { id: 50, name: 'Men\'s Health Package', description: 'Male-specific health screening', price: 55000, duration: '48 hours', category: 'Health Packages', popular: true, homeTest: true, fasting: false },
+    {
+      name: 'Complete Blood Count (CBC)',
+      description: 'Comprehensive blood analysis including red and white blood cells',
+      category: 'Blood Tests',
+      price: '₦3,500',
+      duration: '2-4 hours',
+      fasting: false,
+      popular: true
+    },
+    {
+      name: 'Lipid Profile',
+      description: 'Cholesterol and triglyceride levels assessment',
+      category: 'Blood Tests',
+      price: '₦4,200',
+      duration: '2-4 hours',
+      fasting: true,
+      popular: true
+    },
+    {
+      name: 'Thyroid Function Test',
+      description: 'TSH, T3, and T4 hormone levels',
+      category: 'Specialized',
+      price: '₦6,800',
+      duration: '4-6 hours',
+      fasting: false,
+      popular: false
+    },
+    {
+      name: 'Chest X-Ray',
+      description: 'Lung and heart imaging for respiratory assessment',
+      category: 'Imaging',
+      price: '₦8,500',
+      duration: '30 minutes',
+      fasting: false,
+      popular: true
+    },
+    {
+      name: 'Malaria Test (Rapid)',
+      description: 'Quick malaria parasite detection',
+      category: 'Infectious Disease',
+      price: '₦1,500',
+      duration: '15 minutes',
+      fasting: false,
+      popular: true
+    },
+    {
+      name: 'Hepatitis B & C Screening',
+      description: 'Blood test for hepatitis B and C viruses',
+      category: 'Infectious Disease',
+      price: '₦5,200',
+      duration: '2-4 hours',
+      fasting: false,
+      popular: false
+    },
+    {
+      name: 'Comprehensive Metabolic Panel',
+      description: 'Glucose, electrolytes, kidney and liver function',
+      category: 'Blood Tests',
+      price: '₦7,500',
+      duration: '2-4 hours',
+      fasting: true,
+      popular: false
+    },
+    {
+      name: 'Wellness Package',
+      description: 'CBC, Lipid Profile, Blood Sugar, Liver Function',
+      category: 'Wellness',
+      price: '₦12,000',
+      duration: '2-4 hours',
+      fasting: true,
+      popular: true
+    }
   ];
 
-  const labCenters = [
+  const labLocations = [
     {
-      name: 'Pathcare Laboratory',
+      name: 'LifeCare Diagnostic Center',
       location: 'Victoria Island, Lagos',
       rating: 4.8,
-      services: ['Blood Tests', 'Imaging', 'Cardiac Tests', 'Home Collection'],
-      verified: true,
-      homeService: true
+      distance: '2.3 km',
+      nextAvailable: 'Today 10:00 AM'
     },
     {
-      name: 'Clina-Lancet Laboratories',
-      location: 'Wuse II, Abuja',
-      rating: 4.6,
-      services: ['Blood Tests', 'Molecular Tests', 'Pathology', 'Genetic Testing'],
-      verified: true,
-      homeService: true
-    },
-    {
-      name: 'Synlab Nigeria',
-      location: 'GRA, Port Harcourt',
-      rating: 4.7,
-      services: ['Blood Tests', 'Imaging', 'Specialized Tests', 'Cancer Screening'],
-      verified: true,
-      homeService: false
-    },
-    {
-      name: 'Lancet Laboratories',
+      name: 'Medbury Medical Services',
       location: 'Ikeja, Lagos',
-      rating: 4.5,
-      services: ['Blood Tests', 'Hormonal Tests', 'Nutritional Tests'],
-      verified: true,
-      homeService: true
+      rating: 4.6,
+      distance: '5.1 km',
+      nextAvailable: 'Today 2:00 PM'
     },
     {
-      name: 'Medical Art Center (MART)',
-      location: 'Victoria Island, Lagos',
-      rating: 4.9,
-      services: ['All Tests', 'Imaging', 'Executive Packages', 'Home Collection'],
-      verified: true,
-      homeService: true
-    },
-    {
-      name: 'Bridge Clinic Laboratory',
-      location: 'Ikoyi, Lagos',
+      name: 'PathCare Nigeria',
+      location: 'Abuja Central',
       rating: 4.7,
-      services: ['Women\'s Health', 'Fertility Tests', 'Hormonal Tests'],
-      verified: true,
-      homeService: true
-    },
+      distance: '1.8 km',
+      nextAvailable: 'Tomorrow 9:00 AM'
+    }
   ];
 
-  const categories = ['All', 'Blood Test', 'Diabetes', 'Cardiac', 'Imaging', 'Hormonal', 'Infectious Disease', 'Cancer Screening', 'Nutritional', 'Specialized', 'Health Packages'];
-
-  const filteredTests = labTests.filter(test =>
+  const filteredTests = labTests.filter(test => 
     (selectedCategory === 'All' || test.category === selectedCategory) &&
     (test.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     test.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     test.category.toLowerCase().includes(searchTerm.toLowerCase()))
+     test.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -151,43 +142,54 @@ const Labs = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Laboratory Services
+              Laboratory Tests & Diagnostics
             </h1>
-            <p className="text-lg text-gray-600 mb-6">
-              Book lab tests and diagnostic services from certified laboratories with home collection
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Book laboratory tests and diagnostic services with certified facilities across Nigeria
             </p>
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-600">
+            {!user && (
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center justify-center gap-2 text-blue-700">
+                  <UserPlus className="h-5 w-5" />
+                  <span>Create an account to book tests and track your results</span>
+                  <Button 
+                    onClick={() => navigate('/auth')} 
+                    size="sm" 
+                    className="ml-2 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
               <div className="flex items-center">
-                <Home className="h-4 w-4 mr-2 text-green-600" />
-                Home sample collection
+                <TestTube className="h-4 w-4 mr-2 text-blue-600" />
+                Certified labs
               </div>
               <div className="flex items-center">
-                <Shield className="h-4 w-4 mr-2 text-blue-600" />
-                NAFDAC certified labs
+                <Clock className="h-4 w-4 mr-2 text-green-600" />
+                Quick results
               </div>
               <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2 text-orange-600" />
-                Same-day results available
+                <Activity className="h-4 w-4 mr-2 text-purple-600" />
+                Digital reports
               </div>
             </div>
           </div>
 
-          {/* Search */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          {/* Search and Filter */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Search tests, health conditions, or test packages..."
+                placeholder="Search lab tests..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <Calendar className="mr-2 h-4 w-4" />
-              Book Home Collection
-            </Button>
           </div>
 
           {/* Category Filter */}
@@ -208,66 +210,56 @@ const Labs = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Lab Tests */}
             <div className="lg:col-span-2">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Available Tests ({filteredTests.length})</h2>
-                <select className="px-3 py-2 border rounded-lg text-sm">
-                  <option>Sort by Popularity</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                  <option>Fastest Results</option>
-                </select>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredTests.map((test) => (
-                  <Card key={test.id} className="hover:shadow-lg transition-shadow relative">
-                    {test.popular && (
-                      <Badge className="absolute -top-3 left-4 bg-green-600">
-                        Popular
-                      </Badge>
-                    )}
-                    
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <Monitor className="h-6 w-6 text-blue-600" />
-                        <div className="flex gap-1">
-                          <Badge variant="outline" className="text-xs">{test.category}</Badge>
-                          {test.homeTest && (
-                            <Badge className="bg-green-100 text-green-800 text-xs">
-                              <Home className="h-3 w-3 mr-1" />
-                              Home
-                            </Badge>
-                          )}
-                          {test.fasting && (
-                            <Badge className="bg-orange-100 text-orange-800 text-xs">
-                              Fasting
-                            </Badge>
-                          )}
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Tests</h2>
+              <div className="space-y-4">
+                {filteredTests.map((test, index) => (
+                  <Card key={index} className="hover:shadow-lg transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                            {test.category === 'Blood Tests' && <Droplets className="h-6 w-6 text-red-600" />}
+                            {test.category === 'Imaging' && <Activity className="h-6 w-6 text-blue-600" />}
+                            {test.category === 'Specialized' && <Zap className="h-6 w-6 text-purple-600" />}
+                            {test.category === 'Wellness' && <TestTube className="h-6 w-6 text-green-600" />}
+                            {test.category === 'Infectious Disease' && <TestTube className="h-6 w-6 text-orange-600" />}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="text-lg font-semibold text-gray-900">{test.name}</h3>
+                              {test.popular && (
+                                <Badge className="bg-orange-100 text-orange-800 text-xs">Popular</Badge>
+                              )}
+                            </div>
+                            <p className="text-gray-600 mb-3">{test.description}</p>
+                            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                              <div className="flex items-center">
+                                <Clock className="h-4 w-4 mr-1" />
+                                {test.duration}
+                              </div>
+                              <Badge variant="outline" className="text-xs">
+                                {test.category}
+                              </Badge>
+                              {test.fasting && (
+                                <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                                  Fasting Required
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <CardTitle className="text-lg leading-tight">{test.name}</CardTitle>
-                      <p className="text-sm text-gray-600">{test.description}</p>
-                    </CardHeader>
-                    
-                    <CardContent className="pt-0">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="text-2xl font-bold text-blue-600">₦{test.price.toLocaleString()}</div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {test.duration}
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                          Book Test
-                        </Button>
-                        {test.homeTest && (
-                          <Button variant="outline" size="sm" className="w-full">
-                            <Home className="h-4 w-4 mr-2" />
-                            Home Collection
+                        
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-green-600 mb-2">
+                            {test.price}
+                          </div>
+                          <Button 
+                            className="bg-blue-600 hover:bg-blue-700"
+                            onClick={() => handleProtectedAction('book this lab test')}
+                          >
+                            Book Test
                           </Button>
-                        )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -275,74 +267,63 @@ const Labs = () => {
               </div>
             </div>
 
-            {/* Lab Centers & Info */}
+            {/* Lab Locations Sidebar */}
             <div className="lg:col-span-1">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Partner Labs</h2>
-              <div className="space-y-4 mb-8">
-                {labCenters.map((center, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-gray-900">{center.name}</h3>
-                        {center.verified && (
-                          <Badge className="bg-blue-100 text-blue-800 text-xs">
-                            <Shield className="h-3 w-3 mr-1" />
-                            Verified
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600 mb-2">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {center.location}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600 mb-3">
-                        <Star className="h-4 w-4 mr-1 text-yellow-500 fill-current" />
-                        {center.rating} rating
-                      </div>
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {center.services.slice(0, 3).map((service, serviceIndex) => (
-                          <Badge key={serviceIndex} variant="secondary" className="text-xs">
-                            {service}
-                          </Badge>
-                        ))}
-                      </div>
-                      {center.homeService && (
-                        <div className="flex items-center text-xs text-green-600 mb-3">
-                          <Truck className="h-3 w-3 mr-1" />
-                          Home collection available
-                        </div>
-                      )}
-                      <Button size="sm" variant="outline" className="w-full">
-                        View Details
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Quick Actions */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle className="flex items-center">
+                    <MapPin className="h-5 w-5 mr-2 text-blue-600" />
+                    Nearby Laboratories
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Monitor className="mr-2 h-4 w-4" />
-                      Track Test Results
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Schedule Collection
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Heart className="mr-2 h-4 w-4" />
-                      Health Packages
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Home className="mr-2 h-4 w-4" />
-                      Home Test Kits
-                    </Button>
+                  <div className="space-y-4">
+                    {labLocations.map((lab, index) => (
+                      <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-1">{lab.name}</h4>
+                        <p className="text-sm text-gray-600 mb-2">{lab.location}</p>
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center">
+                            <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
+                            <span>{lab.rating}</span>
+                            <span className="mx-1">•</span>
+                            <span>{lab.distance}</span>
+                          </div>
+                          <span className="text-green-600 font-medium">{lab.nextAvailable}</span>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full mt-2"
+                          onClick={() => handleProtectedAction('book at this location')}
+                        >
+                          Select Location
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Test Preparation Info */}
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle className="text-lg">Test Preparation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-1">Fasting Tests</h4>
+                      <p className="text-gray-600">No food or drink (except water) for 8-12 hours before test</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-1">Regular Tests</h4>
+                      <p className="text-gray-600">No special preparation required</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-1">Medications</h4>
+                      <p className="text-gray-600">Continue regular medications unless advised otherwise</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
