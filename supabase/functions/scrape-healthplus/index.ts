@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -31,7 +32,8 @@ serve(async (req) => {
     console.log('Environment check:', {
       hasFirecrawlKey: !!firecrawlApiKey,
       hasSupabaseUrl: !!supabaseUrl,
-      hasServiceKey: !!supabaseServiceKey
+      hasServiceKey: !!supabaseServiceKey,
+      firecrawlKeyLength: firecrawlApiKey?.length || 0
     });
 
     if (!firecrawlApiKey || !supabaseUrl || !supabaseServiceKey) {
@@ -46,7 +48,41 @@ serve(async (req) => {
     if (action === 'scrape') {
       console.log('Making crawl request to Firecrawl API...');
       
-      // Start crawling the Health Plus website
+      // Test with a simple scrape first to validate the API key
+      const testResponse = await fetch('https://api.firecrawl.dev/v0/scrape', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${firecrawlApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: 'https://healthplusnigeria.com/collections/all',
+          pageOptions: {
+            onlyMainContent: true
+          }
+        })
+      });
+
+      console.log('Test scrape response status:', testResponse.status);
+      
+      if (!testResponse.ok) {
+        const errorText = await testResponse.text();
+        console.error('Test scrape failed:', errorText);
+        
+        // Try to parse the error response
+        try {
+          const errorJson = JSON.parse(errorText);
+          console.error('Parsed error:', errorJson);
+          throw new Error(`Firecrawl API error: ${errorJson.error || errorJson.message || 'Invalid API key or service unavailable'}`);
+        } catch (parseError) {
+          throw new Error(`Firecrawl API error (${testResponse.status}): ${errorText || 'Service unavailable'}`);
+        }
+      }
+
+      const testData = await testResponse.json();
+      console.log('Test scrape successful, starting full crawl...');
+      
+      // Now start the full crawl
       const crawlResponse = await fetch('https://api.firecrawl.dev/v0/crawl', {
         method: 'POST',
         headers: {
@@ -58,8 +94,8 @@ serve(async (req) => {
           crawlerOptions: {
             includes: ['healthplusnigeria.com/products/*', 'healthplusnigeria.com/collections/all*'],
             excludes: ['healthplusnigeria.com/cart', 'healthplusnigeria.com/checkout', 'healthplusnigeria.com/account'],
-            maxCrawlPages: 100,
-            maxCrawlDepth: 3
+            maxCrawlPages: 50,
+            maxCrawlDepth: 2
           },
           pageOptions: {
             onlyMainContent: true,
@@ -73,16 +109,23 @@ serve(async (req) => {
       
       if (!crawlResponse.ok) {
         const errorText = await crawlResponse.text();
-        console.error('Firecrawl API error response:', errorText);
-        throw new Error(`Firecrawl API error (${crawlResponse.status}): ${errorText}`);
+        console.error('Firecrawl crawl API error response:', errorText);
+        
+        try {
+          const errorJson = JSON.parse(errorText);
+          console.error('Parsed crawl error:', errorJson);
+          throw new Error(`Firecrawl crawl error: ${errorJson.error || errorJson.message || 'Crawl request failed'}`);
+        } catch (parseError) {
+          throw new Error(`Firecrawl crawl error (${crawlResponse.status}): ${errorText || 'Crawl service unavailable'}`);
+        }
       }
 
       const crawlData = await crawlResponse.json();
-      console.log('Crawl response data:', crawlData);
+      console.log('Crawl response data:', JSON.stringify(crawlData, null, 2));
       
       if (!crawlData.success) {
         console.error('Crawl failed with error:', crawlData.error);
-        throw new Error(`Crawl failed: ${crawlData.error || 'Unknown error'}`);
+        throw new Error(`Crawl failed: ${crawlData.error || crawlData.message || 'Unknown crawl error'}`);
       }
 
       console.log('Crawl started with job ID:', crawlData.jobId);
@@ -98,6 +141,10 @@ serve(async (req) => {
 
     if (action === 'status') {
       const { jobId } = await req.json();
+      
+      if (!jobId) {
+        throw new Error('Job ID is required for status check');
+      }
       
       const statusResponse = await fetch(`https://api.firecrawl.dev/v0/crawl/status/${jobId}`, {
         headers: {
