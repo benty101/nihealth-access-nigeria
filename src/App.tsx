@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -29,6 +28,7 @@ import Premium from "./pages/Premium";
 import Pediatric from "./pages/Pediatric";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./components/UserProfile";
+import PatientPortal from "./components/PatientPortal";
 
 const App = () => {
   const queryClient = React.useMemo(() => new QueryClient(), []);
@@ -66,6 +66,11 @@ const App = () => {
               <Route path="/hospital" element={
                 <OnboardingProtectedRoute>
                   <HospitalDashboard />
+                </OnboardingProtectedRoute>
+              } />
+              <Route path="/patient-portal" element={
+                <OnboardingProtectedRoute>
+                  <PatientPortal />
                 </OnboardingProtectedRoute>
               } />
               <Route path="/profile" element={

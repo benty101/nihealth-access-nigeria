@@ -23,13 +23,20 @@ export const useNavigationItems = () => {
       roleSpecificItems.push(
         { path: '/admin', label: 'System Admin', icon: Shield },
         { path: '/hospital', label: 'Hospital Tools', icon: Building2 },
-        { path: '/broker', label: 'Broker Dashboard', icon: TrendingUp }
+        { path: '/broker', label: 'Broker Dashboard', icon: TrendingUp },
+        { path: '/patient-portal', label: 'Patient Portal', icon: Users }
       );
     }
 
     if (role === 'hospital_admin') {
       roleSpecificItems.push(
         { path: '/hospital', label: 'Hospital Dashboard', icon: Building2 }
+      );
+    }
+
+    if (role === 'patient') {
+      roleSpecificItems.push(
+        { path: '/patient-portal', label: 'My Health Portal', icon: Activity }
       );
     }
 
