@@ -12,10 +12,11 @@ import SystemOverview from '@/components/admin/SystemOverview';
 import DataImportTools from '@/components/admin/DataImportTools';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { adminDataService } from '@/services/AdminDataService';
+import type { SystemStats } from '@/services/AdminDataService';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<SystemStats | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const AdminDashboard = () => {
       setStats(data);
     } catch (error) {
       console.error("AdminDashboard: Error loading stats", error);
+      setStats(null);
     } finally {
       setLoading(false);
     }

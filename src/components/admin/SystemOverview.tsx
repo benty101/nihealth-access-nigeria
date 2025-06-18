@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Building2, Pill, TestTube, Video, FileText, AlertTriangle, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import ServiceStatusDetails from './overview/ServiceStatusDetails';
 import { format } from 'date-fns';
 
 interface SystemOverviewProps {
-  stats: SystemStats;
+  stats: SystemStats | null;
   loading: boolean;
 }
 
@@ -33,6 +34,20 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
     );
   }
 
+  // Handle case when stats is null
+  if (!stats) {
+    return (
+      <div className="space-y-6">
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Unable to load system statistics. Please try refreshing the page.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Frontend Sync Status */}
@@ -49,18 +64,18 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-lg font-semibold text-blue-800">{stats.loadedServices.length}/7</div>
+              <div className="text-lg font-semibold text-blue-800">{stats.loadedServices?.length || 0}/7</div>
               <div className="text-sm text-blue-600">Services Active</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold text-green-800">
-                {stats.activePharmacies + stats.activeHospitals + stats.activeLabs}
+                {(stats.activePharmacies || 0) + (stats.activeHospitals || 0) + (stats.activeLabs || 0)}
               </div>
               <div className="text-sm text-green-600">Active Providers</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold text-purple-800">
-                {stats.activeMedications + stats.activeLabTests}
+                {(stats.activeMedications || 0) + (stats.activeLabTests || 0)}
               </div>
               <div className="text-sm text-purple-600">Active Services</div>
             </div>
@@ -75,7 +90,7 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
       </Card>
 
       {/* Error Alerts */}
-      {stats.errors.length > 0 && (
+      {stats.errors && stats.errors.length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
@@ -91,11 +106,11 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
 
       {/* System Status */}
       <div className="flex items-center gap-4 mb-6">
-        <Badge variant={stats.errors.length === 0 ? "default" : "destructive"} className="text-sm">
-          {stats.errors.length === 0 ? 'All Systems Operational' : `${stats.errors.length} Service(s) Down`}
+        <Badge variant={(stats.errors?.length || 0) === 0 ? "default" : "destructive"} className="text-sm">
+          {(stats.errors?.length || 0) === 0 ? 'All Systems Operational' : `${stats.errors?.length || 0} Service(s) Down`}
         </Badge>
         <Badge variant="outline" className="text-sm">
-          Frontend Data: {stats.loadedServices.length}/7 Services Synced
+          Frontend Data: {stats.loadedServices?.length || 0}/7 Services Synced
         </Badge>
       </div>
 
@@ -104,56 +119,56 @@ const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
         <StatCard
           title="Hospitals"
           icon={Building2}
-          total={stats.totalHospitals}
-          active={stats.activeHospitals}
+          total={stats.totalHospitals || 0}
+          active={stats.activeHospitals || 0}
           description="Active medical facilities"
         />
 
         <StatCard
           title="Pharmacies"
           icon={Pill}
-          total={stats.totalPharmacies}
-          active={stats.activePharmacies}
+          total={stats.totalPharmacies || 0}
+          active={stats.activePharmacies || 0}
           description="Active drug stores"
         />
 
         <StatCard
           title="Medications"
           icon={Pill}
-          total={stats.totalMedications}
-          active={stats.activeMedications}
+          total={stats.totalMedications || 0}
+          active={stats.activeMedications || 0}
           description="Available drugs"
         />
 
         <StatCard
           title="Laboratories"
           icon={TestTube}
-          total={stats.totalLabs}
-          active={stats.activeLabs}
+          total={stats.totalLabs || 0}
+          active={stats.activeLabs || 0}
           description="Active testing centers"
         />
 
         <StatCard
           title="Test Catalog"
           icon={TestTube}
-          total={stats.totalLabTests}
-          active={stats.activeLabTests}
+          total={stats.totalLabTests || 0}
+          active={stats.activeLabTests || 0}
           description="Available tests"
         />
 
         <StatCard
           title="Insurance Plans"
           icon={FileText}
-          total={stats.totalInsurancePlans}
-          active={stats.activeInsurancePlans}
+          total={stats.totalInsurancePlans || 0}
+          active={stats.activeInsurancePlans || 0}
           description="Available plans"
         />
 
         <StatCard
           title="Telemedicine"
           icon={Video}
-          total={stats.totalTelemedicineProviders}
-          active={stats.activeTelemedicineProviders}
+          total={stats.totalTelemedicineProviders || 0}
+          active={stats.activeTelemedicineProviders || 0}
           description="Online doctors"
         />
       </div>

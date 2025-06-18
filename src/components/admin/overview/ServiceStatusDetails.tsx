@@ -11,14 +11,16 @@ interface ServiceStatusDetailsProps {
 
 const ServiceStatusDetails = ({ stats }: ServiceStatusDetailsProps) => {
   const services = [
-    { name: 'Hospitals', key: 'hospitals', total: stats.totalHospitals, active: stats.activeHospitals },
-    { name: 'Pharmacies', key: 'pharmacies', total: stats.totalPharmacies, active: stats.activePharmacies },
-    { name: 'Medications', key: 'medications', total: stats.totalMedications, active: stats.activeMedications },
-    { name: 'Laboratories', key: 'labs', total: stats.totalLabs, active: stats.activeLabs },
-    { name: 'Test Catalog', key: 'lab_tests', total: stats.totalLabTests, active: stats.activeLabTests },
-    { name: 'Insurance', key: 'insurance_plans', total: stats.totalInsurancePlans, active: stats.activeInsurancePlans },
-    { name: 'Telemedicine', key: 'telemedicine_providers', total: stats.totalTelemedicineProviders, active: stats.activeTelemedicineProviders },
+    { name: 'Hospitals', key: 'hospitals', total: stats.totalHospitals || 0, active: stats.activeHospitals || 0 },
+    { name: 'Pharmacies', key: 'pharmacies', total: stats.totalPharmacies || 0, active: stats.activePharmacies || 0 },
+    { name: 'Medications', key: 'medications', total: stats.totalMedications || 0, active: stats.activeMedications || 0 },
+    { name: 'Laboratories', key: 'labs', total: stats.totalLabs || 0, active: stats.activeLabs || 0 },
+    { name: 'Test Catalog', key: 'lab_tests', total: stats.totalLabTests || 0, active: stats.activeLabTests || 0 },
+    { name: 'Insurance', key: 'insurance_plans', total: stats.totalInsurancePlans || 0, active: stats.activeInsurancePlans || 0 },
+    { name: 'Telemedicine', key: 'telemedicine_providers', total: stats.totalTelemedicineProviders || 0, active: stats.activeTelemedicineProviders || 0 },
   ];
+
+  const loadedServices = stats.loadedServices || [];
 
   return (
     <Card>
@@ -39,10 +41,10 @@ const ServiceStatusDetails = ({ stats }: ServiceStatusDetailsProps) => {
                   {service.active}/{service.total} active
                 </span>
                 <Badge 
-                  variant={stats.loadedServices.includes(service.key) ? "default" : "destructive"}
+                  variant={loadedServices.includes(service.key) ? "default" : "destructive"}
                   className="text-xs"
                 >
-                  {stats.loadedServices.includes(service.key) ? 'Synced' : 'Error'}
+                  {loadedServices.includes(service.key) ? 'Synced' : 'Error'}
                 </Badge>
               </div>
             </div>
