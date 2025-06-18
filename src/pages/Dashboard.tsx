@@ -12,6 +12,7 @@ import PersonalizedInsights from '@/components/dashboard/PersonalizedInsights';
 import ProgressTracker from '@/components/dashboard/ProgressTracker';
 import SmartRecommendations from '@/components/dashboard/SmartRecommendations';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
+import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
@@ -47,6 +48,7 @@ const Dashboard = () => {
           
           {/* Right Column - Sidebar */}
           <div className="xl:col-span-4 space-y-6">
+            <EmergencyContactCard />
             <HealthReminders />
             <QuickLinks />
           </div>
