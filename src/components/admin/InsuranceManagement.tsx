@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, Search, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { FileText, Plus, Search, Edit, Trash2, AlertCircle, RefreshCw, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { adminService, type InsurancePlan } from '@/services/AdminService';
+import { insuranceDataPopulator } from '@/services/InsuranceDataPopulator';
 import { useToast } from '@/hooks/use-toast';
 
 interface InsuranceManagementProps {
@@ -16,6 +17,7 @@ interface InsuranceManagementProps {
 const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
   const [plans, setPlans] = useState<InsurancePlan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
@@ -40,6 +42,32 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const syncInsuranceData = async () => {
+    try {
+      setSyncing(true);
+      await insuranceDataPopulator.syncInsuranceData();
+      await loadPlans();
+      
+      if (onStatsChange) {
+        await onStatsChange();
+      }
+      
+      toast({
+        title: "Success",
+        description: "Insurance data synchronized successfully"
+      });
+    } catch (error) {
+      console.error('Error syncing insurance data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to sync insurance data",
+        variant: "destructive"
+      });
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -72,7 +100,7 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
     plan.plan_type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
+  if (loading && !syncing) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-16">
@@ -93,9 +121,22 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-4 gap-2">
             <Button onClick={loadPlans} variant="outline">
               Try Again
+            </Button>
+            <Button onClick={syncInsuranceData} disabled={syncing} className="bg-teal-600 hover:bg-teal-700">
+              {syncing ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Syncing...
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4 mr-2" />
+                  Sync Data
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
@@ -116,10 +157,29 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
               Manage insurance plans and coverage options
             </CardDescription>
           </div>
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Plan
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={syncInsuranceData} 
+              disabled={syncing}
+              variant="outline"
+            >
+              {syncing ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Syncing...
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4 mr-2" />
+                  Sync Data
+                </>
+              )}
+            </Button>
+            <Button className="bg-teal-600 hover:bg-teal-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Plan
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -214,12 +274,25 @@ const InsuranceManagement = ({ onStatsChange }: InsuranceManagementProps) => {
           ))}
         </div>
 
-        {filteredPlans.length === 0 && (
+        {filteredPlans.length === 0 && !loading && !syncing && (
           <div className="text-center py-8">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-4">
              {searchTerm ? 'No insurance plans found matching your criteria' : 'No insurance plans available'}
             </p>
+            <Button onClick={syncInsuranceData} disabled={syncing} className="bg-teal-600 hover:bg-teal-700">
+              {syncing ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Syncing Data...
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4 mr-2" />
+                  Sync Insurance Data
+                </>
+              )}
+            </Button>
           </div>
         )}
       </CardContent>
