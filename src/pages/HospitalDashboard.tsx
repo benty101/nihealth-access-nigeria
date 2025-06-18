@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import { Building2, Users, FileText, Calendar, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -143,6 +143,9 @@ const HospitalDashboard = () => {
           </Card>
         </div>
       </div>
+      
+      {/* Floating Emergency Button */}
+      <FloatingEmergencyButton />
     </div>
   );
 };

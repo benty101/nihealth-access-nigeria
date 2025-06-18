@@ -4,6 +4,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { Navigate } from 'react-router-dom';
 import SuperAdminDashboard from '@/components/admin/SuperAdminDashboard';
 import Navbar from '@/components/Navbar';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const AdminDashboard = () => {
   const { role, loading } = useUserRole();
@@ -29,6 +30,9 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <SuperAdminDashboard />
+      
+      {/* Floating Emergency Button */}
+      <FloatingEmergencyButton />
     </div>
   );
 };

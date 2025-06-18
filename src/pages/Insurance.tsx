@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import EnhancedInsuranceSearch from '@/components/insurance/EnhancedInsuranceSearch';
@@ -7,6 +6,7 @@ import InsurancePlanCard from '@/components/insurance/InsurancePlanCard';
 import InsuranceComparison from '@/components/insurance/InsuranceComparison';
 import InsuranceHelpSection from '@/components/insurance/InsuranceHelpSection';
 import UserGuidance from '@/components/onboarding/UserGuidance';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import { insurancePlans } from '@/data/insurancePlans';
 
 const Insurance = () => {
@@ -169,6 +169,9 @@ const Insurance = () => {
         {/* Help Section */}
         <InsuranceHelpSection />
       </div>
+
+      {/* Floating Emergency Button */}
+      <FloatingEmergencyButton />
     </div>
   );
 };
