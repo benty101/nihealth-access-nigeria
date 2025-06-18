@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -59,8 +58,14 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
   const loadDoctorsAndHospitals = async () => {
     try {
       const [doctorsResult, hospitalsResult] = await Promise.all([
-        supabase.from('telemedicine_providers').select('id, name, specialization, consultation_fee').eq('is_active', true),
-        supabase.from('hospitals').select('id, name, address').eq('is_active', true)
+        supabase
+          .from('telemedicine_providers')
+          .select('id, name, specialization, consultation_fee')
+          .eq('is_active', true),
+        supabase
+          .from('hospitals')
+          .select('id, name, address')
+          .eq('is_active', true)
       ]);
 
       if (doctorsResult.data) setDoctors(doctorsResult.data);
@@ -84,8 +89,12 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
       appointmentDateTime.setHours(parseInt(hours), parseInt(minutes));
 
       const appointmentData: BookAppointmentData = {
-        ...formData,
-        scheduled_at: appointmentDateTime.toISOString()
+        doctor_id: formData.doctor_id || undefined,
+        hospital_id: formData.hospital_id || undefined,
+        scheduled_at: appointmentDateTime.toISOString(),
+        consultation_type: formData.consultation_type,
+        chief_complaint: formData.chief_complaint || undefined,
+        consultation_notes: formData.consultation_notes || undefined
       };
 
       await AppointmentService.bookAppointment(appointmentData);
@@ -143,8 +152,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="video">Video Consultation</SelectItem>
-                <SelectItem value="phone">Phone Consultation</SelectItem>
-                <SelectItem value="in_person">In-Person Visit</SelectItem>
+                <SelectItem value="voice">Phone Consultation</SelectItem>
+                <SelectItem value="chat">Chat Consultation</SelectItem>
               </SelectContent>
             </Select>
           </div>
