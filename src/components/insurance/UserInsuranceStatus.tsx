@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +53,7 @@ const UserInsuranceStatus = () => {
     }
   };
 
-  const isExpiringsoon = (endDate: string) => {
+  const isExpiringSoon = (endDate: string) => {
     const end = new Date(endDate);
     const thirtyDaysFromNow = addDays(new Date(), 30);
     return isAfter(end, new Date()) && isBefore(end, thirtyDaysFromNow);

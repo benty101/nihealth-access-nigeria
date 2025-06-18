@@ -28,10 +28,17 @@ import {
 
 const SuperAdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(false);
+
+  const handleRefresh = () => {
+    setLoading(true);
+    // Simulate refresh
+    setTimeout(() => setLoading(false), 1000);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SuperAdminHeader />
+      <SuperAdminHeader loading={loading} onRefresh={handleRefresh} />
       
       <div className="max-w-7xl mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -79,7 +86,7 @@ const SuperAdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            <SystemOverview />
+            <SystemOverview stats={{}} loading={loading} />
           </TabsContent>
 
           <TabsContent value="users">

@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Settings, Sync, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Settings, RefreshCw, Trash2, Eye, EyeOff } from 'lucide-react';
 import { insuranceApiService } from '@/services/InsuranceApiService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -178,7 +178,7 @@ const InsuranceApiManagement = () => {
         <h2 className="text-2xl font-bold">Insurance API Management</h2>
         <div className="flex gap-2">
           <Button onClick={handleSync} disabled={syncing} variant="outline">
-            <Sync className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
             {syncing ? 'Syncing...' : 'Sync Data'}
           </Button>
           <Dialog open={showApiForm} onOpenChange={setShowApiForm}>

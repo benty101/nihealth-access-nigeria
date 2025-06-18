@@ -42,7 +42,7 @@ class InsurancePurchaseService {
       .single();
 
     if (error) throw error;
-    return data;
+    return data as InsurancePurchase;
   }
 
   async getUserPurchases(): Promise<InsurancePurchase[]> {
@@ -60,7 +60,7 @@ class InsurancePurchaseService {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data || []) as InsurancePurchase[];
   }
 
   async updatePurchaseStatus(purchaseId: string, status: InsurancePurchase['status']): Promise<void> {
@@ -89,7 +89,7 @@ class InsurancePurchaseService {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data || []) as InsurancePurchase[];
   }
 }
 
