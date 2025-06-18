@@ -1,12 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-import { Building2, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Building2, Plus, Search, Download, Upload } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { adminService, type Hospital } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
+import HospitalForm from './forms/HospitalForm';
+import HospitalTableRow from './hospital/HospitalTableRow';
+import HospitalDetailModal from './hospital/HospitalDetailModal';
 
 interface HospitalManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -14,18 +27,36 @@ interface HospitalManagementProps {
 
 const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [filteredHospitals, setFilteredHospitals] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [editingHospital, setEditingHospital] = useState<Hospital | null>(null);
+  const [deletingHospital, setDeletingHospital] = useState<Hospital | null>(null);
+  const [viewingHospital, setViewingHospital] = useState<Hospital | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadHospitals();
   }, []);
 
+  useEffect(() => {
+    const filtered = hospitals.filter(hospital =>
+      hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.state || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.lga || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.license_number || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredHospitals(filtered);
+  }, [hospitals, searchTerm]);
+
   const loadHospitals = async () => {
     try {
+      setLoading(true);
       const hospitalsData = await adminService.getAllHospitals();
       setHospitals(hospitalsData);
+      setFilteredHospitals(hospitalsData);
     } catch (error) {
       console.error('Error loading hospitals:', error);
       toast({
@@ -38,35 +69,111 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
     }
   };
 
-  const toggleHospitalStatus = async (id: string, currentStatus: boolean) => {
+  const handleCreateHospital = async (hospitalData: Omit<Hospital, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      await adminService.updateHospital(id, { is_active: !currentStatus });
+      setFormLoading(true);
+      await adminService.createHospital(hospitalData);
       await loadHospitals();
       
-      // Trigger stats refresh if callback provided
       if (onStatsChange) {
         await onStatsChange();
       }
       
+      setShowForm(false);
+      setEditingHospital(null);
+      
       toast({
         title: "Success",
-        description: `Hospital ${!currentStatus ? 'activated' : 'deactivated'} successfully`
+        description: "Hospital created successfully"
       });
     } catch (error) {
-      console.error('Error updating hospital status:', error);
+      console.error('Error creating hospital:', error);
       toast({
         title: "Error",
-        description: "Failed to update hospital status",
+        description: "Failed to create hospital",
+        variant: "destructive"
+      });
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleUpdateHospital = async (hospitalData: Omit<Hospital, 'id' | 'created_at' | 'updated_at'>) => {
+    if (!editingHospital) return;
+    
+    try {
+      setFormLoading(true);
+      await adminService.updateHospital(editingHospital.id, hospitalData);
+      await loadHospitals();
+      
+      if (onStatsChange) {
+        await onStatsChange();
+      }
+      
+      setShowForm(false);
+      setEditingHospital(null);
+      
+      toast({
+        title: "Success",
+        description: "Hospital updated successfully"
+      });
+    } catch (error) {
+      console.error('Error updating hospital:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update hospital",
+        variant: "destructive"
+      });
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDeleteHospital = async () => {
+    if (!deletingHospital) return;
+    
+    try {
+      await adminService.deleteHospital(deletingHospital.id);
+      await loadHospitals();
+      
+      if (onStatsChange) {
+        await onStatsChange();
+      }
+      
+      setDeletingHospital(null);
+      
+      toast({
+        title: "Success",
+        description: "Hospital deleted successfully"
+      });
+    } catch (error) {
+      console.error('Error deleting hospital:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete hospital",
         variant: "destructive"
       });
     }
   };
 
-  const filteredHospitals = hospitals.filter(hospital =>
-    hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (hospital.state || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (hospital.lga || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleEdit = (hospital: Hospital) => {
+    setEditingHospital(hospital);
+    setShowForm(true);
+  };
+
+  const handleView = (hospital: Hospital) => {
+    setViewingHospital(hospital);
+  };
+
+  const handleAddNew = () => {
+    setEditingHospital(null);
+    setShowForm(true);
+  };
+
+  const handleCancelForm = () => {
+    setShowForm(false);
+    setEditingHospital(null);
+  };
 
   if (loading) {
     return (
@@ -81,122 +188,127 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
     );
   }
 
+  if (showForm) {
+    return (
+      <HospitalForm
+        hospital={editingHospital}
+        onSubmit={editingHospital ? handleUpdateHospital : handleCreateHospital}
+        onCancel={handleCancelForm}
+        loading={formLoading}
+      />
+    );
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
-              Hospital Management
-            </CardTitle>
-            <CardDescription>
-              Manage hospital listings and medical services across the platform
-            </CardDescription>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Hospital Management
+              </CardTitle>
+              <CardDescription>
+                Manage hospital listings and medical services across the platform
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+              <Button variant="outline" size="sm">
+                <Upload className="h-4 w-4 mr-2" />
+                Import
+              </Button>
+              <Button onClick={handleAddNew} className="bg-teal-600 hover:bg-teal-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Hospital
+              </Button>
+            </div>
           </div>
-          <Button className="bg-teal-600 hover:bg-teal-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Hospital
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Search */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search hospitals..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        </CardHeader>
+        <CardContent>
+          {/* Search and Stats */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search hospitals..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="text-sm text-gray-600">
+              Showing {filteredHospitals.length} of {hospitals.length} hospitals
+            </div>
           </div>
-        </div>
 
-        {/* Hospitals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredHospitals.map((hospital) => (
-            <Card key={hospital.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{hospital.name}</CardTitle>
-                    <p className="text-sm text-gray-600">{hospital.address}</p>
-                    <p className="text-xs text-gray-500">{hospital.state}, {hospital.lga}</p>
-                  </div>
-                  <Badge className={hospital.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                    {hospital.is_active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">License:</span>
-                    <span className="text-gray-600">{hospital.license_number || 'N/A'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Phone:</span>
-                    <span className="text-gray-600">{hospital.phone || 'N/A'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium">Email:</span>
-                    <span className="text-gray-600">{hospital.email || 'N/A'}</span>
-                  </div>
-                </div>
-
-                {hospital.specialties && hospital.specialties.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-sm font-medium mb-2">Specialties:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {hospital.specialties.slice(0, 3).map((specialty, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {specialty}
-                        </Badge>
-                      ))}
-                      {hospital.specialties.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{hospital.specialties.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="h-3 w-3 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant={hospital.is_active ? "destructive" : "default"}
-                    size="sm"
-                    onClick={() => toggleHospitalStatus(hospital.id, hospital.is_active)}
-                  >
-                    {hospital.is_active ? (
-                      <>
-                        <Trash2 className="h-3 w-3 mr-1" />
-                        Deactivate
-                      </>
-                    ) : (
-                      'Activate'
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredHospitals.length === 0 && (
-          <div className="text-center py-8">
-            <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No hospitals found matching your criteria</p>
+          {/* Hospitals Table */}
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>License</TableHead>
+                  <TableHead>State</TableHead>
+                  <TableHead>LGA</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Specialties</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredHospitals.map((hospital) => (
+                  <HospitalTableRow
+                    key={hospital.id}
+                    hospital={hospital}
+                    onEdit={handleEdit}
+                    onDelete={setDeletingHospital}
+                    onView={handleView}
+                  />
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {filteredHospitals.length === 0 && (
+            <div className="text-center py-8">
+              <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No hospitals found matching your criteria</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingHospital} onOpenChange={() => setDeletingHospital(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Hospital</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{deletingHospital?.name}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteHospital} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Hospital Detail Modal */}
+      <HospitalDetailModal
+        hospital={viewingHospital}
+        open={!!viewingHospital}
+        onClose={() => setViewingHospital(null)}
+      />
+    </>
   );
 };
 
