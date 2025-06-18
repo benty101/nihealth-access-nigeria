@@ -1,369 +1,396 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Minus, ShoppingCart, Star, Clock, Truck, AlertCircle, UserPlus } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Search, 
+  ShoppingCart, 
+  Filter,
+  Package,
+  Clock,
+  Pill,
+  Star,
+  Heart,
+  AlertTriangle
+} from 'lucide-react';
+import UserGuidance from '@/components/onboarding/UserGuidance';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
+import OrderManagement from '@/components/pharmacy/OrderManagement';
+import MedicationReminders from '@/components/pharmacy/MedicationReminders';
 import { medicationService } from '@/services/MedicationService';
-import type { Medication as MedicationType } from '@/services/AdminService';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { pharmacyService } from '@/services/PharmacyService';
-import { usePharmacies } from '@/hooks/usePharmacies';
-import { useMedications } from '@/hooks/useMedications';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Pharmacy = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const [medications, setMedications] = useState<any[]>([]);
+  const [pharmacies, setPharmacies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [cart, setCart] = useState<{[key: string]: number}>({});
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedPharmacy, setSelectedPharmacy] = useState('all');
   const [sortBy, setSortBy] = useState('name');
-  const [selectedPharmacyId, setSelectedPharmacyId] = useState<string | null>(null);
+  const [cart, setCart] = useState<any[]>([]);
 
-  // USE UNIFIED HOOKS:
-  const { data: pharmacies = [], isLoading: pharmaciesLoading, isError: pharmaciesError } = usePharmacies();
-  const { data: medications = [], isLoading: medsLoading, isError: medsError } = useMedications({
-    pharmacyId: selectedPharmacyId
-  });
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const categories = [
-    'All',
-    'Pain Relief',
-    'Antibiotics',
-    'Cardiovascular',
-    'Diabetes',
-    'Supplements',
-    'Respiratory',
-    'Gastrointestinal',
-    'Mental Health',
-    'Dermatology',
-    "Women's Health",
-    "Men's Health",
-    'Eye Care'
-  ];
-
-  // Function to handle protected actions
-  const handleProtectedAction = (action: string) => {
-    if (!user) {
-      // Show registration prompt
-      const proceed = window.confirm(`You need to create an account to ${action}. Would you like to register now?`);
-      if (proceed) {
-        navigate('/auth');
-      }
-      return false;
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [medicationsData, pharmaciesData] = await Promise.all([
+        medicationService.getActiveMedications(),
+        pharmacyService.getActivePharmacies()
+      ]);
+      setMedications(medicationsData);
+      setPharmacies(pharmaciesData);
+    } catch (error) {
+      console.error('Error loading pharmacy data:', error);
+    } finally {
+      setLoading(false);
     }
-    return true;
   };
 
-  // Optionally filter medications by selected pharmacy
+  // Get unique categories
+  const categories = ['all', ...new Set(medications.map(med => med.category))];
+
+  // Filter and sort medications
   const filteredMedications = medications
-    .filter(med => 
-      (selectedCategory === 'All' || med.category === selectedCategory) &&
-      (med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       med.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       (med.brand && med.brand.toLowerCase().includes(searchTerm.toLowerCase()))) &&
-      (!selectedPharmacyId || med.pharmacy_id === selectedPharmacyId)
-    )
+    .filter(med => {
+      const matchesSearch = med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           med.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           med.active_ingredient?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || med.category === selectedCategory;
+      const matchesPharmacy = selectedPharmacy === 'all' || med.pharmacy_id === selectedPharmacy;
+      
+      return matchesSearch && matchesCategory && matchesPharmacy;
+    })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'price-low': return a.price - b.price;
-        case 'price-high': return b.price - a.price;
-        case 'rating': return (b.rating ?? 0) - (a.rating ?? 0);
-        default: return a.name.localeCompare(b.name);
+        case 'price-low':
+          return a.price - b.price;
+        case 'price-high':
+          return b.price - a.price;
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'name':
+        default:
+          return a.name.localeCompare(b.name);
       }
     });
 
-  const updateCart = (id: string, change: number) => {
-    if (!handleProtectedAction('add items to cart')) return;
-    
-    setCart(prev => {
-      const newCart = { ...prev };
-      const currentQty = newCart[id] || 0;
-      const newQty = Math.max(0, currentQty + change);
-      if (newQty === 0) {
-        delete newCart[id];
-      } else {
-        newCart[id] = newQty;
-      }
-      return newCart;
-    });
+  const addToCart = (medication: any) => {
+    const existingItem = cart.find(item => item.id === medication.id);
+    if (existingItem) {
+      setCart(cart.map(item =>
+        item.id === medication.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setCart([...cart, { ...medication, quantity: 1 }]);
+    }
   };
 
-  const handleCartClick = () => {
-    if (!handleProtectedAction('view cart')) return;
-    // Cart functionality for authenticated users
+  const removeFromCart = (medicationId: string) => {
+    setCart(cart.filter(item => item.id !== medicationId));
   };
 
-  const getTotalItems = () => Object.values(cart).reduce((sum, qty) => sum + qty, 0);
-  
-  const getTotalPrice = () => {
-    return Object.entries(cart).reduce((total, [id, qty]) => {
-      const medication = medications.find(med => med.id === id);
-      return total + (medication ? medication.price * qty : 0);
-    }, 0);
+  const updateCartQuantity = (medicationId: string, quantity: number) => {
+    if (quantity === 0) {
+      removeFromCart(medicationId);
+    } else {
+      setCart(cart.map(item =>
+        item.id === medicationId ? { ...item, quantity } : item
+      ));
+    }
+  };
+
+  const MedicationCard = ({ medication }: { medication: any }) => {
+    const isInCart = cart.some(item => item.id === medication.id);
+    const cartItem = cart.find(item => item.id === medication.id);
+
+    return (
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardContent className="p-4">
+          <div className="flex justify-between items-start mb-3">
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg">{medication.name}</h3>
+              {medication.brand && (
+                <p className="text-sm text-gray-600">Brand: {medication.brand}</p>
+              )}
+              {medication.generic_name && medication.generic_name !== medication.name && (
+                <p className="text-sm text-gray-500">Generic: {medication.generic_name}</p>
+              )}
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-xl text-teal-600">₦{medication.price.toLocaleString()}</p>
+              {medication.pack_size && (
+                <p className="text-sm text-gray-500">{medication.pack_size}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-2 mb-3">
+            <Badge variant="outline" className="mr-2">{medication.category}</Badge>
+            {medication.prescription_required && (
+              <Badge variant="destructive" className="mr-2">
+                <AlertTriangle className="h-3 w-3 mr-1" />
+                Prescription Required
+              </Badge>
+            )}
+            {medication.strength && (
+              <Badge variant="secondary">{medication.strength}</Badge>
+            )}
+          </div>
+
+          {medication.description && (
+            <p className="text-sm text-gray-700 mb-3 line-clamp-2">
+              {medication.description}
+            </p>
+          )}
+
+          {medication.indication && (
+            <div className="mb-3">
+              <p className="text-xs font-medium text-gray-600">Indication:</p>
+              <p className="text-sm text-gray-700">{medication.indication}</p>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              {medication.rating && (
+                <div className="flex items-center">
+                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                  <span className="text-sm">{medication.rating}</span>
+                </div>
+              )}
+              <Badge className={medication.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                {medication.in_stock ? 'In Stock' : 'Out of Stock'}
+              </Badge>
+            </div>
+            {medication.manufacturer && (
+              <p className="text-xs text-gray-500">{medication.manufacturer}</p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            {isInCart ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => updateCartQuantity(medication.id, (cartItem?.quantity || 1) - 1)}
+                >
+                  -
+                </Button>
+                <span className="mx-2">{cartItem?.quantity}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => updateCartQuantity(medication.id, (cartItem?.quantity || 1) + 1)}
+                >
+                  +
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => addToCart(medication)}
+                disabled={!medication.in_stock}
+                className="bg-teal-600 hover:bg-teal-700"
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Add to Cart
+              </Button>
+            )}
+            <Button variant="ghost" size="sm">
+              <Heart className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      <UserGuidance />
       
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Online Pharmacy
-            </h1>
-            <p className="text-lg text-gray-600">
-              Browse genuine medicines and health products with same-day delivery
-            </p>
-            {!user && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center justify-center gap-2 text-blue-700">
-                  <UserPlus className="h-5 w-5" />
-                  <span>Create an account to purchase medicines and track your orders</span>
-                  <Button 
-                    onClick={() => navigate('/auth')} 
-                    size="sm" 
-                    className="ml-2 bg-blue-600 hover:bg-blue-700"
-                  >
-                    Sign Up
-                  </Button>
-                </div>
-              </div>
-            )}
-            <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
-              <div className="flex items-center">
-                <Truck className="h-4 w-4 mr-2 text-green-600" />
-                Free delivery over ₦10,000
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2 text-blue-600" />
-                Same-day delivery available
-              </div>
-              <div className="flex items-center">
-                <Star className="h-4 w-4 mr-2 text-yellow-500" />
-                Verified authentic medicines
-              </div>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">MeddyPal Pharmacy</h1>
+          <p className="text-gray-600">Your trusted online pharmacy for quality medications</p>
+        </div>
 
-          {/* Pharmacies grid for selection */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-2">Pharmacies</h2>
-            {pharmaciesLoading ? (
-              <div>Loading pharmacies...</div>
-            ) : pharmaciesError ? (
-              <div className="text-red-500">Failed to fetch pharmacies. Please try again.</div>
-            ) : pharmacies.length > 0 ? (
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  variant={!selectedPharmacyId ? "default" : "outline"}
-                  onClick={() => setSelectedPharmacyId(null)}
-                  size="sm"
-                  className={!selectedPharmacyId ? "bg-blue-600 hover:bg-blue-700" : ""}
-                >
-                  All Pharmacies
-                </Button>
-                {pharmacies.map((pharm) => (
-                  <Button
-                    key={pharm.id}
-                    variant={selectedPharmacyId === pharm.id ? "default" : "outline"}
-                    onClick={() => setSelectedPharmacyId(pharm.id)}
-                    size="sm"
-                    className={selectedPharmacyId === pharm.id ? "bg-blue-600 hover:bg-blue-700" : ""}
-                  >
-                    {pharm.name}
-                  </Button>
-                ))}
+        <Tabs defaultValue="shop" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="shop" className="flex items-center gap-2">
+              <ShoppingCart className="h-4 w-4" />
+              Shop
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              My Orders
+            </TabsTrigger>
+            <TabsTrigger value="reminders" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Reminders
+            </TabsTrigger>
+            <TabsTrigger value="prescriptions" className="flex items-center gap-2">
+              <Pill className="h-4 w-4" />
+              Prescriptions
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="shop" className="mt-6">
+            {/* Search and Filter */}
+            <Card className="mb-6">
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search medications..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(category => (
+                        <SelectItem key={category} value={category}>
+                          {category === 'all' ? 'All Categories' : category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={selectedPharmacy} onValueChange={setSelectedPharmacy}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pharmacy" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Pharmacies</SelectItem>
+                      {pharmacies.map(pharmacy => (
+                        <SelectItem key={pharmacy.id} value={pharmacy.id}>
+                          {pharmacy.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="name">Name A-Z</SelectItem>
+                      <SelectItem value="price-low">Price: Low to High</SelectItem>
+                      <SelectItem value="price-high">Price: High to Low</SelectItem>
+                      <SelectItem value="rating">Highest Rated</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cart Summary */}
+            {cart.length > 0 && (
+              <Card className="mb-6 border-teal-200 bg-teal-50">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold">Cart ({cart.length} items)</h3>
+                      <p className="text-teal-600">
+                        Total: ₦{cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}
+                      </p>
+                    </div>
+                    <Button className="bg-teal-600 hover:bg-teal-700">
+                      Proceed to Checkout
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Medications Grid */}
+            {loading ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
               </div>
             ) : (
-              <div>No pharmacies available</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredMedications.map(medication => (
+                  <MedicationCard key={medication.id} medication={medication} />
+                ))}
+              </div>
             )}
-          </div>
 
-          {/* Search and Cart */}
-          <div className="flex flex-col lg:flex-row gap-4 mb-8">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search medicines, brands, or conditions..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-2">
-              <select 
-                className="px-4 py-2 border rounded-lg bg-white"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="name">Sort by Name</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
-              </select>
-              <Button className="bg-green-600 hover:bg-green-700" onClick={handleCartClick}>
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Cart ({getTotalItems()}) - ₦{getTotalPrice().toLocaleString()}
-              </Button>
-            </div>
-          </div>
+            {filteredMedications.length === 0 && !loading && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No medications found matching your criteria</p>
+              </div>
+            )}
+          </TabsContent>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className={selectedCategory === category ? "bg-blue-600 hover:bg-blue-700" : ""}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
+          <TabsContent value="orders" className="mt-6">
+            {user ? (
+              <OrderManagement />
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <h3 className="text-lg font-medium mb-2">Sign in to view orders</h3>
+                  <p className="text-gray-600">Please sign in to access your order history</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
-          {/* Medications Grid */}
-          {(medsLoading || pharmaciesLoading) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <Card key={index}>
-                  <CardHeader><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" /></CardHeader>
-                  <CardContent><Skeleton className="h-10 w-full" /></CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+          <TabsContent value="reminders" className="mt-6">
+            {user ? (
+              <MedicationReminders />
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <h3 className="text-lg font-medium mb-2">Sign in to manage reminders</h3>
+                  <p className="text-gray-600">Please sign in to set up medication reminders</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
-          {(medsError || pharmaciesError) && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                Failed to load data. Please try again later.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {!medsLoading && !pharmaciesLoading && !medsError && !pharmaciesError && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredMedications.map((medication) => (
-                <Card key={medication.id} className="hover:shadow-lg transition-shadow flex flex-col">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="outline" className="text-xs">{medication.category}</Badge>
-                      {medication.prescription_required && (
-                        <Badge className="bg-red-100 text-red-800 text-xs">
-                          Rx Required
-                        </Badge>
-                      )}
-                    </div>
-                    <CardTitle className="text-lg leading-tight">{medication.name}</CardTitle>
-                    {medication.pharmacy_id && (
-                      <span className="block text-xs text-gray-500 mb-1">
-                        {pharmacies.find(ph => ph.id === medication.pharmacy_id)?.name || ''}
-                      </span>
-                    )}
-                    <p className="text-sm text-gray-600 mb-2 truncate">{medication.description}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{medication.brand}</span>
-                      <span>{medication.pack_size}</span>
-                    </div>
-                    <div className="flex items-center mt-1">
-                      <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                      <span className="text-xs text-gray-600 ml-1">{medication.rating}</span>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="pt-0 mt-auto">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="text-xl font-bold text-green-600">
-                        ₦{medication.price.toLocaleString()}
-                      </div>
-                      <div className={`text-sm font-semibold ${medication.in_stock ? 'text-green-600' : 'text-red-600'}`}>
-                        {medication.in_stock ? 'In Stock' : 'Out of Stock'}
-                      </div>
-                    </div>
-                    
-                    {medication.in_stock ? (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateCart(medication.id, -1)}
-                              disabled={!cart[medication.id]}
-                            >
-                              <Minus className="h-3 w-3" />
-                            </Button>
-                            <span className="w-8 text-center text-sm font-medium">{cart[medication.id] || 0}</span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateCart(medication.id, 1)}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </Button>
-                          </div>
-                           <Button 
-                            size="sm" 
-                            className="bg-blue-600 hover:bg-blue-700"
-                            onClick={() => updateCart(medication.id, 1)}
-                          >
-                            Add to Cart
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <Button disabled className="w-full" size="sm">
-                        Notify When Available
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-
-          {!medsLoading && !pharmaciesLoading && !medsError && !pharmaciesError && filteredMedications.length === 0 && (
-             <div className="text-center py-16">
-              <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">
-                {searchTerm || selectedCategory !== 'All' ? 'No medications found matching your criteria.' : 'No medications available at the moment.'}
-              </p>
-            </div>
-          )}
-
-          {/* Prescription Upload */}
-          <div className="mt-16 bg-white rounded-lg shadow-sm p-8">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Have a Prescription?
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Upload your prescription and we'll prepare your medicines for delivery
-              </p>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => handleProtectedAction('upload prescription')}
-              >
-                Upload Prescription
-              </Button>
-            </div>
-          </div>
-        </div>
+          <TabsContent value="prescriptions" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Prescription Management</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">
+                  Upload your prescriptions for prescription medications. Our pharmacists will verify them before processing your order.
+                </p>
+                <Button className="bg-teal-600 hover:bg-teal-700">
+                  Upload Prescription
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
+
+      <FloatingEmergencyButton />
     </div>
   );
 };
