@@ -16,20 +16,19 @@ const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="text-center">
-          {/* Trust Badge */}
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-white shadow-sm border border-teal-200 text-teal-800 text-sm font-medium mb-8 animate-fade-in">
-            <Shield className="h-4 w-4 mr-2" />
-            🇳🇬 Ministry of Health Approved • Trusted by 25,000+ Nigerian Mothers
-          </div>
-
           {/* Main Headline */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 animate-fade-in animation-delay-200">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-2 animate-fade-in animation-delay-200">
             Your Digital 
             <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent block">
               Maternal Health
             </span>
             Companion
           </h1>
+
+          {/* Partnership text */}
+          <p className="text-sm text-gray-500 mb-6 animate-fade-in animation-delay-300">
+            In partnership with Ministry of Science & Innovation
+          </p>
 
           {/* Subheadline */}
           <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed animate-fade-in animation-delay-400">
@@ -81,7 +80,7 @@ const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>200+ Partner Health Facilities</span>
+              <span>200+ Insurance Partners</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full"></div>

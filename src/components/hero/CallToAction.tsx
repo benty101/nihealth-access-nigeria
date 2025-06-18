@@ -13,20 +13,13 @@ const CallToAction = ({ onGetStarted }: CallToActionProps) => {
       <div className="absolute inset-0 bg-gradient-to-r from-teal-600/20 to-emerald-600/20 animate-pulse"></div>
       
       <div className="max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Government Partnership Badge */}
-        <div className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium mb-8 animate-fade-in">
-          <Shield className="h-4 w-4 mr-2" />
-          🇳🇬 Official Partner: Ministry of Health & Ministry of Science and Innovation
-        </div>
-
         <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 animate-fade-in animation-delay-200">
           Join Nigeria's Leading
           <span className="block text-teal-100">Maternal Health Revolution</span>
         </h2>
         
         <p className="text-xl text-teal-100 mb-8 max-w-4xl mx-auto animate-fade-in animation-delay-300">
-          Backed by government partnerships and trusted by thousands of Nigerian mothers, 
-          MeddyPal is transforming maternal and child healthcare across the nation.
+          Trusted by thousands of Nigerian mothers, MeddyPal is transforming maternal and child healthcare across the nation.
         </p>
 
         {/* Key Statistics */}

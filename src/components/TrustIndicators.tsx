@@ -34,10 +34,6 @@ const TrustIndicators = () => {
     <div className="py-16 bg-gradient-to-br from-teal-50 to-emerald-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-white shadow-sm border border-emerald-200 text-emerald-800 text-sm font-medium mb-6 animate-gentle-bounce">
-            <Shield className="h-4 w-4 mr-2 animate-pulse" />
-            🇳🇬 Ministry of Health Approved • Ministry of Science & Innovation Partner
-          </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Why Nigerian Mothers Choose <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">MeddyPal</span>
           </h2>
