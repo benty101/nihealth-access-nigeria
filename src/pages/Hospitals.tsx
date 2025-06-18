@@ -2,7 +2,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import HospitalDirectory from '@/components/HospitalDirectory';
-import HealthReminders from '@/components/dashboard/HealthReminders';
+import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
 
 const Hospitals = () => {
   return (
@@ -10,10 +10,10 @@ const Hospitals = () => {
       <Navbar />
       <HospitalDirectory />
       
-      {/* Health Reminders Section at Bottom */}
+      {/* Emergency Contact Section at Bottom */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="max-w-md mx-auto">
-          <HealthReminders />
+          <EmergencyContactCard />
         </div>
       </div>
     </div>
