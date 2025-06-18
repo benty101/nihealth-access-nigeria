@@ -92,6 +92,102 @@ export type Database = {
         }
         Relationships: []
       }
+      insurance_api_configs: {
+        Row: {
+          api_endpoint: string
+          api_key_reference: string | null
+          config_data: Json | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          last_sync: string | null
+          provider_name: string
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint: string
+          api_key_reference?: string | null
+          config_data?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          provider_name: string
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string
+          api_key_reference?: string | null
+          config_data?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          provider_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      insurance_claims: {
+        Row: {
+          claim_amount: number
+          claim_number: string
+          claim_type: string
+          created_at: string
+          description: string | null
+          hospital_id: string | null
+          id: string
+          purchase_id: string
+          status: string
+          supporting_documents: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claim_amount: number
+          claim_number: string
+          claim_type: string
+          created_at?: string
+          description?: string | null
+          hospital_id?: string | null
+          id?: string
+          purchase_id: string
+          status?: string
+          supporting_documents?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claim_amount?: number
+          claim_number?: string
+          claim_type?: string
+          created_at?: string
+          description?: string | null
+          hospital_id?: string | null
+          id?: string
+          purchase_id?: string
+          status?: string
+          supporting_documents?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claims_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_claims_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_purchases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_plans: {
         Row: {
           coverage_amount: number | null
@@ -136,6 +232,62 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      insurance_purchases: {
+        Row: {
+          beneficiaries: Json | null
+          created_at: string
+          end_date: string
+          id: string
+          payment_frequency: string
+          plan_id: string
+          policy_number: string | null
+          premium_amount: number
+          purchase_date: string
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          beneficiaries?: Json | null
+          created_at?: string
+          end_date: string
+          id?: string
+          payment_frequency?: string
+          plan_id: string
+          policy_number?: string | null
+          premium_amount: number
+          purchase_date?: string
+          start_date: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          beneficiaries?: Json | null
+          created_at?: string
+          end_date?: string
+          id?: string
+          payment_frequency?: string
+          plan_id?: string
+          policy_number?: string | null
+          premium_amount?: number
+          purchase_date?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_purchases_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lab_tests: {
         Row: {
@@ -598,6 +750,10 @@ export type Database = {
       can_manage_roles: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      generate_policy_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
