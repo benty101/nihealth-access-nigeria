@@ -1386,6 +1386,7 @@ export type Database = {
           full_name: string | null
           gender: string | null
           genotype: string | null
+          height: number | null
           id: string
           insurance_number: string | null
           insurance_provider: string | null
@@ -1395,6 +1396,7 @@ export type Database = {
           preferred_language: string | null
           state_of_residence: string | null
           updated_at: string | null
+          weight: number | null
         }
         Insert: {
           address?: string | null
@@ -1409,6 +1411,7 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           genotype?: string | null
+          height?: number | null
           id: string
           insurance_number?: string | null
           insurance_provider?: string | null
@@ -1418,6 +1421,7 @@ export type Database = {
           preferred_language?: string | null
           state_of_residence?: string | null
           updated_at?: string | null
+          weight?: number | null
         }
         Update: {
           address?: string | null
@@ -1432,6 +1436,7 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           genotype?: string | null
+          height?: number | null
           id?: string
           insurance_number?: string | null
           insurance_provider?: string | null
@@ -1441,6 +1446,7 @@ export type Database = {
           preferred_language?: string | null
           state_of_residence?: string | null
           updated_at?: string | null
+          weight?: number | null
         }
         Relationships: []
       }

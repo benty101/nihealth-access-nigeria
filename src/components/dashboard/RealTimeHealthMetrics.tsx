@@ -35,10 +35,10 @@ const RealTimeHealthMetrics = () => {
     if (!user) return;
 
     try {
-      // Since we don't have a health_metrics table yet, let's get health data from the profile
+      // Get health data from the profile with the new height and weight columns
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('height, weight, updated_at')
         .eq('id', user.id)
         .single();
 
