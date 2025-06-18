@@ -48,7 +48,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
-            <TabsTrigger value="test-catalog">Test Catalog</TabsTrigger>
+            <TabsTrigger value="laboratories">Laboratories</TabsTrigger>
             <TabsTrigger value="medications">Medications</TabsTrigger>
             <TabsTrigger value="insurance">Insurance</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
@@ -66,8 +66,8 @@ const AdminDashboard = () => {
             <HospitalManagement onStatsChange={loadStats} />
           </TabsContent>
 
-          <TabsContent value="test-catalog" className="mt-6">
-            <LabTestManagement />
+          <TabsContent value="laboratories" className="mt-6">
+            <LabTestManagement onStatsChange={loadStats} />
           </TabsContent>
 
           <TabsContent value="medications" className="mt-6">

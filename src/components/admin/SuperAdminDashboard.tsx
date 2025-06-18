@@ -92,9 +92,9 @@ const SuperAdminDashboard = () => {
               <Pill className="h-3 w-3" />
               <span className="hidden sm:inline">Medications</span>
             </TabsTrigger>
-            <TabsTrigger value="test-catalog" className="flex items-center gap-1 text-xs">
-              <Stethoscope className="h-3 w-3" />
-              <span className="hidden sm:inline">Test Catalog</span>
+            <TabsTrigger value="laboratories" className="flex items-center gap-1 text-xs">
+              <TestTube className="h-3 w-3" />
+              <span className="hidden sm:inline">Laboratories</span>
             </TabsTrigger>
             <TabsTrigger value="insurance" className="flex items-center gap-1 text-xs">
               <Shield className="h-3 w-3" />
@@ -122,7 +122,7 @@ const SuperAdminDashboard = () => {
             <MedicationManagement />
           </TabsContent>
 
-          <TabsContent value="test-catalog">
+          <TabsContent value="laboratories">
             <LabTestManagement />
           </TabsContent>
 
