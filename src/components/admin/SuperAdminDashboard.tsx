@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SystemOverview from './SystemOverview';
@@ -12,6 +13,7 @@ import TelemedicineManagement from './TelemedicineManagement';
 import InsuranceManagement from './InsuranceManagement';
 import InsuranceApiManagement from './InsuranceApiManagement';
 import SuperAdminHeader from './dashboard/SuperAdminHeader';
+import { adminDataService, SystemStats } from '@/services/AdminDataService';
 import { 
   Users, 
   Building2, 
@@ -29,11 +31,48 @@ import {
 const SuperAdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<SystemStats>({
+    totalHospitals: 0,
+    totalPharmacies: 0,
+    totalLabs: 0,
+    totalInsurancePlans: 0,
+    totalTelemedicineProviders: 0,
+    totalMedications: 0,
+    totalLabTests: 0,
+    activeHospitals: 0,
+    activePharmacies: 0,
+    activeLabs: 0,
+    activeInsurancePlans: 0,
+    activeTelemedicineProviders: 0,
+    activeMedications: 0,
+    activeLabTests: 0,
+    errors: [],
+    loadedServices: [],
+    lastSyncTime: new Date().toISOString()
+  });
 
-  const handleRefresh = () => {
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
     setLoading(true);
-    // Simulate refresh
-    setTimeout(() => setLoading(false), 1000);
+    try {
+      const systemStats = await adminDataService.getSystemStats();
+      setStats(systemStats);
+    } catch (error) {
+      console.error('Error loading system stats:', error);
+      setStats(prev => ({
+        ...prev,
+        errors: ['Failed to load system statistics']
+      }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    await loadStats();
   };
 
   return (
@@ -86,7 +125,7 @@ const SuperAdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            <SystemOverview stats={{}} loading={loading} />
+            <SystemOverview stats={stats} loading={loading} />
           </TabsContent>
 
           <TabsContent value="users">
