@@ -40,15 +40,14 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState<string>('');
   
-  const [formData, setFormData] = useState<BookAppointmentData>({
+  const [formData, setFormData] = useState<Omit<BookAppointmentData, 'scheduled_at'>>({
     doctor_id: '',
     hospital_id: '',
-    appointment_date: '',
-    appointment_time: '',
-    appointment_type: 'consultation',
+    consultation_type: 'video',
     chief_complaint: '',
-    notes: ''
+    consultation_notes: ''
   });
 
   useEffect(() => {
@@ -76,13 +75,17 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
     setLoading(true);
 
     try {
-      if (!selectedDate) {
-        throw new Error('Please select an appointment date');
+      if (!selectedDate || !selectedTime) {
+        throw new Error('Please select both date and time for the appointment');
       }
+
+      const appointmentDateTime = new Date(selectedDate);
+      const [hours, minutes] = selectedTime.split(':');
+      appointmentDateTime.setHours(parseInt(hours), parseInt(minutes));
 
       const appointmentData: BookAppointmentData = {
         ...formData,
-        appointment_date: format(selectedDate, 'yyyy-MM-dd')
+        scheduled_at: appointmentDateTime.toISOString()
       };
 
       await AppointmentService.bookAppointment(appointmentData);
@@ -111,13 +114,12 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
     setFormData({
       doctor_id: '',
       hospital_id: '',
-      appointment_date: '',
-      appointment_time: '',
-      appointment_type: 'consultation',
+      consultation_type: 'video',
       chief_complaint: '',
-      notes: ''
+      consultation_notes: ''
     });
     setSelectedDate(undefined);
+    setSelectedTime('');
   };
 
   const timeSlots = [
@@ -134,16 +136,15 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="appointment_type">Appointment Type</Label>
-            <Select value={formData.appointment_type} onValueChange={(value) => setFormData({...formData, appointment_type: value})}>
+            <Label htmlFor="consultation_type">Consultation Type</Label>
+            <Select value={formData.consultation_type} onValueChange={(value) => setFormData({...formData, consultation_type: value})}>
               <SelectTrigger>
-                <SelectValue placeholder="Select appointment type" />
+                <SelectValue placeholder="Select consultation type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="consultation">Consultation</SelectItem>
-                <SelectItem value="follow_up">Follow-up</SelectItem>
-                <SelectItem value="emergency">Emergency</SelectItem>
-                <SelectItem value="routine_checkup">Routine Checkup</SelectItem>
+                <SelectItem value="video">Video Consultation</SelectItem>
+                <SelectItem value="phone">Phone Consultation</SelectItem>
+                <SelectItem value="in_person">In-Person Visit</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -208,8 +209,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="appointment_time">Time</Label>
-            <Select value={formData.appointment_time} onValueChange={(value) => setFormData({...formData, appointment_time: value})}>
+            <Label htmlFor="time">Time</Label>
+            <Select value={selectedTime} onValueChange={setSelectedTime}>
               <SelectTrigger>
                 <SelectValue placeholder="Select time" />
               </SelectTrigger>
@@ -235,12 +236,12 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Additional Notes</Label>
+            <Label htmlFor="consultation_notes">Additional Notes</Label>
             <Textarea
-              id="notes"
+              id="consultation_notes"
               placeholder="Any additional information..."
-              value={formData.notes}
-              onChange={(e) => setFormData({...formData, notes: e.target.value})}
+              value={formData.consultation_notes}
+              onChange={(e) => setFormData({...formData, consultation_notes: e.target.value})}
               rows={2}
             />
           </div>

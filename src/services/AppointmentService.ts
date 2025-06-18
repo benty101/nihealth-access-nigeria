@@ -3,55 +3,63 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface Appointment {
   id: string;
-  user_id: string;
+  patient_id: string;
   doctor_id?: string;
   hospital_id?: string;
-  appointment_date: string;
-  appointment_time: string;
-  appointment_type: string;
+  scheduled_at: string;
+  consultation_type: string;
   status: string;
   chief_complaint?: string;
-  notes?: string;
+  consultation_notes?: string;
   created_at: string;
   updated_at: string;
   // Joined data
   doctor_name?: string;
   hospital_name?: string;
-  specialty?: string;
+  specialization?: string;
 }
 
 export interface BookAppointmentData {
   doctor_id?: string;
   hospital_id?: string;
-  appointment_date: string;
-  appointment_time: string;
-  appointment_type: string;
+  scheduled_at: string;
+  consultation_type: string;
   chief_complaint?: string;
-  notes?: string;
+  consultation_notes?: string;
 }
 
 export const AppointmentService = {
   async getUserAppointments(userId: string): Promise<Appointment[]> {
     const { data, error } = await supabase
-      .from('appointments')
+      .from('consultations')
       .select(`
         *,
         telemedicine_providers(name, specialization),
         hospitals(name)
       `)
-      .eq('user_id', userId)
-      .order('appointment_date', { ascending: true });
+      .eq('patient_id', userId)
+      .order('scheduled_at', { ascending: true });
 
     if (error) {
       console.error('Error fetching appointments:', error);
       throw error;
     }
 
-    return data.map(appointment => ({
-      ...appointment,
-      doctor_name: appointment.telemedicine_providers?.name,
-      specialty: appointment.telemedicine_providers?.specialization,
-      hospital_name: appointment.hospitals?.name
+    return data.map(consultation => ({
+      id: consultation.id,
+      patient_id: consultation.patient_id,
+      doctor_id: consultation.doctor_id,
+      hospital_id: consultation.hospital_id,
+      scheduled_at: consultation.scheduled_at,
+      consultation_type: consultation.consultation_type,
+      status: consultation.status,
+      chief_complaint: consultation.chief_complaint,
+      consultation_notes: consultation.consultation_notes,
+      created_at: consultation.created_at,
+      updated_at: consultation.updated_at,
+      doctor_name: consultation.telemedicine_providers?.name,
+      specialization: consultation.telemedicine_providers?.specialization,
+      hospital_name: consultation.hospitals?.name
     }));
   },
 
@@ -63,10 +71,17 @@ export const AppointmentService = {
     }
 
     const { data, error } = await supabase
-      .from('appointments')
+      .from('consultations')
       .insert({
-        user_id: user.id,
-        ...appointmentData
+        patient_id: user.id,
+        doctor_id: appointmentData.doctor_id,
+        hospital_id: appointmentData.hospital_id,
+        scheduled_at: appointmentData.scheduled_at,
+        consultation_type: appointmentData.consultation_type,
+        chief_complaint: appointmentData.chief_complaint,
+        consultation_notes: appointmentData.consultation_notes,
+        consultation_fee: 5000, // Default fee
+        status: 'scheduled'
       })
       .select()
       .single();
@@ -76,13 +91,34 @@ export const AppointmentService = {
       throw error;
     }
 
-    return data;
+    return {
+      id: data.id,
+      patient_id: data.patient_id,
+      doctor_id: data.doctor_id,
+      hospital_id: data.hospital_id,
+      scheduled_at: data.scheduled_at,
+      consultation_type: data.consultation_type,
+      status: data.status,
+      chief_complaint: data.chief_complaint,
+      consultation_notes: data.consultation_notes,
+      created_at: data.created_at,
+      updated_at: data.updated_at
+    };
   },
 
   async updateAppointment(appointmentId: string, updates: Partial<BookAppointmentData>): Promise<Appointment> {
+    const updateData: any = {};
+    
+    if (updates.doctor_id) updateData.doctor_id = updates.doctor_id;
+    if (updates.hospital_id) updateData.hospital_id = updates.hospital_id;
+    if (updates.scheduled_at) updateData.scheduled_at = updates.scheduled_at;
+    if (updates.consultation_type) updateData.consultation_type = updates.consultation_type;
+    if (updates.chief_complaint) updateData.chief_complaint = updates.chief_complaint;
+    if (updates.consultation_notes) updateData.consultation_notes = updates.consultation_notes;
+
     const { data, error } = await supabase
-      .from('appointments')
-      .update(updates)
+      .from('consultations')
+      .update(updateData)
       .eq('id', appointmentId)
       .select()
       .single();
@@ -92,12 +128,24 @@ export const AppointmentService = {
       throw error;
     }
 
-    return data;
+    return {
+      id: data.id,
+      patient_id: data.patient_id,
+      doctor_id: data.doctor_id,
+      hospital_id: data.hospital_id,
+      scheduled_at: data.scheduled_at,
+      consultation_type: data.consultation_type,
+      status: data.status,
+      chief_complaint: data.chief_complaint,
+      consultation_notes: data.consultation_notes,
+      created_at: data.created_at,
+      updated_at: data.updated_at
+    };
   },
 
   async cancelAppointment(appointmentId: string): Promise<void> {
     const { error } = await supabase
-      .from('appointments')
+      .from('consultations')
       .update({ status: 'cancelled' })
       .eq('id', appointmentId);
 
