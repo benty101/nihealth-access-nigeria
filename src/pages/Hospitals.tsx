@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import HospitalDirectory from '@/components/HospitalDirectory';
 import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Hospitals = () => {
   return (
@@ -16,6 +17,9 @@ const Hospitals = () => {
           <EmergencyContactCard />
         </div>
       </div>
+      
+      {/* Floating Emergency Button */}
+      <FloatingEmergencyButton />
     </div>
   );
 };
