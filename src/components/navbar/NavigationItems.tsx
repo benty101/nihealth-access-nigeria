@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserRole } from '@/hooks/useUserRole';
-import { Shield, Building2, TrendingUp } from 'lucide-react';
+import { Shield, Building2, TrendingUp, Users, Activity, Calendar, FileText } from 'lucide-react';
 
 export const useNavigationItems = () => {
   const { role } = useUserRole();
@@ -21,12 +21,13 @@ export const useNavigationItems = () => {
 
     if (role === 'super_admin') {
       roleSpecificItems.push(
-        { path: '/admin', label: 'Admin Panel', icon: Shield },
+        { path: '/admin', label: 'System Admin', icon: Shield },
+        { path: '/hospital', label: 'Hospital Tools', icon: Building2 },
         { path: '/broker', label: 'Broker Dashboard', icon: TrendingUp }
       );
     }
 
-    if (role === 'hospital_admin' || role === 'super_admin') {
+    if (role === 'hospital_admin') {
       roleSpecificItems.push(
         { path: '/hospital', label: 'Hospital Dashboard', icon: Building2 }
       );
