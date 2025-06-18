@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,9 +26,11 @@ import { medicationService } from '@/services/MedicationService';
 import { pharmacyService } from '@/services/PharmacyService';
 import { useAuth } from '@/contexts/AuthContext';
 import CheckoutModal from '@/components/pharmacy/CheckoutModal';
+import { useToast } from '@/hooks/use-toast';
 
 const Pharmacy = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [medications, setMedications] = useState<any[]>([]);
   const [pharmacies, setPharmacies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
