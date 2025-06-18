@@ -13,14 +13,14 @@ const TrustIndicators = () => {
     {
       icon: Users,
       number: "25,000+",
-      label: "Mothers & Families Served",
+      label: "Trusted by",
       description: "Growing community of Nigerian mothers trusting our platform"
     },
     {
       icon: Shield,
       number: "200+",
-      label: "Partner Health Facilities",
-      description: "Verified hospitals and clinics specializing in maternal care"
+      label: "Insurance Partners",
+      description: "Verified insurance providers specializing in maternal care"
     },
     {
       icon: Award,
