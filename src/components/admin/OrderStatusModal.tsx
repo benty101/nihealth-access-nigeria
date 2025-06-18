@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { medicationOrderService, type MedicationOrder } from '@/services/MedicationOrderService';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface OrderStatusModalProps {
   isOpen: boolean;
@@ -24,7 +25,8 @@ const OrderStatusModal = ({ isOpen, onClose, order, onStatusUpdated }: OrderStat
     message: '',
     tracking_number: order.tracking_number || '',
     estimated_delivery_date: order.estimated_delivery_date || '',
-    actual_delivery_date: order.actual_delivery_date || ''
+    actual_delivery_date: order.actual_delivery_date || '',
+    payment_status: order.payment_status || 'pending'
   });
 
   const statusOptions = [
@@ -36,34 +38,68 @@ const OrderStatusModal = ({ isOpen, onClose, order, onStatusUpdated }: OrderStat
     { value: 'cancelled', label: 'Cancelled' }
   ];
 
+  const paymentStatusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'processing', label: 'Processing' },
+    { value: 'paid', label: 'Paid' },
+    { value: 'failed', label: 'Failed' },
+    { value: 'refunded', label: 'Refunded' }
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Update order status
       await medicationOrderService.updateOrderStatus(
         order.id,
         formData.status,
         formData.message || undefined
       );
 
-      // Update additional fields if provided
-      if (formData.tracking_number || formData.estimated_delivery_date || formData.actual_delivery_date) {
-        // We'd need to add this method to the service
-        // For now, we'll just update the status
+      // Update additional fields using direct Supabase call
+      const updateData: any = {};
+      
+      if (formData.tracking_number !== order.tracking_number) {
+        updateData.tracking_number = formData.tracking_number;
+      }
+      
+      if (formData.estimated_delivery_date !== order.estimated_delivery_date) {
+        updateData.estimated_delivery_date = formData.estimated_delivery_date;
+      }
+      
+      if (formData.actual_delivery_date !== order.actual_delivery_date) {
+        updateData.actual_delivery_date = formData.actual_delivery_date;
+      }
+      
+      if (formData.payment_status !== order.payment_status) {
+        updateData.payment_status = formData.payment_status;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        updateData.updated_at = new Date().toISOString();
+        
+        const { error } = await supabase
+          .from('medication_orders')
+          .update(updateData)
+          .eq('id', order.id);
+
+        if (error) throw error;
       }
 
       toast({
         title: "Success",
-        description: "Order status updated successfully",
+        description: "Order updated successfully",
       });
 
       onStatusUpdated();
+      onClose();
     } catch (error) {
-      console.error('Error updating order status:', error);
+      console.error('Error updating order:', error);
       toast({
         title: "Error",
-        description: "Failed to update order status",
+        description: "Failed to update order",
         variant: "destructive",
       });
     } finally {
@@ -73,17 +109,12 @@ const OrderStatusModal = ({ isOpen, onClose, order, onStatusUpdated }: OrderStat
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Update Order Status</DialogTitle>
+          <DialogTitle>Update Order - #{order.order_number}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label>Order Number</Label>
-            <Input value={order.order_number} disabled />
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="status">Status *</Label>
             <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
@@ -92,6 +123,22 @@ const OrderStatusModal = ({ isOpen, onClose, order, onStatusUpdated }: OrderStat
               </SelectTrigger>
               <SelectContent>
                 {statusOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="payment_status">Payment Status</Label>
+            <Select value={formData.payment_status} onValueChange={(value) => setFormData(prev => ({ ...prev, payment_status: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select payment status" />
+              </SelectTrigger>
+              <SelectContent>
+                {paymentStatusOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
@@ -151,7 +198,7 @@ const OrderStatusModal = ({ isOpen, onClose, order, onStatusUpdated }: OrderStat
               Cancel
             </Button>
             <Button type="submit" disabled={loading} className="bg-teal-600 hover:bg-teal-700">
-              {loading ? 'Updating...' : 'Update Status'}
+              {loading ? 'Updating...' : 'Update Order'}
             </Button>
           </div>
         </form>

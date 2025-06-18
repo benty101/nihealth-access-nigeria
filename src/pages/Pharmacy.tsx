@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +24,7 @@ import MedicationReminders from '@/components/pharmacy/MedicationReminders';
 import { medicationService } from '@/services/MedicationService';
 import { pharmacyService } from '@/services/PharmacyService';
 import { useAuth } from '@/contexts/AuthContext';
+import CheckoutModal from '@/components/pharmacy/CheckoutModal';
 
 const Pharmacy = () => {
   const { user } = useAuth();
@@ -36,6 +36,7 @@ const Pharmacy = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [cart, setCart] = useState<any[]>([]);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -110,6 +111,26 @@ const Pharmacy = () => {
         item.id === medicationId ? { ...item, quantity } : item
       ));
     }
+  };
+
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      toast({
+        title: "Cart is empty",
+        description: "Please add items to your cart before checkout",
+        variant: "destructive",
+      });
+      return;
+    }
+    setShowCheckoutModal(true);
+  };
+
+  const handleOrderSuccess = (orderId: string) => {
+    setCart([]); // Clear cart
+    toast({
+      title: "Order Placed Successfully",
+      description: `Your order has been created successfully!`,
+    });
   };
 
   const MedicationCard = ({ medication }: { medication: any }) => {
@@ -318,7 +339,10 @@ const Pharmacy = () => {
                         Total: ₦{cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}
                       </p>
                     </div>
-                    <Button className="bg-teal-600 hover:bg-teal-700">
+                    <Button 
+                      onClick={handleCheckout}
+                      className="bg-teal-600 hover:bg-teal-700"
+                    >
                       Proceed to Checkout
                     </Button>
                   </div>
@@ -389,6 +413,13 @@ const Pharmacy = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        cartItems={cart}
+        onOrderSuccess={handleOrderSuccess}
+      />
 
       <FloatingEmergencyButton />
     </div>

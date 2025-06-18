@@ -41,6 +41,7 @@ export interface CreateOrderRequest {
   delivery_address: string;
   delivery_phone: string;
   delivery_method?: string;
+  payment_method?: string;
   special_instructions?: string;
   items: Omit<OrderItem, 'id' | 'order_id'>[];
 }
@@ -52,18 +53,25 @@ class MedicationOrderService {
     // Calculate total amount
     const totalAmount = orderData.items.reduce((sum, item) => sum + item.total_price, 0);
     
-    // Create the order
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    // Create the order - fix: pass single object instead of array
     const { data: order, error: orderError } = await supabase
       .from('medication_orders')
-      .insert([{
+      .insert({
         pharmacy_id: orderData.pharmacy_id,
         delivery_address: orderData.delivery_address,
         delivery_phone: orderData.delivery_phone,
         delivery_method: orderData.delivery_method || 'standard',
+        payment_method: orderData.payment_method || 'cash_on_delivery',
         special_instructions: orderData.special_instructions,
         total_amount: totalAmount,
-        user_id: (await supabase.auth.getUser()).data.user?.id
-      }])
+        user_id: user.id,
+        status: 'pending',
+        payment_status: orderData.payment_method === 'online' ? 'pending' : 'pending'
+      })
       .select()
       .single();
 
@@ -155,14 +163,37 @@ class MedicationOrderService {
     await this.addStatusHistory(orderId, status, message);
   }
 
+  async updateOrderPaymentStatus(orderId: string, paymentStatus: string, paymentMethod?: string): Promise<void> {
+    const updateData: any = { 
+      payment_status: paymentStatus,
+      updated_at: new Date().toISOString()
+    };
+    
+    if (paymentMethod) {
+      updateData.payment_method = paymentMethod;
+    }
+
+    const { error } = await supabase
+      .from('medication_orders')
+      .update(updateData)
+      .eq('id', orderId);
+
+    if (error) throw error;
+
+    const message = paymentStatus === 'paid' ? 'Payment confirmed' : `Payment status updated to ${paymentStatus}`;
+    await this.addStatusHistory(orderId, paymentStatus === 'paid' ? 'confirmed' : 'pending', message);
+  }
+
   async addStatusHistory(orderId: string, status: string, message?: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
     const { error } = await supabase
       .from('order_status_history')
       .insert([{
         order_id: orderId,
         status,
         status_message: message,
-        updated_by: (await supabase.auth.getUser()).data.user?.id
+        updated_by: user?.id
       }]);
 
     if (error) {
@@ -193,6 +224,47 @@ class MedicationOrderService {
     }
 
     return data || [];
+  }
+
+  // Payment integration methods
+  async initiatePayment(orderId: string, paymentMethod: string): Promise<{ success: boolean; paymentUrl?: string; error?: string }> {
+    try {
+      // Update order with payment method
+      await this.updateOrderPaymentStatus(orderId, 'processing', paymentMethod);
+      
+      // TODO: Integration with payment gateways like Paystack, Flutterwave, etc.
+      // For now, simulate payment URL generation
+      if (paymentMethod === 'paystack') {
+        // Simulate Paystack integration
+        const paymentUrl = `https://checkout.paystack.com/order_${orderId}`;
+        return { success: true, paymentUrl };
+      } else if (paymentMethod === 'flutterwave') {
+        // Simulate Flutterwave integration
+        const paymentUrl = `https://checkout.flutterwave.com/order_${orderId}`;
+        return { success: true, paymentUrl };
+      }
+      
+      return { success: false, error: 'Payment method not supported' };
+    } catch (error) {
+      console.error('Error initiating payment:', error);
+      return { success: false, error: 'Failed to initiate payment' };
+    }
+  }
+
+  async verifyPayment(orderId: string, paymentReference: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // TODO: Implement actual payment verification with payment gateways
+      // For now, simulate verification
+      console.log('Verifying payment for order:', orderId, 'Reference:', paymentReference);
+      
+      // Simulate successful verification
+      await this.updateOrderPaymentStatus(orderId, 'paid');
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error verifying payment:', error);
+      return { success: false, error: 'Payment verification failed' };
+    }
   }
 }
 
