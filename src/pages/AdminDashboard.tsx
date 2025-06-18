@@ -4,13 +4,12 @@ import Navbar from '@/components/Navbar';
 import SuperAdminHeader from '@/components/admin/dashboard/SuperAdminHeader';
 import UserManagement from '@/components/admin/UserManagement';
 import HospitalManagement from '@/components/admin/HospitalManagement';
-import PharmacyManagement from '@/components/admin/PharmacyManagement';
 import LabManagement from '@/components/admin/LabManagement';
 import MedicationManagement from '@/components/admin/MedicationManagement';
 import OrderManagement from '@/components/admin/OrderManagement';
 import SystemOverview from '@/components/admin/SystemOverview';
-import DataImportTools from '@/components/admin/DataImportTools';
 import InsuranceManagement from '@/components/admin/InsuranceManagement';
+import LabTestManagement from '@/components/admin/LabTestManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { adminDataService } from '@/services/AdminDataService';
 import type { SystemStats } from '@/services/AdminDataService';
@@ -45,16 +44,14 @@ const AdminDashboard = () => {
         <SuperAdminHeader loading={loading} onRefresh={loadStats} />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-9">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
-            <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
-            <TabsTrigger value="labs">Labs</TabsTrigger>
+            <TabsTrigger value="test-catalog">Test Catalog</TabsTrigger>
             <TabsTrigger value="medications">Medications</TabsTrigger>
             <TabsTrigger value="insurance">Insurance</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
-            <TabsTrigger value="import">Import Data</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
@@ -69,12 +66,8 @@ const AdminDashboard = () => {
             <HospitalManagement onStatsChange={loadStats} />
           </TabsContent>
 
-          <TabsContent value="pharmacies" className="mt-6">
-            <PharmacyManagement onStatsChange={loadStats} />
-          </TabsContent>
-
-          <TabsContent value="labs" className="mt-6">
-            <LabManagement onStatsChange={loadStats} />
+          <TabsContent value="test-catalog" className="mt-6">
+            <LabTestManagement />
           </TabsContent>
 
           <TabsContent value="medications" className="mt-6">
@@ -87,10 +80,6 @@ const AdminDashboard = () => {
 
           <TabsContent value="orders" className="mt-6">
             <OrderManagement />
-          </TabsContent>
-
-          <TabsContent value="import" className="mt-6">
-            <DataImportTools />
           </TabsContent>
         </Tabs>
       </div>
