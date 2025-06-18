@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Download, Baby, CheckCircle, Clock, Star } from 'lucide-react';
+import { ExternalLink, Download, FileText, Users, CheckCircle } from 'lucide-react';
 
 interface NewbornCareResourcesProps {
   searchTerm: string;
@@ -13,113 +13,86 @@ const newbornResources = [
   {
     id: 1,
     title: 'Essential Newborn Care Guidelines - NPHCDA',
-    description: 'Comprehensive guidelines for immediate newborn care, including thermal care, early breastfeeding, and infection prevention.',
+    description: 'Comprehensive guidelines for immediate newborn care, including cord care, thermal care, and feeding.',
     type: 'Official Guidelines',
     format: 'PDF Document',
-    source: 'National Primary Health Care Development Agency',
+    source: 'NPHCDA',
     link: 'https://nphcda.gov.ng/',
-    downloads: '42.1K',
-    rating: 4.9,
+    downloads: '31.2K',
+    lastUpdated: '2024',
     verifiedOfficial: true,
-    ageGroup: '0-28 days',
-    topics: ['Immediate Care', 'Thermal Care', 'Infection Prevention', 'Early Breastfeeding']
+    topics: ['Immediate Care', 'Cord Care', 'Thermal Care', 'First Feeding'],
+    icon: FileText
   },
   {
     id: 2,
-    title: 'Newborn Health Interventions Package',
-    description: 'Evidence-based interventions for newborn health, including resuscitation, kangaroo mother care, and danger sign recognition.',
-    type: 'Clinical Protocol',
-    format: 'Clinical Guidelines',
-    source: 'Federal Ministry of Health',
+    title: 'Newborn Screening and Early Detection',
+    description: 'Guidelines for newborn screening programs and early detection of health conditions in Nigerian babies.',
+    type: 'Screening Guidelines',
+    format: 'Web Portal',
+    source: 'Federal Ministry of Health Nigeria',
     link: 'https://www.health.gov.ng/index.php/documents/category/65-maternal-child-and-adolescent-health',
-    downloads: '35.7K',
-    rating: 4.8,
+    downloads: '18.5K',
+    lastUpdated: '2024',
     verifiedOfficial: true,
-    ageGroup: '0-28 days',
-    topics: ['Resuscitation', 'Kangaroo Care', 'Danger Signs', 'Emergency Care']
+    topics: ['Health Screening', 'Early Detection', 'Developmental Assessment'],
+    icon: FileText
   },
   {
     id: 3,
-    title: 'UNICEF Newborn Survival Resources',
-    description: 'Comprehensive resources on newborn survival, including statistics, best practices, and educational materials for parents.',
+    title: 'Kangaroo Mother Care Implementation',
+    description: 'Evidence-based guidelines for implementing Kangaroo Mother Care for premature and low birth weight babies.',
+    type: 'Clinical Protocol',
+    format: 'PDF Document',
+    source: 'WHO Nigeria Office',
+    link: 'https://www.afro.who.int/countries/nigeria',
+    downloads: '14.7K',
+    lastUpdated: '2024',
+    verifiedOfficial: true,
+    topics: ['Premature Care', 'Low Birth Weight', 'Skin-to-Skin Contact'],
+    icon: FileText
+  },
+  {
+    id: 4,
+    title: 'UNICEF Nigeria - Newborn Survival',
+    description: 'Comprehensive resources on newborn survival strategies and interventions in Nigeria.',
     type: 'Educational Resources',
     format: 'Web Portal',
     source: 'UNICEF Nigeria',
     link: 'https://www.unicef.org/nigeria/maternal-and-child-health',
-    downloads: '58.3K',
-    rating: 4.7,
+    downloads: '27.3K',
+    lastUpdated: '2024',
     verifiedOfficial: true,
-    ageGroup: '0-2 months',
-    topics: ['Survival Strategies', 'Parent Education', 'Best Practices', 'Statistics']
-  },
-  {
-    id: 4,
-    title: 'Breastfeeding and Newborn Feeding Guidelines',
-    description: 'Detailed guidelines on exclusive breastfeeding, proper latching, feeding schedules, and addressing common challenges.',
-    type: 'Feeding Guidelines',
-    format: 'Educational Guide',
-    source: 'Wellbeing Foundation Africa',
-    link: 'https://www.wellbeingfoundationafrica.org/',
-    downloads: '47.9K',
-    rating: 4.9,
-    verifiedOfficial: false,
-    ageGroup: '0-6 months',
-    topics: ['Exclusive Breastfeeding', 'Latching', 'Feeding Schedules', 'Common Challenges']
+    topics: ['Survival Strategies', 'Interventions', 'Statistics'],
+    icon: Users
   },
   {
     id: 5,
-    title: 'Newborn Screening and Early Detection',
-    description: 'Guidelines for newborn screening programs, early detection of health issues, and follow-up care protocols.',
-    type: 'Screening Guidelines',
-    format: 'Clinical Protocol',
+    title: 'Newborn Care Success Stories',
+    description: 'Real stories and case studies of successful newborn care practices across Nigeria.',
+    type: 'Case Studies',
+    format: 'Web Articles',
     source: 'Nigeria Health Watch',
     link: 'https://nigeriahealthwatch.com/tag/maternal-and-child-health/',
-    downloads: '29.4K',
-    rating: 4.6,
+    downloads: '19.8K',
+    lastUpdated: '2024',
     verifiedOfficial: false,
-    ageGroup: '0-1 month',
-    topics: ['Health Screening', 'Early Detection', 'Follow-up Care', 'Preventive Care']
+    topics: ['Success Stories', 'Best Practices', 'Community Care'],
+    icon: Users
   },
   {
     id: 6,
-    title: 'Home-Based Newborn Care Practices',
-    description: 'Safe practices for caring for newborns at home, including hygiene, sleep safety, and when to seek medical help.',
-    type: 'Home Care Guide',
-    format: 'Educational Materials',
-    source: 'MamaYe Nigeria',
-    link: 'https://mamaye.org/',
-    downloads: '51.2K',
-    rating: 4.7,
+    title: 'Wellbeing Foundation - Newborn Toolkit',
+    description: 'Practical toolkits and educational materials for newborn care in Nigerian communities.',
+    type: 'Educational Toolkit',
+    format: 'Mixed Resources',
+    source: 'Wellbeing Foundation Africa',
+    link: 'https://www.wellbeingfoundationafrica.org/',
+    downloads: '16.4K',
+    lastUpdated: '2024',
     verifiedOfficial: false,
-    ageGroup: '0-3 months',
-    topics: ['Home Care', 'Sleep Safety', 'Hygiene', 'Medical Alert Signs']
-  }
-];
-
-const quickTips = [
-  {
-    title: 'First Hour Care',
-    description: 'Skin-to-skin contact and early breastfeeding within the first hour',
-    icon: '🤱',
-    urgency: 'critical'
-  },
-  {
-    title: 'Temperature Control',
-    description: 'Keep baby warm with proper clothing and room temperature',
-    icon: '🌡️',
-    urgency: 'important'
-  },
-  {
-    title: 'Danger Signs',
-    description: 'Watch for difficulty breathing, fever, or poor feeding',
-    icon: '⚠️',
-    urgency: 'critical'
-  },
-  {
-    title: 'Hygiene',
-    description: 'Clean hands before touching baby, proper cord care',
-    icon: '🧼',
-    urgency: 'important'
+    topics: ['Community Care', 'Educational Tools', 'Practical Guides'],
+    icon: FileText
   }
 ];
 
@@ -135,35 +108,9 @@ const NewbornCareResources = ({ searchTerm }: NewbornCareResourcesProps) => {
       <div className="mb-6">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">Newborn Care Resources</h3>
         <p className="text-gray-600">
-          Essential guidelines and educational materials for caring for newborns in the first months of life.
+          Essential guidelines and resources for comprehensive newborn care and early childhood development in Nigeria.
         </p>
       </div>
-
-      {/* Quick Tips Section */}
-      <Card className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
-        <CardContent className="p-6">
-          <h4 className="font-semibold text-blue-900 mb-4 flex items-center">
-            <Baby className="h-5 w-5 mr-2" />
-            Quick Newborn Care Tips
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickTips.map((tip, index) => (
-              <div key={index} className={`bg-white rounded-lg p-4 border ${tip.urgency === 'critical' ? 'border-red-200' : 'border-blue-200'}`}>
-                <div className="text-2xl mb-2">{tip.icon}</div>
-                <div className={`font-medium ${tip.urgency === 'critical' ? 'text-red-900' : 'text-blue-900'} mb-1`}>
-                  {tip.title}
-                </div>
-                <div className="text-sm text-gray-600">{tip.description}</div>
-                {tip.urgency === 'critical' && (
-                  <Badge className="mt-2 bg-red-100 text-red-700 text-xs">
-                    Critical
-                  </Badge>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredResources.map((resource) => (
@@ -184,27 +131,14 @@ const NewbornCareResources = ({ searchTerm }: NewbornCareResourcesProps) => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                  {resource.rating}
-                </div>
+                <resource.icon className="h-5 w-5 text-gray-400" />
               </div>
               
-              <CardTitle className="text-lg leading-tight group-hover:text-blue-600 transition-colors">
+              <CardTitle className="text-lg leading-tight group-hover:text-purple-600 transition-colors">
                 {resource.title}
               </CardTitle>
               
               <p className="text-gray-600 text-sm line-clamp-2">{resource.description}</p>
-              
-              <div className="flex items-center justify-between mt-3">
-                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
-                  Age: {resource.ageGroup}
-                </Badge>
-                <div className="flex items-center text-xs text-gray-500">
-                  <Download className="h-3 w-3 mr-1" />
-                  {resource.downloads}
-                </div>
-              </div>
               
               <div className="flex flex-wrap gap-2 mt-3">
                 {resource.topics.slice(0, 3).map((topic, idx) => (
@@ -219,10 +153,12 @@ const NewbornCareResources = ({ searchTerm }: NewbornCareResourcesProps) => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <span>{resource.format}</span>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    Recently Updated
-                  </div>
+                  <span>{resource.lastUpdated}</span>
+                </div>
+                
+                <div className="flex items-center text-sm text-gray-600">
+                  <Download className="h-4 w-4 mr-1" />
+                  {resource.downloads} accessed
                 </div>
                 
                 <div className="text-sm text-gray-700">

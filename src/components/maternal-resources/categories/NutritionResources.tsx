@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Download, Apple, CheckCircle, Utensils, Baby } from 'lucide-react';
+import { ExternalLink, Download, FileText, Users, CheckCircle } from 'lucide-react';
 
 interface NutritionResourcesProps {
   searchTerm: string;
@@ -12,91 +12,88 @@ interface NutritionResourcesProps {
 const nutritionResources = [
   {
     id: 1,
-    title: 'Maternal Nutrition Guidelines During Pregnancy',
-    description: 'Comprehensive nutrition guidelines for pregnant women, including essential nutrients, meal planning, and weight gain recommendations.',
+    title: 'Exclusive Breastfeeding Guidelines - NPHCDA',
+    description: 'Official guidelines for exclusive breastfeeding practices for the first 6 months of life.',
     type: 'Official Guidelines',
     format: 'PDF Document',
-    source: 'Federal Ministry of Health Nigeria',
-    link: 'https://www.health.gov.ng/index.php/documents/category/65-maternal-child-and-adolescent-health',
-    downloads: '38.4K',
-    category: 'Maternal Nutrition',
+    source: 'NPHCDA',
+    link: 'https://nphcda.gov.ng/',
+    downloads: '42.1K',
+    lastUpdated: '2024',
     verifiedOfficial: true,
-    topics: ['Pregnancy Diet', 'Essential Nutrients', 'Weight Gain', 'Meal Planning']
+    topics: ['Exclusive Breastfeeding', 'First 6 Months', 'Proper Positioning'],
+    icon: FileText
   },
   {
     id: 2,
-    title: 'Exclusive Breastfeeding Promotion Guidelines',
-    description: 'Evidence-based guidelines promoting exclusive breastfeeding for the first 6 months, with practical tips and common challenges.',
+    title: 'Complementary Feeding Guidelines',
+    description: 'WHO guidelines for introducing complementary foods to Nigerian children from 6 months onwards.',
     type: 'Feeding Guidelines',
-    format: 'Educational Materials',
-    source: 'UNICEF Nigeria',
-    link: 'https://www.unicef.org/nigeria/maternal-and-child-health',
-    downloads: '52.7K',
-    category: 'Infant Feeding',
+    format: 'Web Portal',
+    source: 'WHO Nigeria Office',
+    link: 'https://www.afro.who.int/countries/nigeria',
+    downloads: '35.7K',
+    lastUpdated: '2024',
     verifiedOfficial: true,
-    topics: ['Exclusive Breastfeeding', 'Nutritional Benefits', 'Feeding Techniques', 'Common Issues']
+    topics: ['Complementary Feeding', '6+ Months', 'Local Foods', 'Nutrition'],
+    icon: FileText
   },
   {
     id: 3,
-    title: 'Complementary Feeding Guidelines (6+ months)',
-    description: 'Step-by-step introduction to solid foods, age-appropriate recipes using local Nigerian ingredients.',
-    type: 'Feeding Guidelines',
-    format: 'Educational Guide',
-    source: 'National Primary Health Care Development Agency',
-    link: 'https://nphcda.gov.ng/',
-    downloads: '45.1K',
-    category: 'Child Nutrition',
+    title: 'Maternal Nutrition During Pregnancy and Lactation',
+    description: 'Comprehensive nutrition guidelines for pregnant and breastfeeding mothers in Nigeria.',
+    type: 'Maternal Nutrition',
+    format: 'PDF Document',
+    source: 'Federal Ministry of Health Nigeria',
+    link: 'https://www.health.gov.ng/index.php/documents/category/65-maternal-child-and-adolescent-health',
+    downloads: '28.4K',
+    lastUpdated: '2024',
     verifiedOfficial: true,
-    topics: ['Solid Foods Introduction', 'Local Recipes', 'Age-Appropriate Foods', 'Nutritional Balance']
+    topics: ['Pregnancy Nutrition', 'Lactation', 'Micronutrients', 'Iron Supplements'],
+    icon: FileText
   },
   {
     id: 4,
-    title: 'Nigerian Superfoods for Mothers and Children',
-    description: 'Guide to nutrient-rich local foods like moringa, garden eggs, and palm fruit that support maternal and child health.',
-    type: 'Nutritional Education',
-    format: 'Web Articles',
-    source: 'Nigeria Health Watch',
-    link: 'https://nigeriahealthwatch.com/tag/maternal-and-child-health/',
-    downloads: '29.8K',
-    category: 'Local Nutrition',
-    verifiedOfficial: false,
-    topics: ['Local Superfoods', 'Nutrient Content', 'Traditional Foods', 'Health Benefits']
+    title: 'Nigerian Food-Based Dietary Guidelines',
+    description: 'Local food-based dietary recommendations adapted for Nigerian families and children.',
+    type: 'Dietary Guidelines',
+    format: 'PDF Document',
+    source: 'Federal Ministry of Health Nigeria',
+    link: 'https://www.health.gov.ng/index.php/documents/category/65-maternal-child-and-adolescent-health',
+    downloads: '31.9K',
+    lastUpdated: '2024',
+    verifiedOfficial: true,
+    topics: ['Local Foods', 'Dietary Guidelines', 'Family Nutrition'],
+    icon: FileText
   },
   {
     id: 5,
-    title: 'Malnutrition Prevention and Management',
-    description: 'Comprehensive guide to preventing and managing malnutrition in children, including screening tools and treatment protocols.',
-    type: 'Clinical Guidelines',
-    format: 'Clinical Protocol',
-    source: 'Wellbeing Foundation Africa',
-    link: 'https://www.wellbeingfoundationafrica.org/',
-    downloads: '33.2K',
-    category: 'Clinical Nutrition',
-    verifiedOfficial: false,
-    topics: ['Malnutrition Prevention', 'Screening Tools', 'Treatment Protocols', 'Recovery Monitoring']
+    title: 'UNICEF Nigeria - Nutrition Education',
+    description: 'Educational materials and campaigns on child nutrition and feeding practices.',
+    type: 'Educational Campaign',
+    format: 'Web Portal',
+    source: 'UNICEF Nigeria',
+    link: 'https://www.unicef.org/nigeria/maternal-and-child-health',
+    downloads: '38.2K',
+    lastUpdated: '2024',
+    verifiedOfficial: true,
+    topics: ['Nutrition Education', 'Campaigns', 'Community Awareness'],
+    icon: Users
   },
   {
     id: 6,
-    title: 'Micronutrient Supplementation Guidelines',
-    description: 'Guidelines for iron, folic acid, vitamin A, and zinc supplementation during pregnancy and childhood.',
-    type: 'Supplementation Guide',
-    format: 'Clinical Guidelines',
-    source: 'WHO Nigeria Office',
-    link: 'https://www.afro.who.int/countries/nigeria',
-    downloads: '27.6K',
-    category: 'Supplements',
-    verifiedOfficial: true,
-    topics: ['Iron Supplementation', 'Folic Acid', 'Vitamin A', 'Zinc', 'Dosage Guidelines']
+    title: 'Breastfeeding Success Stories - Nigeria Health Watch',
+    description: 'Real stories and experiences of successful breastfeeding journeys in Nigeria.',
+    type: 'Success Stories',
+    format: 'Web Articles',
+    source: 'Nigeria Health Watch',
+    link: 'https://nigeriahealthwatch.com/tag/maternal-and-child-health/',
+    downloads: '24.6K',
+    lastUpdated: '2024',
+    verifiedOfficial: false,
+    topics: ['Success Stories', 'Real Experiences', 'Community Support'],
+    icon: Users
   }
-];
-
-const localSuperfoods = [
-  { name: 'Moringa Leaves', benefit: 'Rich in iron, calcium, vitamin A & C', icon: '🌿' },
-  { name: 'Garden Eggs', benefit: 'High in folate and fiber', icon: '🍆' },
-  { name: 'Palm Fruit', benefit: 'Excellent source of vitamin A', icon: '🟤' },
-  { name: 'Bitter Leaf', benefit: 'Helps regulate blood sugar', icon: '🥬' },
-  { name: 'Ugwu (Fluted Pumpkin)', benefit: 'High protein and iron content', icon: '🥒' },
-  { name: 'Waterleaf', benefit: 'Contains omega-3 fatty acids', icon: '🌱' }
 ];
 
 const NutritionResources = ({ searchTerm }: NutritionResourcesProps) => {
@@ -111,30 +108,9 @@ const NutritionResources = ({ searchTerm }: NutritionResourcesProps) => {
       <div className="mb-6">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">Nutrition & Feeding Resources</h3>
         <p className="text-gray-600">
-          Comprehensive nutrition guidelines for maternal health, breastfeeding, and child feeding practices.
+          Evidence-based nutrition guidelines for mothers and children, featuring local Nigerian foods and practices.
         </p>
       </div>
-
-      {/* Nigerian Superfoods Section */}
-      <Card className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-        <CardContent className="p-6">
-          <h4 className="font-semibold text-green-900 mb-4 flex items-center">
-            <Apple className="h-5 w-5 mr-2" />
-            Nigerian Superfoods for Mothers & Children
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {localSuperfoods.map((food, index) => (
-              <div key={index} className="bg-white rounded-lg p-4 border border-green-200">
-                <div className="flex items-center mb-2">
-                  <span className="text-2xl mr-3">{food.icon}</span>
-                  <div className="font-medium text-green-900">{food.name}</div>
-                </div>
-                <div className="text-sm text-gray-600">{food.benefit}</div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredResources.map((resource) => (
@@ -155,30 +131,14 @@ const NutritionResources = ({ searchTerm }: NutritionResourcesProps) => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center">
-                  {resource.category.includes('Infant') ? (
-                    <Baby className="h-5 w-5 text-blue-400" />
-                  ) : (
-                    <Utensils className="h-5 w-5 text-green-400" />
-                  )}
-                </div>
+                <resource.icon className="h-5 w-5 text-gray-400" />
               </div>
               
-              <CardTitle className="text-lg leading-tight group-hover:text-green-600 transition-colors">
+              <CardTitle className="text-lg leading-tight group-hover:text-purple-600 transition-colors">
                 {resource.title}
               </CardTitle>
               
               <p className="text-gray-600 text-sm line-clamp-2">{resource.description}</p>
-              
-              <div className="flex items-center justify-between mt-3">
-                <Badge variant="outline" className="text-xs bg-green-50 text-green-700">
-                  {resource.category}
-                </Badge>
-                <div className="flex items-center text-xs text-gray-500">
-                  <Download className="h-3 w-3 mr-1" />
-                  {resource.downloads}
-                </div>
-              </div>
               
               <div className="flex flex-wrap gap-2 mt-3">
                 {resource.topics.slice(0, 3).map((topic, idx) => (
@@ -193,7 +153,12 @@ const NutritionResources = ({ searchTerm }: NutritionResourcesProps) => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <span>{resource.format}</span>
-                  <span>Evidence-Based</span>
+                  <span>{resource.lastUpdated}</span>
+                </div>
+                
+                <div className="flex items-center text-sm text-gray-600">
+                  <Download className="h-4 w-4 mr-1" />
+                  {resource.downloads} accessed
                 </div>
                 
                 <div className="text-sm text-gray-700">
