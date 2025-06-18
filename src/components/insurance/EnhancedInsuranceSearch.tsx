@@ -3,11 +3,9 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   Search, 
   SlidersHorizontal, 
-  MapPin, 
   Sparkles,
   TrendingUp,
   Filter
@@ -55,10 +53,6 @@ const EnhancedInsuranceSearch = ({
                 Find the perfect health insurance plan tailored to your needs
               </p>
             </div>
-            <Badge className="bg-teal-100 text-teal-800 flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              Lagos, Nigeria
-            </Badge>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
