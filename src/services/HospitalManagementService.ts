@@ -118,13 +118,13 @@ class HospitalManagementService {
   async addDoctorToHospital(hospitalId: string, doctorId: string, department?: string, employmentType = 'full_time'): Promise<void> {
     const { error } = await supabase
       .from('hospital_doctors')
-      .insert([{
+      .insert({
         hospital_id: hospitalId,
         doctor_id: doctorId,
         department,
         employment_type: employmentType,
         is_active: true
-      }]);
+      });
 
     if (error) throw error;
   }
@@ -165,7 +165,7 @@ class HospitalManagementService {
   async setDoctorAvailability(availabilityData: Omit<DoctorAvailability, 'id' | 'created_at' | 'updated_at'>): Promise<void> {
     const { error } = await supabase
       .from('doctor_availability')
-      .insert([availabilityData]);
+      .insert(availabilityData);
 
     if (error) throw error;
   }
@@ -206,7 +206,7 @@ class HospitalManagementService {
   async createPatientRecord(recordData: Omit<PatientRecord, 'id' | 'record_number' | 'created_at' | 'updated_at'>): Promise<string> {
     const { data, error } = await supabase
       .from('patient_records')
-      .insert([recordData])
+      .insert(recordData)
       .select()
       .single();
 
@@ -253,7 +253,7 @@ class HospitalManagementService {
   async scheduleConsultation(consultationData: Omit<Consultation, 'id' | 'consultation_number' | 'created_at' | 'updated_at'>): Promise<string> {
     const { data, error } = await supabase
       .from('consultations')
-      .insert([consultationData])
+      .insert(consultationData)
       .select()
       .single();
 
