@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import EnhancedInsuranceSearch from '@/components/insurance/EnhancedInsuranceSearch';
@@ -7,6 +8,7 @@ import InsuranceComparison from '@/components/insurance/InsuranceComparison';
 import InsuranceHelpSection from '@/components/insurance/InsuranceHelpSection';
 import InsurancePurchaseModal from '@/components/insurance/InsurancePurchaseModal';
 import UserInsuranceStatus from '@/components/insurance/UserInsuranceStatus';
+import InsuranceMarketStats from '@/components/insurance/InsuranceMarketStats';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import { Button } from '@/components/ui/button';
