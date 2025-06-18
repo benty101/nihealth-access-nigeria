@@ -1,11 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Phone, Edit, Plus, Trash2, UserCheck } from 'lucide-react';
+import { Phone, Edit, Plus, Trash2, UserCheck, AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -24,70 +28,82 @@ interface EmergencyContact {
 }
 
 const EmergencyContactCard = () => {
-  const [contacts, setContacts] = useState<EmergencyContact[]>([
-    {
-      id: '1',
-      name: 'Dr. Sarah Johnson',
-      phone: '+234-1-7701234',
-      relationship: 'Primary Doctor',
-      isPrimary: true
-    },
-    {
-      id: '2',
-      name: 'John Doe',
-      phone: '+234-803-123-4567',
-      relationship: 'Spouse'
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [contacts, setContacts] = useState<EmergencyContact[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [hasProfileContact, setHasProfileContact] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      loadEmergencyContacts();
     }
-  ]);
-  
-  const [isAddingContact, setIsAddingContact] = useState(false);
-  const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);
-  const [newContact, setNewContact] = useState({
-    name: '',
-    phone: '',
-    relationship: ''
-  });
+  }, [user]);
 
-  const handleAddContact = () => {
-    if (newContact.name && newContact.phone && newContact.relationship) {
-      const contact: EmergencyContact = {
-        id: Date.now().toString(),
-        ...newContact
-      };
-      setContacts([...contacts, contact]);
-      setNewContact({ name: '', phone: '', relationship: '' });
-      setIsAddingContact(false);
+  const loadEmergencyContacts = async () => {
+    if (!user) return;
+
+    try {
+      // Check if user has emergency contact in profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('emergency_contact_name, emergency_contact_phone')
+        .eq('id', user.id)
+        .single();
+
+      const contactsList: EmergencyContact[] = [];
+
+      if (profile?.emergency_contact_name && profile?.emergency_contact_phone) {
+        contactsList.push({
+          id: 'profile-contact',
+          name: profile.emergency_contact_name,
+          phone: profile.emergency_contact_phone,
+          relationship: 'Primary Emergency Contact',
+          isPrimary: true
+        });
+        setHasProfileContact(true);
+      } else {
+        setHasProfileContact(false);
+      }
+
+      setContacts(contactsList);
+    } catch (error) {
+      console.error('Error loading emergency contacts:', error);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleEditContact = (contact: EmergencyContact) => {
-    setEditingContact(contact);
-    setNewContact({
-      name: contact.name,
-      phone: contact.phone,
-      relationship: contact.relationship
-    });
-  };
-
-  const handleUpdateContact = () => {
-    if (editingContact && newContact.name && newContact.phone && newContact.relationship) {
-      setContacts(contacts.map(c => 
-        c.id === editingContact.id 
-          ? { ...c, ...newContact }
-          : c
-      ));
-      setEditingContact(null);
-      setNewContact({ name: '', phone: '', relationship: '' });
-    }
-  };
-
-  const handleDeleteContact = (id: string) => {
-    setContacts(contacts.filter(c => c.id !== id));
   };
 
   const handleCall = (phone: string) => {
     window.location.href = `tel:${phone}`;
   };
+
+  const handleAddContact = () => {
+    navigate('/profile');
+    toast({
+      title: "Complete Profile",
+      description: "Add your emergency contact information in your profile settings.",
+    });
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <UserCheck className="h-5 w-5 text-red-600" />
+            Emergency Contacts
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse space-y-3">
+            <div className="h-16 bg-gray-200 rounded"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -97,155 +113,76 @@ const EmergencyContactCard = () => {
             <UserCheck className="h-5 w-5 text-red-600" />
             Emergency Contacts
           </CardTitle>
-          <Dialog open={isAddingContact} onOpenChange={setIsAddingContact}>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="outline">
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Emergency Contact</DialogTitle>
-                <DialogDescription>
-                  Add a new emergency contact for quick access during emergencies.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={newContact.name}
-                    onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                    placeholder="Contact name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    value={newContact.phone}
-                    onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                    placeholder="+234-xxx-xxx-xxxx"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="relationship">Relationship</Label>
-                  <Input
-                    id="relationship"
-                    value={newContact.relationship}
-                    onChange={(e) => setNewContact({ ...newContact, relationship: e.target.value })}
-                    placeholder="e.g., Spouse, Doctor, Parent"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button onClick={handleAddContact} className="flex-1">
-                    Add Contact
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsAddingContact(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          {hasProfileContact && (
+            <Button size="sm" variant="outline" onClick={() => navigate('/profile')}>
+              <Edit className="h-4 w-4 mr-1" />
+              Edit
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {contacts.map((contact) => (
-            <div key={contact.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium">{contact.name}</h4>
-                  {contact.isPrimary && (
-                    <Badge variant="secondary" className="text-xs">Primary</Badge>
-                  )}
+        {!hasProfileContact ? (
+          <div className="text-center py-6">
+            <div className="mb-4">
+              <AlertTriangle className="h-12 w-12 text-orange-400 mx-auto mb-2" />
+              <h3 className="font-medium text-gray-900 mb-1">No Emergency Contact</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Add someone we can contact in case of emergency
+              </p>
+            </div>
+            <div className="bg-orange-50 p-4 rounded-lg border border-orange-200 mb-4">
+              <div className="flex items-center text-orange-800 mb-1">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                <span className="font-medium text-sm">Important Safety Step</span>
+              </div>
+              <p className="text-xs text-orange-700">
+                Having an emergency contact is crucial for your safety and helps us provide better care.
+              </p>
+            </div>
+            <Button onClick={handleAddContact} className="w-full">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Emergency Contact
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {contacts.map((contact) => (
+              <div key={contact.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">{contact.name}</h4>
+                    {contact.isPrimary && (
+                      <Badge variant="secondary" className="text-xs">Primary</Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">{contact.relationship}</p>
+                  <p className="text-sm text-gray-500">{contact.phone}</p>
                 </div>
-                <p className="text-sm text-gray-600">{contact.relationship}</p>
-                <p className="text-sm text-gray-500">{contact.phone}</p>
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleCall(contact.phone)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleCall(contact.phone)}
-                  className="h-8 w-8 p-0"
-                >
-                  <Phone className="h-4 w-4" />
-                </Button>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleEditContact(contact)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Emergency Contact</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="edit-name">Name</Label>
-                        <Input
-                          id="edit-name"
-                          value={newContact.name}
-                          onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-phone">Phone Number</Label>
-                        <Input
-                          id="edit-phone"
-                          value={newContact.phone}
-                          onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-relationship">Relationship</Label>
-                        <Input
-                          id="edit-relationship"
-                          value={newContact.relationship}
-                          onChange={(e) => setNewContact({ ...newContact, relationship: e.target.value })}
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button onClick={handleUpdateContact} className="flex-1">
-                          Update Contact
-                        </Button>
-                        <Button variant="outline" onClick={() => setEditingContact(null)}>
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDeleteContact(contact.id)}
-                  className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+            ))}
+            
+            <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+              <div className="flex items-center text-green-800">
+                <UserCheck className="h-4 w-4 mr-2" />
+                <span className="text-sm font-medium">Emergency Contact Added</span>
               </div>
+              <p className="text-xs text-green-700 mt-1">
+                Your emergency contact is ready. You can update it anytime in your profile.
+              </p>
             </div>
-          ))}
-          
-          {contacts.length === 0 && (
-            <div className="text-center py-6 text-gray-500">
-              <UserCheck className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-              <p>No emergency contacts added yet</p>
-              <p className="text-sm">Add contacts for quick access during emergencies</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

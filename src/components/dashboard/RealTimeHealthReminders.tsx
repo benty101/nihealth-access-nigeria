@@ -3,111 +3,81 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bell, Clock, Pill, Heart, X } from 'lucide-react';
+import { Bell, Clock, Pill, Heart, X, User, Calendar, FileText, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserHealthService, UserNotification } from '@/services/UserHealthService';
+import { ProfileCompletionService, ProfileReminder } from '@/services/ProfileCompletionService';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const RealTimeHealthReminders = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [notifications, setNotifications] = useState<UserNotification[]>([]);
+  const navigate = useNavigate();
+  const [reminders, setReminders] = useState<ProfileReminder[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
-      loadNotifications();
-      createSampleNotifications();
+      loadReminders();
     }
   }, [user]);
 
-  const loadNotifications = async () => {
+  const loadReminders = async () => {
     if (!user) return;
 
     try {
-      const userNotifications = await UserHealthService.getUserNotifications(user.id);
-      setNotifications(userNotifications.filter(n => !n.is_read));
+      const profileReminders = await ProfileCompletionService.getProfileReminders(user.id);
+      setReminders(profileReminders);
     } catch (error) {
-      console.error('Error loading notifications:', error);
+      console.error('Error loading reminders:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const createSampleNotifications = async () => {
-    if (!user) return;
-
-    try {
-      // Check if user already has notifications
-      const existing = await UserHealthService.getUserNotifications(user.id);
-      if (existing.length > 0) return;
-
-      // Create sample notifications for new users
-      const sampleNotifications = [
-        {
-          title: 'Medication Reminder',
-          message: 'Time to take your morning vitamins',
-          type: 'medication'
-        },
-        {
-          title: 'Health Checkup',
-          message: 'Annual checkup is due next month',
-          type: 'appointment'
-        },
-        {
-          title: 'Exercise Goal',
-          message: 'Complete 30 minutes of exercise today',
-          type: 'info'
-        }
-      ];
-
-      // Note: We'd need a function to create notifications for users
-      // For now, this is just to show the UI structure
-    } catch (error) {
-      console.error('Error creating sample notifications:', error);
-    }
+  const handleReminderAction = (reminder: ProfileReminder) => {
+    navigate(reminder.link);
+    toast({
+      title: "Opening Profile",
+      description: `Complete your ${reminder.category.toLowerCase()} information`,
+    });
   };
 
-  const markAsRead = async (notificationId: string) => {
-    try {
-      await UserHealthService.markNotificationAsRead(notificationId);
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      toast({
-        title: "Notification marked as read"
-      });
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-      toast({
-        title: "Error",
-        description: "Failed to mark notification as read",
-        variant: "destructive"
-      });
-    }
+  const dismissReminder = (reminderId: string) => {
+    setReminders(prev => prev.filter(r => r.id !== reminderId));
+    toast({
+      title: "Reminder dismissed",
+      description: "You can always complete this later in your profile.",
+    });
   };
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'medication':
-        return <Pill className="h-4 w-4 text-blue-500" />;
-      case 'appointment':
-        return <Clock className="h-4 w-4 text-green-500" />;
-      case 'warning':
-        return <Bell className="h-4 w-4 text-red-500" />;
+  const getNotificationIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case 'profile setup':
+        return <User className="h-4 w-4 text-blue-500" />;
+      case 'safety':
+        return <Shield className="h-4 w-4 text-red-500" />;
+      case 'health profile':
+        return <Heart className="h-4 w-4 text-green-500" />;
+      case 'medical history':
+        return <FileText className="h-4 w-4 text-purple-500" />;
+      case 'insurance':
+        return <Shield className="h-4 w-4 text-blue-500" />;
       default:
-        return <Heart className="h-4 w-4 text-purple-500" />;
+        return <Bell className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const getNotificationColor = (type: string) => {
-    switch (type) {
-      case 'medication':
-        return 'bg-blue-100 text-blue-800';
-      case 'appointment':
-        return 'bg-green-100 text-green-800';
-      case 'warning':
+  const getNotificationColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
         return 'bg-red-100 text-red-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'low':
+        return 'bg-blue-100 text-blue-800';
       default:
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -138,55 +108,73 @@ const RealTimeHealthReminders = () => {
           <div className="flex items-center">
             <Bell className="h-5 w-5 mr-2 text-orange-600" />
             Health Reminders
-            {notifications.length > 0 && (
+            {reminders.length > 0 && (
               <Badge variant="secondary" className="ml-2">
-                {notifications.length}
+                {reminders.length}
               </Badge>
             )}
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {notifications.length === 0 ? (
+        {reminders.length === 0 ? (
           <div className="text-center py-6">
             <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600">No active reminders</p>
-            <p className="text-sm text-gray-500 mt-1">You're all caught up!</p>
+            <p className="text-sm text-gray-500 mt-1">Your health profile looks complete!</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {notifications.slice(0, 4).map((notification) => (
-              <div key={notification.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                {getNotificationIcon(notification.type)}
+            {reminders.slice(0, 4).map((reminder) => (
+              <div key={reminder.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                {getNotificationIcon(reminder.category)}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm text-gray-900 truncate">
-                        {notification.title}
+                        {reminder.title}
                       </h4>
                       <p className="text-xs text-gray-600 mt-1">
-                        {notification.message}
+                        {reminder.description}
                       </p>
-                      <Badge className={`text-xs mt-2 ${getNotificationColor(notification.type)}`}>
-                        {notification.type}
-                      </Badge>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge className={`text-xs ${getNotificationColor(reminder.priority)}`}>
+                          {reminder.category}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {reminder.priority} priority
+                        </Badge>
+                      </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => markAsRead(notification.id)}
-                      className="h-6 w-6 p-0 flex-shrink-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        onClick={() => handleReminderAction(reminder)}
+                        className="h-7 text-xs"
+                      >
+                        {reminder.action}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => dismissReminder(reminder.id)}
+                        className="h-6 w-6 p-0 flex-shrink-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
             
-            {notifications.length > 4 && (
-              <Button variant="ghost" className="w-full text-sm">
-                View All ({notifications.length}) Reminders
+            {reminders.length > 4 && (
+              <Button 
+                variant="ghost" 
+                className="w-full text-sm"
+                onClick={() => navigate('/profile')}
+              >
+                View All ({reminders.length}) Reminders
               </Button>
             )}
           </div>

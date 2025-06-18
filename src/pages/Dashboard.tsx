@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import RealTimeHealthStats from '@/components/dashboard/RealTimeHealthStats';
+import RealTimeHealthMetrics from '@/components/dashboard/RealTimeHealthMetrics';
 import RealTimeUpcomingAppointments, { AppointmentsRef } from '@/components/dashboard/RealTimeUpcomingAppointments';
 import RealTimeHealthReminders from '@/components/dashboard/RealTimeHealthReminders';
 import RecentActivity from '@/components/dashboard/RecentActivity';
@@ -15,6 +15,7 @@ import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
 import InsuranceStatusCard from '@/components/dashboard/InsuranceStatusCard';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import EnhancedQuickLinks from '@/components/dashboard/EnhancedQuickLinks';
+import ProfileCompletion from '@/components/dashboard/ProfileCompletion';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
 const Dashboard = () => {
@@ -28,7 +29,6 @@ const Dashboard = () => {
   console.log('Dashboard: Onboarding data', { onboardingData });
 
   const handleAppointmentBooked = () => {
-    // Trigger refresh of appointments component
     if (appointmentsRef.current) {
       appointmentsRef.current.loadAppointments();
     }
@@ -42,13 +42,18 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <DashboardHeader onboardingData={onboardingData} greeting={greeting} />
         
+        {/* Profile Completion Banner */}
+        <div className="mb-6">
+          <ProfileCompletion />
+        </div>
+        
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mt-6">
           {/* Left Column - Main Content */}
           <div className="xl:col-span-8 space-y-6">
             <PersonalizedInsights onboardingData={onboardingData} />
             <ProgressTracker onboardingData={onboardingData} />
-            <RealTimeHealthStats />
+            <RealTimeHealthMetrics />
             <SmartRecommendations onboardingData={onboardingData} />
             <PersonalizedRecommendations 
               recommendations={recommendations} 
