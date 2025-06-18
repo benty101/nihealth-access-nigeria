@@ -16,6 +16,12 @@ const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="text-center">
+          {/* Partnership Banner */}
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-white shadow-sm border border-teal-200 text-teal-800 text-sm font-medium mb-8 animate-fade-in animate-gentle-bounce">
+            <Shield className="h-4 w-4 mr-2 animate-pulse" />
+            🇳🇬 In partnership with Ministry of Science & Innovation
+          </div>
+
           {/* Main Headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-2 animate-fade-in animation-delay-200">
             Your Digital 
@@ -24,11 +30,6 @@ const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
             </span>
             Companion
           </h1>
-
-          {/* Partnership text */}
-          <p className="text-sm text-gray-500 mb-6 animate-fade-in animation-delay-300">
-            In partnership with Ministry of Science & Innovation
-          </p>
 
           {/* Subheadline */}
           <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed animate-fade-in animation-delay-400">
