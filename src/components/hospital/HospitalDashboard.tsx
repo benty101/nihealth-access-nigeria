@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { hospitalManagementService } from '@/services/HospitalManagementService';
 import HospitalOnboarding from './HospitalOnboarding';
 import DoctorManagement from './DoctorManagement';
 import PatientRecords from './PatientRecords';
@@ -33,6 +34,12 @@ const HospitalDashboard = () => {
   const { toast } = useToast();
   const [hospitalStaff, setHospitalStaff] = useState<HospitalStaff | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dashboardStats, setDashboardStats] = useState({
+    doctorsCount: 0,
+    patientsCount: 0,
+    consultationsToday: 0,
+    activeRecords: 0
+  });
 
   useEffect(() => {
     if (user && role === 'hospital_admin') {
@@ -67,6 +74,9 @@ const HospitalDashboard = () => {
       }
 
       setHospitalStaff(data);
+      if (data?.hospital_id) {
+        loadDashboardStats(data.hospital_id);
+      }
     } catch (error: any) {
       console.error('Error checking hospital staff status:', error);
       toast({
@@ -76,6 +86,22 @@ const HospitalDashboard = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadDashboardStats = async (hospitalId: string) => {
+    try {
+      const stats = await hospitalManagementService.getHospitalDashboardStats(hospitalId);
+      setDashboardStats(stats);
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error);
+      // Don't show error toast for stats, just log it
+    }
+  };
+
+  const handleStatsUpdate = () => {
+    if (hospitalStaff?.hospital_id) {
+      loadDashboardStats(hospitalStaff.hospital_id);
     }
   };
 
@@ -142,8 +168,8 @@ const HospitalDashboard = () => {
               <div className="flex items-center">
                 <Users className="h-8 w-8 text-blue-600" />
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Patients</p>
-                  <p className="text-2xl font-bold">247</p>
+                  <p className="text-sm font-medium text-gray-600">Total Doctors</p>
+                  <p className="text-2xl font-bold">{dashboardStats.doctorsCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -155,7 +181,7 @@ const HospitalDashboard = () => {
                 <Calendar className="h-8 w-8 text-green-600" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-                  <p className="text-2xl font-bold">12</p>
+                  <p className="text-2xl font-bold">{dashboardStats.consultationsToday}</p>
                 </div>
               </div>
             </CardContent>
@@ -167,7 +193,7 @@ const HospitalDashboard = () => {
                 <FileText className="h-8 w-8 text-purple-600" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Active Records</p>
-                  <p className="text-2xl font-bold">89</p>
+                  <p className="text-2xl font-bold">{dashboardStats.activeRecords}</p>
                 </div>
               </div>
             </CardContent>
@@ -178,8 +204,8 @@ const HospitalDashboard = () => {
               <div className="flex items-center">
                 <BarChart3 className="h-8 w-8 text-orange-600" />
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
-                  <p className="text-2xl font-bold">₦2.4M</p>
+                  <p className="text-sm font-medium text-gray-600">Total Patients</p>
+                  <p className="text-2xl font-bold">{dashboardStats.patientsCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -268,15 +294,24 @@ const HospitalDashboard = () => {
           </TabsContent>
 
           <TabsContent value="doctors">
-            <DoctorManagement hospitalId={hospitalStaff?.hospital_id} />
+            <DoctorManagement 
+              hospitalId={hospitalStaff?.hospital_id} 
+              onStatsUpdate={handleStatsUpdate}
+            />
           </TabsContent>
 
           <TabsContent value="patients">
-            <PatientRecords hospitalId={hospitalStaff?.hospital_id} />
+            <PatientRecords 
+              hospitalId={hospitalStaff?.hospital_id} 
+              onStatsUpdate={handleStatsUpdate}
+            />
           </TabsContent>
 
           <TabsContent value="appointments">
-            <ConsultationScheduler hospitalId={hospitalStaff?.hospital_id} />
+            <ConsultationScheduler 
+              hospitalId={hospitalStaff?.hospital_id} 
+              onStatsUpdate={handleStatsUpdate}
+            />
           </TabsContent>
 
           <TabsContent value="settings">
