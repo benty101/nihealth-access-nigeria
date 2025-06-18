@@ -100,18 +100,18 @@ const ChildbirthResources = ({ searchTerm }: ChildbirthResourcesProps) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredResources.map((resource) => (
-          <Card key={resource.id} className="hover:shadow-xl transition-all duration-300 group">
+          <Card key={resource.id} className="hover:shadow-lg transition-all duration-300 group bg-white border border-gray-200">
             <CardHeader>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-2">
                   <Badge 
                     variant={resource.verifiedOfficial ? "default" : "outline"}
-                    className={resource.verifiedOfficial ? "bg-green-600 text-white" : ""}
+                    className={resource.verifiedOfficial ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white" : "border-gray-300 text-gray-700"}
                   >
                     {resource.type}
                   </Badge>
                   {resource.verifiedOfficial && (
-                    <div className="flex items-center text-green-600">
+                    <div className="flex items-center text-purple-600">
                       <CheckCircle className="h-4 w-4 mr-1" />
                       <span className="text-xs font-medium">Official</span>
                     </div>
@@ -128,7 +128,7 @@ const ChildbirthResources = ({ searchTerm }: ChildbirthResourcesProps) => {
               
               <div className="flex flex-wrap gap-2 mt-3">
                 {resource.topics.slice(0, 3).map((topic, idx) => (
-                  <Badge key={idx} variant="outline" className="text-xs">
+                  <Badge key={idx} variant="outline" className="text-xs border-gray-300 text-gray-600">
                     {topic}
                   </Badge>
                 ))}
@@ -152,7 +152,7 @@ const ChildbirthResources = ({ searchTerm }: ChildbirthResourcesProps) => {
                 </div>
                 
                 <Button 
-                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white"
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                   onClick={() => window.open(resource.link, '_blank')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
