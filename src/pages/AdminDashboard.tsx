@@ -54,7 +54,7 @@ const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
-            <SystemOverview stats={stats} />
+            <SystemOverview stats={stats} loading={loading} />
           </TabsContent>
 
           <TabsContent value="users" className="mt-6">
