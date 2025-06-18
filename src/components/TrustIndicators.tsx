@@ -84,7 +84,7 @@ const TrustIndicators = () => {
           </div>
           <div className="flex items-center space-x-2 text-gray-600 hover:text-emerald-600 transition-colors duration-300">
             <Heart className="h-5 w-5 text-emerald-500" />
-            <span className="text-sm font-medium">Min of Sci and innovation</span>
+            <span className="text-sm font-medium">Ministry of Sci and Innovation endorsed</span>
           </div>
         </div>
       </div>
