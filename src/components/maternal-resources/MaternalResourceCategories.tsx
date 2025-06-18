@@ -22,23 +22,41 @@ const MaternalResourceCategories = ({ searchTerm, selectedCategory }: MaternalRe
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <Tabs value={getActiveTab()} className="w-full">
-        <TabsList className="grid w-full grid-cols-6 mb-8 bg-gray-100 p-1 rounded-lg">
-          <TabsTrigger value="pregnancy" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-500 data-[state=active]:text-white">
+        <TabsList className="grid w-full grid-cols-6 mb-8 bg-gray-50 p-1 rounded-lg h-12">
+          <TabsTrigger 
+            value="pregnancy" 
+            className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-sm text-gray-600 hover:text-cyan-600 transition-colors"
+          >
             Pregnancy Care
           </TabsTrigger>
-          <TabsTrigger value="childbirth" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-indigo-500 data-[state=active]:text-white">
+          <TabsTrigger 
+            value="childbirth" 
+            className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-sm text-gray-600 hover:text-cyan-600 transition-colors"
+          >
             Childbirth
           </TabsTrigger>
-          <TabsTrigger value="newborn" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white">
+          <TabsTrigger 
+            value="newborn" 
+            className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-sm text-gray-600 hover:text-cyan-600 transition-colors"
+          >
             Newborn Care
           </TabsTrigger>
-          <TabsTrigger value="nutrition" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-500 data-[state=active]:text-white">
+          <TabsTrigger 
+            value="nutrition" 
+            className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-sm text-gray-600 hover:text-cyan-600 transition-colors"
+          >
             Nutrition
           </TabsTrigger>
-          <TabsTrigger value="immunization" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white">
+          <TabsTrigger 
+            value="immunization" 
+            className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-sm text-gray-600 hover:text-cyan-600 transition-colors"
+          >
             Immunization
           </TabsTrigger>
-          <TabsTrigger value="childhealth" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white">
+          <TabsTrigger 
+            value="childhealth" 
+            className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-sm text-gray-600 hover:text-cyan-600 transition-colors"
+          >
             Child Development
           </TabsTrigger>
         </TabsList>
