@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PregnancyCareResources from '@/components/maternal-resources/categories/PregnancyCareResources';
 import ChildbirthResources from '@/components/maternal-resources/categories/ChildbirthResources';
 import NewbornCareResources from '@/components/maternal-resources/categories/NewbornCareResources';
@@ -14,77 +13,48 @@ interface MaternalResourceCategoriesProps {
 }
 
 const MaternalResourceCategories = ({ searchTerm, selectedCategory }: MaternalResourceCategoriesProps) => {
-  const getActiveTab = () => {
-    if (selectedCategory === 'all') return 'pregnancy';
-    return selectedCategory;
+  // Filter which sections to show based on selected category
+  const shouldShowSection = (category: string) => {
+    return selectedCategory === 'all' || selectedCategory === category;
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-6">
-      <Tabs defaultValue="pregnancy" value={getActiveTab()} className="w-full">
-        <TabsList className="grid w-full grid-cols-6 mb-8 bg-gray-50 p-1 rounded-lg h-12">
-          <TabsTrigger 
-            value="pregnancy" 
-            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
-          >
-            Pregnancy Care
-          </TabsTrigger>
-          <TabsTrigger 
-            value="childbirth" 
-            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
-          >
-            Childbirth
-          </TabsTrigger>
-          <TabsTrigger 
-            value="newborn" 
-            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
-          >
-            Newborn Care
-          </TabsTrigger>
-          <TabsTrigger 
-            value="nutrition" 
-            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
-          >
-            Nutrition
-          </TabsTrigger>
-          <TabsTrigger 
-            value="immunization" 
-            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
-          >
-            Immunization
-          </TabsTrigger>
-          <TabsTrigger 
-            value="childhealth" 
-            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
-          >
-            Child Development
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="pregnancy" className="mt-6">
+    <div className="space-y-12">
+      {shouldShowSection('pregnancy') && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <PregnancyCareResources searchTerm={searchTerm} />
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="childbirth" className="mt-6">
+      {shouldShowSection('childbirth') && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <ChildbirthResources searchTerm={searchTerm} />
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="newborn" className="mt-6">
+      {shouldShowSection('newborn') && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <NewbornCareResources searchTerm={searchTerm} />
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="nutrition" className="mt-6">
+      {shouldShowSection('nutrition') && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <NutritionResources searchTerm={searchTerm} />
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="immunization" className="mt-6">
+      {shouldShowSection('immunization') && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <ImmunizationResources searchTerm={searchTerm} />
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="childhealth" className="mt-6">
+      {shouldShowSection('childhealth') && (
+        <div className="bg-white rounded-xl shadow-sm border p-6">
           <ChildDevelopmentResources searchTerm={searchTerm} />
-        </TabsContent>
-      </Tabs>
+        </div>
+      )}
     </div>
   );
 };
