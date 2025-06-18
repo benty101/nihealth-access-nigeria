@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import EnhancedInsuranceSearch from '@/components/insurance/EnhancedInsuranceSearch';
@@ -41,6 +40,7 @@ const Insurance = () => {
     setLoadingPlans(true);
     try {
       const plans = await insuranceService.getAllInsurancePlans();
+      console.log('Loaded plans from database:', plans.length);
       setDbPlans(plans);
     } catch (error) {
       console.error('Error loading plans:', error);
@@ -49,21 +49,25 @@ const Insurance = () => {
     }
   };
 
-  // Combine static plans with database plans
+  // Use database plans if available, otherwise use static plans
+  const primaryPlans = dbPlans.length > 0 ? dbPlans.map(plan => ({
+    id: plan.id,
+    name: plan.name,
+    provider: plan.provider,
+    type: plan.plan_type,
+    monthlyPremium: `₦${plan.premium_monthly?.toLocaleString() || 'N/A'}`,
+    coverage: `₦${plan.coverage_amount?.toLocaleString() || 'N/A'}`,
+    features: plan.features || [],
+    rating: 4.5,
+    popular: false,
+    terms: plan.terms
+  })) : enhancedInsurancePlans;
+
+  // Add static plans as fallback
   const allPlans = [
-    ...enhancedInsurancePlans,
-    ...dbPlans.map(plan => ({
-      id: plan.id,
-      name: plan.name,
-      provider: plan.provider,
-      type: plan.plan_type,
-      monthlyPremium: `₦${plan.premium_monthly?.toLocaleString() || 'N/A'}`,
-      coverage: `₦${plan.coverage_amount?.toLocaleString() || 'N/A'}`,
-      features: plan.features || [],
-      rating: 4.5,
-      popular: false,
-      terms: plan.terms
-    }))
+    ...primaryPlans,
+    // Only add static plans if we don't have database plans
+    ...(dbPlans.length === 0 ? enhancedInsurancePlans : [])
   ];
 
   // Filter and sort plans
@@ -188,6 +192,15 @@ const Insurance = () => {
                     setShowComparison(false);
                   }}
                 />
+              </div>
+            )}
+
+            {/* Database Status Indicator */}
+            {dbPlans.length > 0 && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-700">
+                  ✅ Showing {dbPlans.length} plans from database
+                </p>
               </div>
             )}
 
