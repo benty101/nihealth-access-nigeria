@@ -152,7 +152,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onSuccess }: BookAppointmentMod
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="video">Video Consultation</SelectItem>
-                <SelectItem value="voice">Phone Consultation</SelectItem>
+                <SelectItem value="voice">Voice Consultation</SelectItem>
                 <SelectItem value="chat">Chat Consultation</SelectItem>
               </SelectContent>
             </Select>
