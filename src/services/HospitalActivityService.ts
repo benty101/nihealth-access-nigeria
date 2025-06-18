@@ -18,18 +18,31 @@ class HospitalActivityService {
     // Get recent patient records
     const { data: recentRecords } = await supabase
       .from('patient_records')
-      .select('id, created_at, patient_id, profiles(full_name)')
+      .select(`
+        id, 
+        created_at, 
+        patient_id,
+        record_number
+      `)
       .eq('hospital_id', hospitalId)
       .order('created_at', { ascending: false })
       .limit(3);
 
     if (recentRecords) {
+      // Get patient names separately
+      const patientIds = recentRecords.map(record => record.patient_id);
+      const { data: patientProfiles } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', patientIds);
+
       recentRecords.forEach(record => {
+        const patientProfile = patientProfiles?.find(p => p.id === record.patient_id);
         activities.push({
           id: `record_${record.id}`,
           type: 'patient_registered',
           title: 'New patient registered',
-          description: `${record.profiles?.full_name || 'Patient'} added to hospital records`,
+          description: `${patientProfile?.full_name || 'Patient'} added to hospital records`,
           timestamp: record.created_at,
           relatedId: record.patient_id,
           hospitalId
@@ -40,19 +53,44 @@ class HospitalActivityService {
     // Get recent consultations
     const { data: recentConsultations } = await supabase
       .from('consultations')
-      .select('id, created_at, scheduled_at, status, profiles(full_name), telemedicine_providers(name)')
+      .select(`
+        id, 
+        created_at, 
+        scheduled_at, 
+        status,
+        patient_id,
+        doctor_id,
+        consultation_number
+      `)
       .eq('hospital_id', hospitalId)
       .order('created_at', { ascending: false })
       .limit(3);
 
     if (recentConsultations) {
+      // Get patient and doctor names separately
+      const patientIds = recentConsultations.map(c => c.patient_id);
+      const doctorIds = recentConsultations.map(c => c.doctor_id);
+      
+      const { data: patientProfiles } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', patientIds);
+
+      const { data: doctorProfiles } = await supabase
+        .from('telemedicine_providers')
+        .select('id, name')
+        .in('id', doctorIds);
+
       recentConsultations.forEach(consultation => {
+        const patientProfile = patientProfiles?.find(p => p.id === consultation.patient_id);
+        const doctorProfile = doctorProfiles?.find(d => d.id === consultation.doctor_id);
         const isCompleted = consultation.status === 'completed';
+        
         activities.push({
           id: `consultation_${consultation.id}`,
           type: isCompleted ? 'consultation_completed' : 'appointment_scheduled',
           title: isCompleted ? 'Consultation completed' : 'Appointment scheduled',
-          description: `${consultation.profiles?.full_name || 'Patient'} with Dr. ${consultation.telemedicine_providers?.name || 'Unknown'}`,
+          description: `${patientProfile?.full_name || 'Patient'} with Dr. ${doctorProfile?.name || 'Unknown'}`,
           timestamp: consultation.created_at,
           relatedId: consultation.id,
           hospitalId
@@ -63,19 +101,31 @@ class HospitalActivityService {
     // Get recent hospital doctors
     const { data: recentDoctors } = await supabase
       .from('hospital_doctors')
-      .select('id, created_at, telemedicine_providers(name, specialization)')
+      .select(`
+        id, 
+        created_at, 
+        doctor_id
+      `)
       .eq('hospital_id', hospitalId)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(2);
 
     if (recentDoctors) {
+      // Get doctor details separately
+      const doctorIds = recentDoctors.map(d => d.doctor_id);
+      const { data: doctorProfiles } = await supabase
+        .from('telemedicine_providers')
+        .select('id, name, specialization')
+        .in('id', doctorIds);
+
       recentDoctors.forEach(doctor => {
+        const doctorProfile = doctorProfiles?.find(d => d.id === doctor.doctor_id);
         activities.push({
           id: `doctor_${doctor.id}`,
           type: 'doctor_added',
           title: 'Doctor added to hospital',
-          description: `Dr. ${doctor.telemedicine_providers?.name || 'Unknown'} (${doctor.telemedicine_providers?.specialization || 'General'})`,
+          description: `Dr. ${doctorProfile?.name || 'Unknown'} (${doctorProfile?.specialization || 'General'})`,
           timestamp: doctor.created_at,
           relatedId: doctor.id,
           hospitalId
