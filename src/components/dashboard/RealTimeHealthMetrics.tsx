@@ -35,15 +35,39 @@ const RealTimeHealthMetrics = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('health_metrics')
+      // Since we don't have a health_metrics table yet, let's get health data from the profile
+      const { data: profile, error } = await supabase
+        .from('profiles')
         .select('*')
-        .eq('user_id', user.id)
-        .order('recorded_at', { ascending: false })
-        .limit(10);
+        .eq('id', user.id)
+        .single();
 
       if (error) throw error;
-      setMetrics(data || []);
+
+      // Convert profile data to health metrics format
+      const profileMetrics: HealthMetric[] = [];
+      
+      if (profile?.height) {
+        profileMetrics.push({
+          id: 'height',
+          metric_type: 'height',
+          value: profile.height,
+          unit: 'cm',
+          recorded_at: profile.updated_at || new Date().toISOString()
+        });
+      }
+
+      if (profile?.weight) {
+        profileMetrics.push({
+          id: 'weight',
+          metric_type: 'weight',
+          value: profile.weight,
+          unit: 'kg',
+          recorded_at: profile.updated_at || new Date().toISOString()
+        });
+      }
+
+      setMetrics(profileMetrics);
     } catch (error) {
       console.error('Error loading health metrics:', error);
     } finally {

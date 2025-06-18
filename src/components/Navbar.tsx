@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -5,8 +6,8 @@ import NavLogo from './navbar/NavLogo';
 import UserMenu from './navbar/UserMenu';
 import { useStreamlinedNavigation, StreamlinedDesktopNavigation } from './navbar/StreamlinedNavigation';
 import { useSuperAdminNavigation, SuperAdminDesktopNavigation } from './navbar/SuperAdminNavigation';
-import Button from '@/components/Button';
-import Star from '@/components/icons/Star';
+import { Button } from '@/components/ui/button';
+import { Star } from 'lucide-react';
 
 const Navbar = () => {
   const { user } = useAuth();
