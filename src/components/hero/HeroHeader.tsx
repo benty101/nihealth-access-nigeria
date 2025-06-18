@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Shield, Baby, Search } from 'lucide-react';
+import { Heart, Shield, Baby } from 'lucide-react';
 
 interface HeroHeaderProps {
   onGetStarted: () => void;
@@ -10,64 +10,91 @@ interface HeroHeaderProps {
 
 const HeroHeader = ({ onGetStarted, onExploreServices }: HeroHeaderProps) => {
   return (
-    <div className="bg-gradient-to-br from-teal-50 via-white to-emerald-50 py-20 lg:py-28">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-r from-teal-600/5 to-emerald-600/5"></div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="text-center">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 text-sm font-medium mb-8 shadow-sm animate-fade-in hover:shadow-md transition-all duration-300">
+          {/* Trust Badge */}
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-white shadow-sm border border-teal-200 text-teal-800 text-sm font-medium mb-8 animate-fade-in">
             <Shield className="h-4 w-4 mr-2" />
-            🇳🇬 In Partnership with Ministry of Science and Technology
+            🇳🇬 Ministry of Health Approved • Trusted by 25,000+ Nigerian Mothers
           </div>
-          
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight animate-fade-in animation-delay-200">
-            Your Complete{' '}
-            <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent hover:from-emerald-600 hover:to-teal-600 transition-all duration-500">
-              Maternal & Child Health
-            </span>{' '}
+
+          {/* Main Headline */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 animate-fade-in animation-delay-200">
+            Your Digital 
+            <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent block">
+              Maternal Health
+            </span>
             Companion
           </h1>
-          
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in animation-delay-400">
-            Comprehensive healthcare for mothers and children - find specialized hospitals, 
-            compare maternal insurance, book antenatal appointments, access child vaccinations, 
-            and manage family health records securely.
+
+          {/* Subheadline */}
+          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed animate-fade-in animation-delay-400">
+            From pregnancy to parenthood, access Nigeria's most comprehensive maternal and child health platform. 
+            <span className="text-teal-600 font-semibold"> Expert care, when you need it, where you are.</span>
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-in animation-delay-600">
+
+          {/* Key Benefits */}
+          <div className="flex flex-wrap justify-center gap-6 mb-10 animate-fade-in animation-delay-500">
+            <div className="flex items-center space-x-2 text-gray-700">
+              <Heart className="h-5 w-5 text-red-500" />
+              <span className="font-medium">24/7 Maternal Support</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-700">
+              <Baby className="h-5 w-5 text-blue-500" />
+              <span className="font-medium">Child Development Tracking</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-700">
+              <Shield className="h-5 w-5 text-green-500" />
+              <span className="font-medium">Certified Healthcare Providers</span>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-600">
             <Button 
               size="lg" 
               onClick={onGetStarted}
-              className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform"
+              className="maternal-button text-white px-12 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform"
             >
-              <Baby className="mr-2 h-5 w-5" />
-              Start Your Journey
+              <Heart className="mr-2 h-5 w-5" />
+              Start Your Maternal Journey
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
               onClick={onExploreServices}
-              className="border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-4 text-lg rounded-full transition-all duration-300 hover:scale-105 transform hover:border-teal-700"
+              className="px-12 py-4 text-lg rounded-full border-2 border-teal-600 text-teal-600 hover:bg-teal-50 transition-all duration-300"
             >
-              <Search className="mr-2 h-5 w-5" />
-              Explore Services
+              Explore Our Services
             </Button>
           </div>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-600 animate-fade-in animation-delay-800">
-            <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
-              <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
-              500+ Care Centers
+
+          {/* Social Proof */}
+          <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500 animate-fade-in animation-delay-800">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>500+ Maternal Health Specialists</span>
             </div>
-            <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
-              <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
-              Government Approved
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span>200+ Partner Health Facilities</span>
             </div>
-            <div className="flex items-center hover:text-teal-600 transition-colors duration-300">
-              <Shield className="h-5 w-5 text-teal-500 mr-2 hover:scale-110 transition-transform duration-300" />
-              25,000+ Families Served
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span>99.2% Mother Satisfaction Rate</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Decorative Elements */}
+      <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full opacity-10 animate-float"></div>
+      <div className="absolute bottom-20 right-10 w-32 h-32 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-10 animate-float animation-delay-300"></div>
+      <div className="absolute top-1/2 left-20 w-16 h-16 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 animate-float animation-delay-600"></div>
     </div>
   );
 };

@@ -5,28 +5,28 @@ import { Shield, Heart, Users, Award, CheckCircle, Star } from 'lucide-react';
 const TrustIndicators = () => {
   const trustStats = [
     {
-      icon: Shield,
-      number: "1000+",
-      label: "Verified Health Providers",
-      description: "Extensive insurance network and partners"
+      icon: Heart,
+      number: "500+",
+      label: "Maternal Health Specialists",
+      description: "Certified doctors and midwives focused on mother and child care"
     },
     {
       icon: Users,
-      number: "5,000+",
-      label: "Registered Users",
-      description: "Growing community of Nigerian families"
+      number: "25,000+",
+      label: "Mothers & Families Served",
+      description: "Growing community of Nigerian mothers trusting our platform"
     },
     {
-      icon: Heart,
-      number: "850+",
-      label: "NAFDAC Approved Pharmacies",
-      description: "Certified pharmaceutical partners"
+      icon: Shield,
+      number: "200+",
+      label: "Partner Health Facilities",
+      description: "Verified hospitals and clinics specializing in maternal care"
     },
     {
       icon: Award,
-      number: "99.9%",
-      label: "Service Guarantee",
-      description: "Reliable healthcare service delivery"
+      number: "99.2%",
+      label: "Satisfaction Rate",
+      description: "Mothers rating our services as excellent or very good"
     }
   ];
 
@@ -36,13 +36,13 @@ const TrustIndicators = () => {
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center px-6 py-3 rounded-full bg-white shadow-sm border border-emerald-200 text-emerald-800 text-sm font-medium mb-6 animate-gentle-bounce">
             <Shield className="h-4 w-4 mr-2 animate-pulse" />
-            🇳🇬 Proudly Nigerian • Ministry of Health Approved
+            🇳🇬 Ministry of Health Approved • Ministry of Science & Innovation Partner
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Why Families Choose <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">MeddyPal</span>
+            Why Nigerian Mothers Choose <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">MeddyPal</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Trusted healthcare platform designed specifically for Nigerian families
+            Nigeria's leading digital health platform dedicated to maternal and child healthcare excellence
           </p>
         </div>
 
@@ -76,19 +76,19 @@ const TrustIndicators = () => {
         <div className="mt-16 flex flex-wrap justify-center items-center gap-8 animate-fade-in animation-delay-800">
           <div className="flex items-center space-x-2 text-gray-600 hover:text-emerald-600 transition-colors duration-300">
             <CheckCircle className="h-5 w-5 text-emerald-500" />
-            <span className="text-sm font-medium">ISO 27001 Certified</span>
+            <span className="text-sm font-medium">ISO 27001 Certified Security</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600 hover:text-emerald-600 transition-colors duration-300">
             <Shield className="h-5 w-5 text-emerald-500" />
-            <span className="text-sm font-medium">HIPAA Compliant</span>
+            <span className="text-sm font-medium">HIPAA Compliant Platform</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600 hover:text-emerald-600 transition-colors duration-300">
             <Star className="h-5 w-5 text-emerald-500" />
-            <span className="text-sm font-medium">4.8/5 User Rating</span>
+            <span className="text-sm font-medium">4.9/5 Mother Satisfaction</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600 hover:text-emerald-600 transition-colors duration-300">
             <Heart className="h-5 w-5 text-emerald-500" />
-            <span className="text-sm font-medium">Ministry of Health Approved</span>
+            <span className="text-sm font-medium">Ministry of Health Endorsed</span>
           </div>
         </div>
       </div>

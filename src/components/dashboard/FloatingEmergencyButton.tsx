@@ -10,9 +10,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Heart, Phone, MapPin, Users, AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const FloatingEmergencyButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+
+  // Only show for authenticated users
+  if (!user) {
+    return null;
+  }
 
   const emergencyContacts = [
     {
