@@ -10,9 +10,10 @@ import BookAppointmentModal from './BookAppointmentModal';
 
 interface PersonalizedRecommendationsProps {
   recommendations: Recommendation[];
+  onAppointmentBooked?: () => void;
 }
 
-const PersonalizedRecommendations = ({ recommendations }: PersonalizedRecommendationsProps) => {
+const PersonalizedRecommendations = ({ recommendations, onAppointmentBooked }: PersonalizedRecommendationsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -77,6 +78,10 @@ const PersonalizedRecommendations = ({ recommendations }: PersonalizedRecommenda
       title: "Success",
       description: "Appointment booked successfully!",
     });
+    // Notify parent component to refresh data
+    if (onAppointmentBooked) {
+      onAppointmentBooked();
+    }
   };
 
   return (

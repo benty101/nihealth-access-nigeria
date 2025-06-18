@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,6 +25,7 @@ const RealTimeUpcomingAppointments = () => {
     if (!user) return;
 
     try {
+      setLoading(true);
       const userAppointments = await AppointmentService.getUserAppointments(user.id);
       
       // Filter for upcoming appointments only
@@ -35,6 +35,7 @@ const RealTimeUpcomingAppointments = () => {
         return appointmentDateTime > now && apt.status !== 'cancelled';
       });
 
+      console.log('Loaded upcoming appointments:', upcoming);
       setAppointments(upcoming);
     } catch (error) {
       console.error('Error loading appointments:', error);
@@ -69,7 +70,8 @@ const RealTimeUpcomingAppointments = () => {
   };
 
   const handleBookingSuccess = () => {
-    loadAppointments(); // Refresh appointments
+    // Refresh appointments after successful booking
+    loadAppointments();
     toast({
       title: "Success",
       description: "Appointment booked successfully!"

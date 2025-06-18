@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import RealTimeHealthStats from '@/components/dashboard/RealTimeHealthStats';
@@ -19,12 +19,20 @@ import { PersonalizationService } from '@/services/PersonalizationService';
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
+  const appointmentsRef = useRef<{ loadAppointments: () => void } | null>(null);
 
   const onboardingData = PersonalizationService.getOnboardingData();
   const recommendations = PersonalizationService.getPersonalizedRecommendations(onboardingData);
   const greeting = PersonalizationService.getPersonalizedGreeting(onboardingData);
 
   console.log('Dashboard: Onboarding data', { onboardingData });
+
+  const handleAppointmentBooked = () => {
+    // Trigger refresh of appointments component
+    if (appointmentsRef.current && 'loadAppointments' in appointmentsRef.current) {
+      appointmentsRef.current.loadAppointments();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,8 +50,11 @@ const Dashboard = () => {
             <ProgressTracker onboardingData={onboardingData} />
             <RealTimeHealthStats />
             <SmartRecommendations onboardingData={onboardingData} />
-            <PersonalizedRecommendations recommendations={recommendations} />
-            <RealTimeUpcomingAppointments />
+            <PersonalizedRecommendations 
+              recommendations={recommendations} 
+              onAppointmentBooked={handleAppointmentBooked}
+            />
+            <RealTimeUpcomingAppointments ref={appointmentsRef} />
             <RecentActivity />
           </div>
           
