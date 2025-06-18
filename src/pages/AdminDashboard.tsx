@@ -6,7 +6,7 @@ import UserManagement from '@/components/admin/UserManagement';
 import HospitalManagement from '@/components/admin/HospitalManagement';
 import LabManagement from '@/components/admin/LabManagement';
 import MedicationManagement from '@/components/admin/MedicationManagement';
-import OrderManagement from '@/components/admin/OrderManagement';
+import UnifiedOrderManagement from '@/components/admin/UnifiedOrderManagement';
 import SystemOverview from '@/components/admin/SystemOverview';
 import InsuranceManagement from '@/components/admin/InsuranceManagement';
 import LabTestManagement from '@/components/admin/LabTestManagement';
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="orders" className="mt-6">
-            <OrderManagement />
+            <UnifiedOrderManagement />
           </TabsContent>
         </Tabs>
       </div>

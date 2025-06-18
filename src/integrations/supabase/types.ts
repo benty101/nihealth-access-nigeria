@@ -289,6 +289,166 @@ export type Database = {
           },
         ]
       }
+      lab_test_order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          lab_test_id: string
+          order_id: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lab_test_id: string
+          order_id: string
+          quantity?: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lab_test_id?: string
+          order_id?: string
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_test_order_items_lab_test_id_fkey"
+            columns: ["lab_test_id"]
+            isOneToOne: false
+            referencedRelation: "lab_tests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_test_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "lab_test_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_test_order_status_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string
+          status: string
+          status_message: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id: string
+          status: string
+          status_message?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string
+          status?: string
+          status_message?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_test_order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "lab_test_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_test_orders: {
+        Row: {
+          collection_address: string | null
+          collection_date: string | null
+          collection_method: string
+          collection_phone: string
+          collection_time: string | null
+          created_at: string | null
+          id: string
+          lab_id: string | null
+          order_number: string
+          patient_age: number | null
+          patient_gender: string | null
+          patient_name: string
+          payment_method: string | null
+          payment_status: string | null
+          results_uploaded: boolean | null
+          results_url: string | null
+          special_instructions: string | null
+          status: string
+          total_amount: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          collection_address?: string | null
+          collection_date?: string | null
+          collection_method?: string
+          collection_phone: string
+          collection_time?: string | null
+          created_at?: string | null
+          id?: string
+          lab_id?: string | null
+          order_number: string
+          patient_age?: number | null
+          patient_gender?: string | null
+          patient_name: string
+          payment_method?: string | null
+          payment_status?: string | null
+          results_uploaded?: boolean | null
+          results_url?: string | null
+          special_instructions?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          collection_address?: string | null
+          collection_date?: string | null
+          collection_method?: string
+          collection_phone?: string
+          collection_time?: string | null
+          created_at?: string | null
+          id?: string
+          lab_id?: string | null
+          order_number?: string
+          patient_age?: number | null
+          patient_gender?: string | null
+          patient_name?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          results_uploaded?: boolean | null
+          results_url?: string | null
+          special_instructions?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_test_orders_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lab_tests: {
         Row: {
           category: string
@@ -1061,6 +1221,10 @@ export type Database = {
       can_manage_roles: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      generate_lab_order_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       generate_order_number: {
         Args: Record<PropertyKey, never>
