@@ -61,6 +61,13 @@ serve(async (req) => {
           api_key_reference: 'axa_api_key',
           config_data: { version: '1.5', format: 'json' },
           is_active: true
+        },
+        {
+          provider_name: 'MyFrame API',
+          api_endpoint: 'https://api.myframe.ai/v1/insurance',
+          api_key_reference: 'myframe_api_key',
+          config_data: { version: '1.0', format: 'json', aggregator: true },
+          is_active: true
         }
       ];
 
@@ -80,7 +87,9 @@ serve(async (req) => {
         .select('*')
         .eq('is_active', true);
       
-      apiConfigs = newConfigs || [];
+      if (newConfigs) {
+        apiConfigs.push(...newConfigs);
+      }
     }
 
     for (const config of apiConfigs || []) {
@@ -90,21 +99,34 @@ serve(async (req) => {
         // Generate realistic mock data based on provider
         const mockPlans = generateMockPlans(config.provider_name);
 
-        // Insert or update plans in database
+        // Insert or update plans in database using INSERT with ON CONFLICT
         for (const planData of mockPlans) {
           const { error: insertError } = await supabase
             .from('insurance_plans')
-            .upsert({
+            .insert({
               ...planData,
               updated_at: new Date().toISOString()
-            }, {
-              onConflict: 'name,provider'
             });
 
           if (insertError) {
-            console.error(`Error upserting plan ${planData.name}:`, insertError);
+            console.error(`Error inserting plan ${planData.name}:`, insertError);
+            // Try updating if insert fails
+            const { error: updateError } = await supabase
+              .from('insurance_plans')
+              .update({
+                ...planData,
+                updated_at: new Date().toISOString()
+              })
+              .eq('name', planData.name)
+              .eq('provider', planData.provider);
+            
+            if (updateError) {
+              console.error(`Error updating plan ${planData.name}:`, updateError);
+            } else {
+              console.log(`Successfully updated plan: ${planData.name}`);
+            }
           } else {
-            console.log(`Successfully upserted plan: ${planData.name}`);
+            console.log(`Successfully inserted plan: ${planData.name}`);
           }
         }
 
@@ -207,17 +229,6 @@ function generateMockPlans(providerName: string) {
       coverage_amount: Math.floor(Math.random() * 10000000) + 5000000,
       features: [...baseFeatures, ...premiumFeatures],
       terms: 'Premium coverage with all inclusive benefits and worldwide coverage',
-      is_active: true
-    },
-    {
-      name: `${providerName} Family Plan`,
-      provider: providerName,
-      plan_type: 'Family HMO',
-      premium_monthly: Math.floor(Math.random() * 40000) + 35000,
-      premium_annual: null,
-      coverage_amount: Math.floor(Math.random() * 8000000) + 4000000,
-      features: [...baseFeatures, 'Family Coverage', 'Pediatric Care', 'Maternity Care'],
-      terms: 'Designed for families with comprehensive child and maternity coverage',
       is_active: true
     }
   ];
