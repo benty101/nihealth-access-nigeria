@@ -40,7 +40,10 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { action = 'scrape' } = await req.json();
+    
+    // Read the request body once and store it
+    const requestBody = await req.json();
+    const { action = 'scrape', jobId } = requestBody;
 
     console.log('Starting Health Plus scraping process...');
 
@@ -140,8 +143,6 @@ serve(async (req) => {
     }
 
     if (action === 'status') {
-      const { jobId } = await req.json();
-      
       if (!jobId) {
         throw new Error('Job ID is required for status check');
       }
