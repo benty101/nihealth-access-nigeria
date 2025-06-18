@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -6,6 +5,8 @@ import NavLogo from './navbar/NavLogo';
 import UserMenu from './navbar/UserMenu';
 import { useStreamlinedNavigation, StreamlinedDesktopNavigation } from './navbar/StreamlinedNavigation';
 import { useSuperAdminNavigation, SuperAdminDesktopNavigation } from './navbar/SuperAdminNavigation';
+import Button from '@/components/Button';
+import Star from '@/components/icons/Star';
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -39,8 +40,21 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Right side - User Menu only */}
-          <div className="flex items-center">
+          {/* Right side - Premium Link + User Menu */}
+          <div className="flex items-center gap-4">
+            {user && !isSuperAdmin && (
+              <div className="hidden md:block animate-fade-in animation-delay-500">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.location.href = '/premium'}
+                  className="border-yellow-300 text-yellow-700 hover:bg-yellow-50 font-medium"
+                >
+                  <Star className="h-4 w-4 mr-1" />
+                  Premium
+                </Button>
+              </div>
+            )}
             <div className="flex items-center animate-fade-in animation-delay-600">
               <UserMenu />
             </div>

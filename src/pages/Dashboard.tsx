@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
@@ -16,6 +15,7 @@ import InsuranceStatusCard from '@/components/dashboard/InsuranceStatusCard';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import EnhancedQuickLinks from '@/components/dashboard/EnhancedQuickLinks';
 import ProfileCompletion from '@/components/dashboard/ProfileCompletion';
+import PremiumUpgradeCard from '@/components/dashboard/PremiumUpgradeCard';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
 const Dashboard = () => {
@@ -45,6 +45,11 @@ const Dashboard = () => {
         {/* Profile Completion Banner */}
         <div className="mb-6">
           <ProfileCompletion />
+        </div>
+        
+        {/* Premium Upgrade Card */}
+        <div className="mb-6">
+          <PremiumUpgradeCard />
         </div>
         
         {/* Main Dashboard Grid */}
