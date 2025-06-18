@@ -2,7 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building2, Users, Package, Calendar } from 'lucide-react';
-import SystemStats from './SystemStats';
+import SystemOverview from './SystemOverview';
 import HospitalManagement from './HospitalManagement';
 import OrderManagement from './OrderManagement';
 import HospitalDashboard from '../hospital/HospitalDashboard';
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
-            <SystemStats />
+            <SystemOverview />
           </TabsContent>
 
           <TabsContent value="hospitals" className="mt-6">
