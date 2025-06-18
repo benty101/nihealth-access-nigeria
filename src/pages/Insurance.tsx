@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import EnhancedInsuranceSearch from '@/components/insurance/EnhancedInsuranceSearch';
@@ -14,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield, Search, User } from 'lucide-react';
 import { insurancePlans } from '@/data/insurancePlans';
+import { enhancedInsurancePlans } from '@/data/enhancedInsurancePlans';
 import { insuranceService } from '@/services/InsuranceService';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -53,9 +53,9 @@ const Insurance = () => {
     }
   };
 
-  // Combine static plans with database plans
+  // Combine static plans with database plans - now using enhanced plans
   const allPlans = [
-    ...insurancePlans,
+    ...enhancedInsurancePlans,
     ...dbPlans.map(plan => ({
       id: plan.id,
       name: plan.name,
@@ -160,7 +160,7 @@ const Insurance = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Health Insurance</h1>
-              <p className="text-gray-600">Find and manage your health insurance coverage</p>
+              <p className="text-gray-600">Nigeria's most comprehensive insurance comparison platform</p>
             </div>
           </div>
 
@@ -177,6 +177,9 @@ const Insurance = () => {
             </TabsList>
 
             <TabsContent value="browse" className="mt-6">
+              {/* Market Statistics */}
+              <InsuranceMarketStats />
+
               {/* Enhanced Search Section */}
               <EnhancedInsuranceSearch
                 searchTerm={searchTerm}
