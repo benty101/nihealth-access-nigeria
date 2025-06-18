@@ -27,6 +27,17 @@ import { pharmacyService } from '@/services/PharmacyService';
 import { useAuth } from '@/contexts/AuthContext';
 import CheckoutModal from '@/components/pharmacy/CheckoutModal';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 12;
 
 const Pharmacy = () => {
   const { user } = useAuth();
@@ -40,10 +51,15 @@ const Pharmacy = () => {
   const [sortBy, setSortBy] = useState('name');
   const [cart, setCart] = useState<any[]>([]);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [searchTerm, selectedCategory, selectedPharmacy, sortBy]);
 
   const loadData = async () => {
     setLoading(true);
@@ -88,6 +104,11 @@ const Pharmacy = () => {
           return a.name.localeCompare(b.name);
       }
     });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredMedications.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedMedications = filteredMedications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const addToCart = (medication: any) => {
     const existingItem = cart.find(item => item.id === medication.id);
@@ -242,6 +263,117 @@ const Pharmacy = () => {
     );
   };
 
+  const PaginationComponent = () => {
+    const renderPageNumbers = () => {
+      const pages = [];
+      const showEllipsis = totalPages > 7;
+      
+      if (!showEllipsis) {
+        for (let i = 1; i <= totalPages; i++) {
+          pages.push(
+            <PaginationItem key={i}>
+              <PaginationLink
+                onClick={() => setCurrentPage(i)}
+                isActive={currentPage === i}
+                className="cursor-pointer"
+              >
+                {i}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        }
+      } else {
+        // Show first page
+        pages.push(
+          <PaginationItem key={1}>
+            <PaginationLink
+              onClick={() => setCurrentPage(1)}
+              isActive={currentPage === 1}
+              className="cursor-pointer"
+            >
+              1
+            </PaginationLink>
+          </PaginationItem>
+        );
+
+        // Show ellipsis if current page is far from start
+        if (currentPage > 3) {
+          pages.push(
+            <PaginationItem key="ellipsis1">
+              <PaginationEllipsis />
+            </PaginationItem>
+          );
+        }
+
+        // Show pages around current page
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          pages.push(
+            <PaginationItem key={i}>
+              <PaginationLink
+                onClick={() => setCurrentPage(i)}
+                isActive={currentPage === i}
+                className="cursor-pointer"
+              >
+                {i}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        }
+
+        // Show ellipsis if current page is far from end
+        if (currentPage < totalPages - 2) {
+          pages.push(
+            <PaginationItem key="ellipsis2">
+              <PaginationEllipsis />
+            </PaginationItem>
+          );
+        }
+
+        // Show last page
+        if (totalPages > 1) {
+          pages.push(
+            <PaginationItem key={totalPages}>
+              <PaginationLink
+                onClick={() => setCurrentPage(totalPages)}
+                isActive={currentPage === totalPages}
+                className="cursor-pointer"
+              >
+                {totalPages}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        }
+      }
+      
+      return pages;
+    };
+
+    return (
+      <Pagination className="mt-8">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+            />
+          </PaginationItem>
+          
+          {renderPageNumbers()}
+          
+          <PaginationItem>
+            <PaginationNext 
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -353,17 +485,32 @@ const Pharmacy = () => {
               </Card>
             )}
 
+            {/* Results Summary */}
+            <div className="mb-4 flex justify-between items-center">
+              <p className="text-gray-600">
+                Showing {startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, filteredMedications.length)} of {filteredMedications.length} medications
+              </p>
+              <p className="text-sm text-gray-500">
+                Page {currentPage} of {totalPages}
+              </p>
+            </div>
+
             {/* Medications Grid */}
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredMedications.map(medication => (
-                  <MedicationCard key={medication.id} medication={medication} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginatedMedications.map(medication => (
+                    <MedicationCard key={medication.id} medication={medication} />
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && <PaginationComponent />}
+              </>
             )}
 
             {filteredMedications.length === 0 && !loading && (
