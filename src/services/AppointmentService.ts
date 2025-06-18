@@ -74,18 +74,28 @@ export const AppointmentService = {
       throw new Error('User not authenticated');
     }
 
-    // Prepare the insert data - let the database handle auto-generated fields
-    const insertData = {
+    // Prepare the insert data - only include fields that should be manually set
+    const insertData: any = {
       patient_id: user.id,
-      doctor_id: appointmentData.doctor_id || null,
-      hospital_id: appointmentData.hospital_id || null,
       scheduled_at: appointmentData.scheduled_at,
       consultation_type: appointmentData.consultation_type,
-      chief_complaint: appointmentData.chief_complaint || null,
-      consultation_notes: appointmentData.consultation_notes || null,
       consultation_fee: 5000, // Default fee
-      status: 'scheduled' as const
+      status: 'scheduled'
     };
+
+    // Only add optional fields if they have values
+    if (appointmentData.doctor_id) {
+      insertData.doctor_id = appointmentData.doctor_id;
+    }
+    if (appointmentData.hospital_id) {
+      insertData.hospital_id = appointmentData.hospital_id;
+    }
+    if (appointmentData.chief_complaint) {
+      insertData.chief_complaint = appointmentData.chief_complaint;
+    }
+    if (appointmentData.consultation_notes) {
+      insertData.consultation_notes = appointmentData.consultation_notes;
+    }
 
     const { data, error } = await supabase
       .from('consultations')
