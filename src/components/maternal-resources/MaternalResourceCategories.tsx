@@ -21,41 +21,41 @@ const MaternalResourceCategories = ({ searchTerm, selectedCategory }: MaternalRe
 
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6">
-      <Tabs value={getActiveTab()} className="w-full">
-        <TabsList className="grid w-full grid-cols-6 mb-8 bg-gray-100 p-1 rounded-md h-10">
+      <Tabs defaultValue="pregnancy" value={getActiveTab()} className="w-full">
+        <TabsList className="grid w-full grid-cols-6 mb-8 bg-gray-50 p-1 rounded-lg h-12">
           <TabsTrigger 
             value="pregnancy" 
-            className="text-sm font-medium"
+            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
           >
             Pregnancy Care
           </TabsTrigger>
           <TabsTrigger 
             value="childbirth" 
-            className="text-sm font-medium"
+            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
           >
             Childbirth
           </TabsTrigger>
           <TabsTrigger 
             value="newborn" 
-            className="text-sm font-medium"
+            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
           >
             Newborn Care
           </TabsTrigger>
           <TabsTrigger 
             value="nutrition" 
-            className="text-sm font-medium"
+            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
           >
             Nutrition
           </TabsTrigger>
           <TabsTrigger 
             value="immunization" 
-            className="text-sm font-medium"
+            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
           >
             Immunization
           </TabsTrigger>
           <TabsTrigger 
             value="childhealth" 
-            className="text-sm font-medium"
+            className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100"
           >
             Child Development
           </TabsTrigger>
