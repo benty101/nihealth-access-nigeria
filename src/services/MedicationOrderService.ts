@@ -1,4 +1,7 @@
+
 import { supabase } from '@/integrations/supabase/client';
+import { orderStatusService } from './orders/OrderStatusService';
+import { paymentService } from './orders/PaymentService';
 
 export interface MedicationOrder {
   id: string;
@@ -104,7 +107,7 @@ class MedicationOrderService {
     }
 
     // Add initial status history
-    await this.addStatusHistory(order.id, 'pending', 'Order placed successfully');
+    await orderStatusService.addStatusHistory(order.id, 'pending', 'Order placed successfully');
 
     console.log('Order created successfully:', order.order_number);
     return order.id;
@@ -157,56 +160,6 @@ class MedicationOrderService {
     return data;
   }
 
-  async updateOrderStatus(orderId: string, status: string, message?: string): Promise<void> {
-    const { error } = await supabase
-      .from('medication_orders')
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', orderId);
-
-    if (error) throw error;
-
-    await this.addStatusHistory(orderId, status, message);
-  }
-
-  async updateOrderPaymentStatus(orderId: string, paymentStatus: string, paymentMethod?: string): Promise<void> {
-    const updateData: any = { 
-      payment_status: paymentStatus,
-      updated_at: new Date().toISOString()
-    };
-    
-    if (paymentMethod) {
-      updateData.payment_method = paymentMethod;
-    }
-
-    const { error } = await supabase
-      .from('medication_orders')
-      .update(updateData)
-      .eq('id', orderId);
-
-    if (error) throw error;
-
-    const message = paymentStatus === 'paid' ? 'Payment confirmed' : `Payment status updated to ${paymentStatus}`;
-    await this.addStatusHistory(orderId, paymentStatus === 'paid' ? 'confirmed' : 'pending', message);
-  }
-
-  async addStatusHistory(orderId: string, status: string, message?: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    const { error } = await supabase
-      .from('order_status_history')
-      .insert([{
-        order_id: orderId,
-        status,
-        status_message: message,
-        updated_by: user?.id
-      }]);
-
-    if (error) {
-      console.error('Error adding status history:', error);
-      throw error;
-    }
-  }
-
   async getAllOrders(): Promise<MedicationOrder[]> {
     console.log('MedicationOrderService: Fetching all orders (admin)...');
     
@@ -231,45 +184,33 @@ class MedicationOrderService {
     return data || [];
   }
 
-  // Payment integration methods
+  // Delegate to specialized services
+  async updateOrderStatus(orderId: string, status: string, message?: string): Promise<void> {
+    return orderStatusService.updateOrderStatus(orderId, status, message);
+  }
+
+  async updateOrderPaymentStatus(orderId: string, paymentStatus: string, paymentMethod?: string): Promise<void> {
+    return orderStatusService.updatePaymentStatus(orderId, paymentStatus, paymentMethod);
+  }
+
+  async addStatusHistory(orderId: string, status: string, message?: string): Promise<void> {
+    return orderStatusService.addStatusHistory(orderId, status, message);
+  }
+
   async initiatePayment(orderId: string, paymentMethod: string): Promise<{ success: boolean; paymentUrl?: string; error?: string }> {
-    try {
-      // Update order with payment method
+    const result = await paymentService.initiatePayment(orderId, paymentMethod);
+    if (result.success) {
       await this.updateOrderPaymentStatus(orderId, 'processing', paymentMethod);
-      
-      // TODO: Integration with payment gateways like Paystack, Flutterwave, etc.
-      // For now, simulate payment URL generation
-      if (paymentMethod === 'paystack') {
-        // Simulate Paystack integration
-        const paymentUrl = `https://checkout.paystack.com/order_${orderId}`;
-        return { success: true, paymentUrl };
-      } else if (paymentMethod === 'flutterwave') {
-        // Simulate Flutterwave integration
-        const paymentUrl = `https://checkout.flutterwave.com/order_${orderId}`;
-        return { success: true, paymentUrl };
-      }
-      
-      return { success: false, error: 'Payment method not supported' };
-    } catch (error) {
-      console.error('Error initiating payment:', error);
-      return { success: false, error: 'Failed to initiate payment' };
     }
+    return result;
   }
 
   async verifyPayment(orderId: string, paymentReference: string): Promise<{ success: boolean; error?: string }> {
-    try {
-      // TODO: Implement actual payment verification with payment gateways
-      // For now, simulate verification
-      console.log('Verifying payment for order:', orderId, 'Reference:', paymentReference);
-      
-      // Simulate successful verification
+    const result = await paymentService.verifyPayment(orderId, paymentReference);
+    if (result.success) {
       await this.updateOrderPaymentStatus(orderId, 'paid');
-      
-      return { success: true };
-    } catch (error) {
-      console.error('Error verifying payment:', error);
-      return { success: false, error: 'Payment verification failed' };
     }
+    return result;
   }
 }
 
