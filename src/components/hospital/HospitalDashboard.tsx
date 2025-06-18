@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Building2, Users, Calendar, FileText, Settings, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,7 @@ import HospitalOnboarding from './HospitalOnboarding';
 import DoctorManagement from './DoctorManagement';
 import PatientRecords from './PatientRecords';
 import ConsultationScheduler from './ConsultationScheduler';
+import HospitalRecentActivity from './HospitalRecentActivity';
 
 interface HospitalStaff {
   id: string;
@@ -224,37 +224,7 @@ const HospitalDashboard = () => {
 
           <TabsContent value="overview">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                  <CardDescription>Latest updates from your hospital</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">New patient registered</p>
-                        <p className="text-xs text-gray-500">2 minutes ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Appointment scheduled</p>
-                        <p className="text-xs text-gray-500">15 minutes ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Medical record updated</p>
-                        <p className="text-xs text-gray-500">1 hour ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <HospitalRecentActivity hospitalId={hospitalStaff?.hospital_id || ''} />
 
               <Card>
                 <CardHeader>
