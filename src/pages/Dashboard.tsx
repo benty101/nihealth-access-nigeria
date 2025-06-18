@@ -13,6 +13,7 @@ import ProgressTracker from '@/components/dashboard/ProgressTracker';
 import SmartRecommendations from '@/components/dashboard/SmartRecommendations';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
+import InsuranceStatusCard from '@/components/dashboard/InsuranceStatusCard';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
@@ -48,6 +49,7 @@ const Dashboard = () => {
           
           {/* Right Column - Sidebar */}
           <div className="xl:col-span-4 space-y-6">
+            <InsuranceStatusCard />
             <EmergencyContactCard />
             <HealthReminders />
             <QuickLinks />
