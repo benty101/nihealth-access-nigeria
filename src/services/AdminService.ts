@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Hospital {
@@ -383,6 +384,12 @@ class AdminService {
       .eq('id', id);
     
     if (error) throw error;
+  }
+
+  // System Stats using AdminDataService
+  async getSystemStats() {
+    const { adminDataService } = await import('@/services/AdminDataService');
+    return adminDataService.getSystemStats();
   }
 }
 

@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import SuperAdminHeader from '@/components/admin/SuperAdminHeader';
+import SuperAdminHeader from '@/components/admin/dashboard/SuperAdminHeader';
 import UserManagement from '@/components/admin/UserManagement';
 import HospitalManagement from '@/components/admin/HospitalManagement';
 import PharmacyManagement from '@/components/admin/PharmacyManagement';
@@ -10,11 +11,12 @@ import OrderManagement from '@/components/admin/OrderManagement';
 import SystemOverview from '@/components/admin/SystemOverview';
 import DataImportTools from '@/components/admin/DataImportTools';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { adminService } from '@/services/AdminService';
+import { adminDataService } from '@/services/AdminDataService';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadStats();
@@ -22,10 +24,13 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
-      const data = await adminService.getSystemStats();
+      setLoading(true);
+      const data = await adminDataService.getSystemStats();
       setStats(data);
     } catch (error) {
       console.error("AdminDashboard: Error loading stats", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,7 +39,7 @@ const AdminDashboard = () => {
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SuperAdminHeader />
+        <SuperAdminHeader loading={loading} onRefresh={loadStats} />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-8">
@@ -49,7 +54,7 @@ const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
-            <SystemOverview stats={stats} onStatsChange={loadStats} />
+            <SystemOverview stats={stats} />
           </TabsContent>
 
           <TabsContent value="users" className="mt-6">
