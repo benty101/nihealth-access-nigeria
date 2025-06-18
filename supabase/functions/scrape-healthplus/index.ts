@@ -28,6 +28,12 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
+    console.log('Environment check:', {
+      hasFirecrawlKey: !!firecrawlApiKey,
+      hasSupabaseUrl: !!supabaseUrl,
+      hasServiceKey: !!supabaseServiceKey
+    });
+
     if (!firecrawlApiKey || !supabaseUrl || !supabaseServiceKey) {
       throw new Error('Missing required environment variables');
     }
@@ -38,6 +44,8 @@ serve(async (req) => {
     console.log('Starting Health Plus scraping process...');
 
     if (action === 'scrape') {
+      console.log('Making crawl request to Firecrawl API...');
+      
       // Start crawling the Health Plus website
       const crawlResponse = await fetch('https://api.firecrawl.dev/v0/crawl', {
         method: 'POST',
@@ -61,10 +69,20 @@ serve(async (req) => {
         })
       });
 
+      console.log('Crawl response status:', crawlResponse.status);
+      
+      if (!crawlResponse.ok) {
+        const errorText = await crawlResponse.text();
+        console.error('Firecrawl API error response:', errorText);
+        throw new Error(`Firecrawl API error (${crawlResponse.status}): ${errorText}`);
+      }
+
       const crawlData = await crawlResponse.json();
+      console.log('Crawl response data:', crawlData);
       
       if (!crawlData.success) {
-        throw new Error(`Crawl failed: ${crawlData.error}`);
+        console.error('Crawl failed with error:', crawlData.error);
+        throw new Error(`Crawl failed: ${crawlData.error || 'Unknown error'}`);
       }
 
       console.log('Crawl started with job ID:', crawlData.jobId);
@@ -86,6 +104,12 @@ serve(async (req) => {
           'Authorization': `Bearer ${firecrawlApiKey}`,
         },
       });
+
+      if (!statusResponse.ok) {
+        const errorText = await statusResponse.text();
+        console.error('Status check error:', errorText);
+        throw new Error(`Status check failed (${statusResponse.status}): ${errorText}`);
+      }
 
       const statusData = await statusResponse.json();
       console.log('Crawl status:', statusData.status, 'Completed:', statusData.completed, 'Total:', statusData.total);
@@ -122,8 +146,9 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in scrape-healthplus function:', error);
     return new Response(JSON.stringify({ 
-      error: error.message,
-      success: false 
+      error: error.message || 'Unknown error occurred',
+      success: false,
+      details: error.toString()
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
