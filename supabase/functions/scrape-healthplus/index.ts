@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -69,7 +68,6 @@ serve(async (req) => {
         const errorText = await testResponse.text();
         console.error('Test scrape failed:', errorText);
         
-        // Try to parse the error response
         try {
           const errorJson = JSON.parse(errorText);
           console.error('Parsed error:', errorJson);
@@ -123,20 +121,22 @@ serve(async (req) => {
       const crawlData = await crawlResponse.json();
       console.log('Crawl response data:', JSON.stringify(crawlData, null, 2));
       
-      if (!crawlData.success) {
-        console.error('Crawl failed with error:', crawlData.error);
-        throw new Error(`Crawl failed: ${crawlData.error || crawlData.message || 'Unknown crawl error'}`);
+      // Check if we have a jobId - this indicates the crawl was accepted
+      if (crawlData.jobId) {
+        console.log('Crawl started with job ID:', crawlData.jobId);
+        
+        return new Response(JSON.stringify({ 
+          success: true, 
+          jobId: crawlData.jobId,
+          message: 'Scraping started. Check status with the job ID.'
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } else {
+        // Log the full response to understand what Firecrawl is returning
+        console.error('No jobId in response. Full response:', crawlData);
+        throw new Error(`Crawl request failed: ${crawlData.error || crawlData.message || 'No job ID returned'}`);
       }
-
-      console.log('Crawl started with job ID:', crawlData.jobId);
-      
-      return new Response(JSON.stringify({ 
-        success: true, 
-        jobId: crawlData.jobId,
-        message: 'Scraping started. Check status with the job ID.'
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
     }
 
     if (action === 'status') {
