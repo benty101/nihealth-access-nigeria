@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Building2, Plus, Search, Download, Upload } from 'lucide-react';
+import { Building2, Plus, Search, Download, Upload, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { adminService, type Hospital } from '@/services/AdminService';
+import { hospitalService, type Hospital } from '@/services/HospitalService';
 import { useToast } from '@/hooks/use-toast';
 import HospitalForm from './forms/HospitalForm';
 import HospitalTableRow from './hospital/HospitalTableRow';
@@ -35,26 +34,63 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
   const [deletingHospital, setDeletingHospital] = useState<Hospital | null>(null);
   const [viewingHospital, setViewingHospital] = useState<Hospital | null>(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [stats, setStats] = useState<{
+    total: number;
+    active: number;
+    byState: Record<string, number>;
+    bySpecialty: Record<string, number>;
+  } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     loadHospitals();
+    loadStats();
+    
+    // Setup realtime subscription
+    const unsubscribe = hospitalService.subscribeToHospitalChanges({
+      onInsert: (hospital) => {
+        console.log('New hospital added:', hospital);
+        setHospitals(prev => [hospital, ...prev]);
+        loadStats();
+        toast({
+          title: "Hospital Added",
+          description: `${hospital.name} has been added to the system.`,
+        });
+      },
+      onUpdate: (hospital) => {
+        console.log('Hospital updated:', hospital);
+        setHospitals(prev => prev.map(h => h.id === hospital.id ? hospital : h));
+        loadStats();
+        toast({
+          title: "Hospital Updated",
+          description: `${hospital.name} has been updated.`,
+        });
+      },
+      onDelete: (hospital) => {
+        console.log('Hospital deleted:', hospital);
+        setHospitals(prev => prev.filter(h => h.id !== hospital.id));
+        loadStats();
+        toast({
+          title: "Hospital Removed",
+          description: `${hospital.name} has been removed from the system.`,
+        });
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    const filtered = hospitals.filter(hospital =>
-      hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (hospital.state || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (hospital.lga || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (hospital.license_number || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredHospitals(filtered);
+    filterHospitals();
   }, [hospitals, searchTerm]);
 
   const loadHospitals = async () => {
     try {
       setLoading(true);
-      const hospitalsData = await adminService.getAllHospitals();
+      const hospitalsData = await hospitalService.getAllHospitals();
       setHospitals(hospitalsData);
       setFilteredHospitals(hospitalsData);
     } catch (error) {
@@ -69,11 +105,37 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
     }
   };
 
+  const loadStats = async () => {
+    try {
+      const hospitalStats = await hospitalService.getHospitalStats();
+      setStats(hospitalStats);
+    } catch (error) {
+      console.error('Error loading hospital stats:', error);
+    }
+  };
+
+  const filterHospitals = () => {
+    if (!searchTerm) {
+      setFilteredHospitals(hospitals);
+      return;
+    }
+
+    const filtered = hospitals.filter(hospital =>
+      hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.state || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.lga || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.license_number || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (hospital.specialties || []).some(specialty => 
+        specialty.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+    setFilteredHospitals(filtered);
+  };
+
   const handleCreateHospital = async (hospitalData: Omit<Hospital, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       setFormLoading(true);
-      await adminService.createHospital(hospitalData);
-      await loadHospitals();
+      await hospitalService.createHospital(hospitalData);
       
       if (onStatsChange) {
         await onStatsChange();
@@ -103,8 +165,7 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
     
     try {
       setFormLoading(true);
-      await adminService.updateHospital(editingHospital.id, hospitalData);
-      await loadHospitals();
+      await hospitalService.updateHospital(editingHospital.id, hospitalData);
       
       if (onStatsChange) {
         await onStatsChange();
@@ -133,8 +194,7 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
     if (!deletingHospital) return;
     
     try {
-      await adminService.deleteHospital(deletingHospital.id);
-      await loadHospitals();
+      await hospitalService.deleteHospital(deletingHospital.id);
       
       if (onStatsChange) {
         await onStatsChange();
@@ -208,12 +268,24 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
                 Hospital Management
+                <div className="flex items-center gap-2 ml-4">
+                  <div className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                    {filteredHospitals.length} hospitals
+                  </div>
+                  <div className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                    Real-time
+                  </div>
+                </div>
               </CardTitle>
               <CardDescription>
                 Manage hospital listings and medical services across the platform
               </CardDescription>
             </div>
             <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
                 Export
@@ -228,6 +300,28 @@ const HospitalManagement = ({ onStatsChange }: HospitalManagementProps) => {
               </Button>
             </div>
           </div>
+
+          {/* Stats Summary */}
+          {stats && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
+                <div className="text-sm text-blue-600">Total Hospitals</div>
+              </div>
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+                <div className="text-sm text-green-600">Active Hospitals</div>
+              </div>
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">{Object.keys(stats.byState).length}</div>
+                <div className="text-sm text-purple-600">States Covered</div>
+              </div>
+              <div className="bg-orange-50 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">{Object.keys(stats.bySpecialty).length}</div>
+                <div className="text-sm text-orange-600">Specialties</div>
+              </div>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {/* Search and Stats */}

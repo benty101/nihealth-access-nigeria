@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MapPin, Phone, Mail, Building2 } from 'lucide-react';
+import { Search, Filter, MapPin, Phone, Mail, Building2, Clock, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,25 @@ const HospitalDirectory = () => {
 
   useEffect(() => {
     loadHospitals();
+    
+    // Setup realtime subscription for public hospital directory
+    const unsubscribe = hospitalService.subscribeToHospitalChanges({
+      onInsert: (hospital) => {
+        if (hospital.is_active) {
+          setHospitals(prev => [hospital, ...prev]);
+        }
+      },
+      onUpdate: (hospital) => {
+        setHospitals(prev => prev.map(h => h.id === hospital.id ? hospital : h));
+      },
+      onDelete: (hospital) => {
+        setHospitals(prev => prev.filter(h => h.id !== hospital.id));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -47,29 +66,24 @@ const HospitalDirectory = () => {
     }
   };
 
-  const filterHospitals = () => {
-    let filtered = hospitals;
+  const filterHospitals = async () => {
+    try {
+      if (!searchTerm && !selectedState && !selectedSpecialty) {
+        setFilteredHospitals(hospitals);
+        return;
+      }
 
-    if (searchTerm) {
-      filtered = filtered.filter(hospital =>
-        hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (hospital.address && hospital.address.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (hospital.state && hospital.state.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+      const results = await hospitalService.searchHospitals(searchTerm, {
+        state: selectedState || undefined,
+        specialty: selectedSpecialty || undefined
+      });
+      
+      setFilteredHospitals(results);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error('Error filtering hospitals:', error);
+      setFilteredHospitals(hospitals);
     }
-
-    if (selectedState) {
-      filtered = filtered.filter(hospital => hospital.state === selectedState);
-    }
-
-    if (selectedSpecialty) {
-      filtered = filtered.filter(hospital =>
-        hospital.specialties && hospital.specialties.includes(selectedSpecialty)
-      );
-    }
-
-    setFilteredHospitals(filtered);
-    setCurrentPage(1);
   };
 
   const getAllStates = () => {
@@ -95,7 +109,10 @@ const HospitalDirectory = () => {
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading hospitals...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -109,6 +126,14 @@ const HospitalDirectory = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Hospital Directory</h1>
           <p className="text-xl text-gray-600">Find quality healthcare providers near you</p>
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+              {filteredHospitals.length} hospitals available
+            </div>
+            <div className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+              Live updates
+            </div>
+          </div>
         </div>
 
         {/* Search and Filters */}
@@ -137,7 +162,7 @@ const HospitalDirectory = () => {
                   className="pl-10"
                 />
               </div>
-              <Button>Search</Button>
+              <Button onClick={filterHospitals}>Search</Button>
             </div>
 
             {showFilters && (
@@ -186,11 +211,16 @@ const HospitalDirectory = () => {
                   <CardTitle className="text-lg font-semibold text-gray-900 mb-2">
                     {hospital.name}
                   </CardTitle>
-                  {hospital.license_number && (
-                    <Badge variant="outline" className="text-xs">
-                      {hospital.license_number}
+                  <div className="flex flex-col gap-1">
+                    {hospital.license_number && (
+                      <Badge variant="outline" className="text-xs">
+                        {hospital.license_number}
+                      </Badge>
+                    )}
+                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                      Active
                     </Badge>
-                  )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -325,6 +355,17 @@ const HospitalDirectory = () => {
           <div className="text-center py-8">
             <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600">No hospitals found matching your criteria</p>
+            <Button 
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedState('');
+                setSelectedSpecialty('');
+              }}
+              className="mt-4"
+              variant="outline"
+            >
+              Clear Filters
+            </Button>
           </div>
         )}
       </div>
