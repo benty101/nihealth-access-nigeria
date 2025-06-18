@@ -2,10 +2,9 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import HealthStats from '@/components/dashboard/HealthStats';
-import QuickLinks from '@/components/dashboard/QuickLinks';
-import UpcomingAppointments from '@/components/dashboard/UpcomingAppointments';
-import HealthReminders from '@/components/dashboard/HealthReminders';
+import RealTimeHealthStats from '@/components/dashboard/RealTimeHealthStats';
+import RealTimeUpcomingAppointments from '@/components/dashboard/RealTimeUpcomingAppointments';
+import RealTimeHealthReminders from '@/components/dashboard/RealTimeHealthReminders';
 import RecentActivity from '@/components/dashboard/RecentActivity';
 import PersonalizedRecommendations from '@/components/dashboard/PersonalizedRecommendations';
 import PersonalizedInsights from '@/components/dashboard/PersonalizedInsights';
@@ -15,6 +14,7 @@ import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyBut
 import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
 import InsuranceStatusCard from '@/components/dashboard/InsuranceStatusCard';
 import UserGuidance from '@/components/onboarding/UserGuidance';
+import EnhancedQuickLinks from '@/components/dashboard/EnhancedQuickLinks';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
 const Dashboard = () => {
@@ -40,10 +40,10 @@ const Dashboard = () => {
           <div className="xl:col-span-8 space-y-6">
             <PersonalizedInsights onboardingData={onboardingData} />
             <ProgressTracker onboardingData={onboardingData} />
-            <HealthStats />
+            <RealTimeHealthStats />
             <SmartRecommendations onboardingData={onboardingData} />
             <PersonalizedRecommendations recommendations={recommendations} />
-            <UpcomingAppointments />
+            <RealTimeUpcomingAppointments />
             <RecentActivity />
           </div>
           
@@ -51,8 +51,8 @@ const Dashboard = () => {
           <div className="xl:col-span-4 space-y-6">
             <InsuranceStatusCard />
             <EmergencyContactCard />
-            <HealthReminders />
-            <QuickLinks />
+            <RealTimeHealthReminders />
+            <EnhancedQuickLinks />
           </div>
         </div>
       </div>
