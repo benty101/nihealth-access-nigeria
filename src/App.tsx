@@ -31,9 +31,10 @@ import NotFound from "./pages/NotFound";
 import UserProfile from "./components/UserProfile";
 import PatientPortal from "./pages/PatientPortal";
 
-const App = () => {
-  const queryClient = React.useMemo(() => new QueryClient(), []);
+// Create QueryClient outside of component to avoid re-creation
+const queryClient = new QueryClient();
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
