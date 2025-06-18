@@ -10,7 +10,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import HospitalStats from './HospitalStats';
 import HospitalSearchFilters from './hospitals/HospitalSearchFilters';
 import EnhancedHospitalCard from './hospitals/EnhancedHospitalCard';
 import { hospitalDataService, type Hospital, type HospitalFilters } from '@/services/HospitalDataService';
@@ -96,8 +95,6 @@ const HospitalDirectory = () => {
   return (
     <div className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <HospitalStats />
-
         <HospitalSearchFilters
           onFiltersChange={handleFiltersChange}
           currentFilters={filters}
