@@ -5,6 +5,7 @@ import Hero from '@/components/Hero';
 import WorldClassFeatures from '@/components/WorldClassFeatures';
 import TrustIndicators from '@/components/TrustIndicators';
 import TestimonialsSection from '@/components/TestimonialsSection';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Index = () => {
   return (
@@ -22,6 +23,9 @@ const Index = () => {
       <div className="animate-fade-in animation-delay-600">
         <TestimonialsSection />
       </div>
+      
+      {/* Floating Emergency Button */}
+      <FloatingEmergencyButton />
     </div>
   );
 };

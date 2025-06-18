@@ -6,6 +6,7 @@ import SessionWarning from '@/components/auth/SessionWarning';
 import AuthHeader from '@/components/auth/AuthHeader';
 import AuthTabs from '@/components/auth/AuthTabs';
 import AuthFooter from '@/components/auth/AuthFooter';
+import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 const Auth = () => {
@@ -24,6 +25,9 @@ const Auth = () => {
           </div>
           <p className="text-gray-600">Loading...</p>
         </div>
+        
+        {/* Floating Emergency Button */}
+        <FloatingEmergencyButton />
       </div>
     );
   }
@@ -46,6 +50,9 @@ const Auth = () => {
 
         <AuthFooter />
       </div>
+      
+      {/* Floating Emergency Button */}
+      <FloatingEmergencyButton />
     </div>
   );
 };
