@@ -10,12 +10,12 @@ const MaternalResourceCenter = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   return (
-    <div className="py-8 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 min-h-screen">
+    <div className="py-8 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <MaternalResourceHeader />
         
         {/* Search and Filters */}
-        <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
+        <div className="mb-8 bg-white rounded-lg shadow-sm border p-6">
           <MaternalResourceSearch 
             searchTerm={searchTerm} 
             setSearchTerm={setSearchTerm}
