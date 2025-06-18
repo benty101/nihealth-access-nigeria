@@ -7,14 +7,9 @@ import InsurancePlanCard from '@/components/insurance/InsurancePlanCard';
 import InsuranceComparison from '@/components/insurance/InsuranceComparison';
 import InsuranceHelpSection from '@/components/insurance/InsuranceHelpSection';
 import InsurancePurchaseModal from '@/components/insurance/InsurancePurchaseModal';
-import UserInsuranceStatus from '@/components/insurance/UserInsuranceStatus';
 import InsuranceMarketStats from '@/components/insurance/InsuranceMarketStats';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Search, User } from 'lucide-react';
-import { insurancePlans } from '@/data/insurancePlans';
 import { enhancedInsurancePlans } from '@/data/enhancedInsurancePlans';
 import { insuranceService } from '@/services/InsuranceService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,7 +18,6 @@ const Insurance = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('popular');
-  const [activeTab, setActiveTab] = useState('browse');
   const [filters, setFilters] = useState({
     priceRange: [1000, 50000],
     coverage: 'all',
@@ -55,7 +49,7 @@ const Insurance = () => {
     }
   };
 
-  // Combine static plans with database plans - now using enhanced plans
+  // Combine static plans with database plans
   const allPlans = [
     ...enhancedInsurancePlans,
     ...dbPlans.map(plan => ({
@@ -66,7 +60,7 @@ const Insurance = () => {
       monthlyPremium: `₦${plan.premium_monthly?.toLocaleString() || 'N/A'}`,
       coverage: `₦${plan.coverage_amount?.toLocaleString() || 'N/A'}`,
       features: plan.features || [],
-      rating: 4.5, // Default rating
+      rating: 4.5,
       popular: false,
       terms: plan.terms
     }))
@@ -130,7 +124,7 @@ const Insurance = () => {
 
   const handleSelectPlan = (plan: any) => {
     if (!user) {
-      // Redirect to login or show login modal
+      // Could redirect to login or show login modal here
       return;
     }
     setSelectedPlan(plan);
@@ -154,134 +148,89 @@ const Insurance = () => {
       <UserGuidance />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header with Tabs */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center">
-              <Shield className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Health Insurance</h1>
-              <p className="text-gray-600">Nigeria's most comprehensive insurance comparison platform</p>
-            </div>
-          </div>
+        {/* Market Statistics - Enhanced Hero Section */}
+        <InsuranceMarketStats />
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:w-96">
-              <TabsTrigger value="browse" className="flex items-center gap-2">
-                <Search className="h-4 w-4" />
-                Browse Plans
-              </TabsTrigger>
-              <TabsTrigger value="my-insurance" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                My Insurance
-              </TabsTrigger>
-            </TabsList>
+        {/* Enhanced Search Section */}
+        <EnhancedInsuranceSearch
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          resultsCount={filteredPlans.length}
+          totalCount={allPlans.length}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+        />
 
-            <TabsContent value="browse" className="mt-6">
-              {/* Market Statistics */}
-              <InsuranceMarketStats />
-
-              {/* Enhanced Search Section */}
-              <EnhancedInsuranceSearch
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
-                resultsCount={filteredPlans.length}
-                totalCount={allPlans.length}
-                showFilters={showFilters}
-                onToggleFilters={() => setShowFilters(!showFilters)}
+        <div className="flex flex-col lg:flex-row gap-8 mt-8">
+          {/* Filters Sidebar */}
+          {showFilters && (
+            <div className="lg:w-80">
+              <InsuranceFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                onClearFilters={clearFilters}
               />
+            </div>
+          )}
 
-              <div className="flex flex-col lg:flex-row gap-8 mt-8">
-                {/* Filters Sidebar */}
-                {showFilters && (
-                  <div className="lg:w-80">
-                    <InsuranceFilters
-                      filters={filters}
-                      onFiltersChange={setFilters}
-                      onClearFilters={clearFilters}
-                    />
-                  </div>
-                )}
-
-                {/* Main Content */}
-                <div className="flex-1">
-                  {/* Comparison Panel */}
-                  {showComparison && comparisonPlans.length > 0 && (
-                    <div className="mb-6">
-                      <InsuranceComparison
-                        selectedPlans={comparisonPlans}
-                        onRemovePlan={handleRemoveFromComparison}
-                        onClearComparison={() => {
-                          setComparisonPlans([]);
-                          setShowComparison(false);
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Loading State */}
-                  {loadingPlans && (
-                    <div className="text-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
-                      <p className="mt-2 text-gray-600">Loading insurance plans...</p>
-                    </div>
-                  )}
-
-                  {/* Insurance Plans Grid */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {filteredPlans.map((plan) => (
-                      <InsurancePlanCard
-                        key={plan.id}
-                        plan={plan}
-                        onSelectPlan={handleSelectPlan}
-                        onAddToComparison={handleAddToComparison}
-                        isInComparison={comparisonPlans.some(p => p.id === plan.id)}
-                        comparisonFull={comparisonPlans.length >= 3}
-                      />
-                    ))}
-                  </div>
-
-                  {filteredPlans.length === 0 && !loadingPlans && (
-                    <div className="text-center py-12">
-                      <div className="text-gray-500 text-lg mb-4">
-                        No insurance plans match your criteria
-                      </div>
-                      <button
-                        onClick={clearFilters}
-                        className="text-teal-600 hover:text-teal-700 font-medium"
-                      >
-                        Clear all filters
-                      </button>
-                    </div>
-                  )}
-                </div>
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Comparison Panel */}
+            {showComparison && comparisonPlans.length > 0 && (
+              <div className="mb-6">
+                <InsuranceComparison
+                  selectedPlans={comparisonPlans}
+                  onRemovePlan={handleRemoveFromComparison}
+                  onClearComparison={() => {
+                    setComparisonPlans([]);
+                    setShowComparison(false);
+                  }}
+                />
               </div>
+            )}
 
-              {/* Help Section */}
-              <InsuranceHelpSection />
-            </TabsContent>
+            {/* Loading State */}
+            {loadingPlans && (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading insurance plans...</p>
+              </div>
+            )}
 
-            <TabsContent value="my-insurance" className="mt-6">
-              {user ? (
-                <UserInsuranceStatus />
-              ) : (
-                <div className="text-center py-12">
-                  <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium text-gray-900 mb-2">Login Required</h3>
-                  <p className="text-gray-600 mb-6">
-                    Please log in to view your insurance coverage and policies.
-                  </p>
-                  <Button className="bg-teal-600 hover:bg-teal-700">
-                    Log In
-                  </Button>
+            {/* Insurance Plans Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredPlans.map((plan) => (
+                <InsurancePlanCard
+                  key={plan.id}
+                  plan={plan}
+                  onSelectPlan={handleSelectPlan}
+                  onAddToComparison={handleAddToComparison}
+                  isInComparison={comparisonPlans.some(p => p.id === plan.id)}
+                  comparisonFull={comparisonPlans.length >= 3}
+                />
+              ))}
+            </div>
+
+            {filteredPlans.length === 0 && !loadingPlans && (
+              <div className="text-center py-12">
+                <div className="text-gray-500 text-lg mb-4">
+                  No insurance plans match your criteria
                 </div>
-              )}
-            </TabsContent>
-          </Tabs>
+                <button
+                  onClick={clearFilters}
+                  className="text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Help Section */}
+        <InsuranceHelpSection />
       </div>
 
       {/* Purchase Modal */}
@@ -291,7 +240,6 @@ const Insurance = () => {
         plan={selectedPlan}
         onPurchaseComplete={() => {
           loadDatabasePlans();
-          setActiveTab('my-insurance');
         }}
       />
 
