@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -28,7 +29,7 @@ import Premium from "./pages/Premium";
 import Pediatric from "./pages/Pediatric";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./components/UserProfile";
-import PatientPortal from "./components/PatientPortal";
+import PatientPortal from "./pages/PatientPortal";
 
 const App = () => {
   const queryClient = React.useMemo(() => new QueryClient(), []);

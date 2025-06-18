@@ -143,7 +143,7 @@ const PatientLabResults = () => {
               </div>
               <div className="text-right">
                 <div className="font-semibold">{param.value} {param.unit}</div>
-                <Badge className={getStatusColor(param.status)} size="sm">
+                <Badge className={getStatusColor(param.status)}>
                   {param.status}
                 </Badge>
               </div>
