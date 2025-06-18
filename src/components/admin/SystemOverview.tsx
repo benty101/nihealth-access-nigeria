@@ -1,13 +1,21 @@
 
 import React from 'react';
-import { Building2, Pill, TestTube, Video, FileText, AlertTriangle, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import type { SystemStats } from '@/services/AdminDataService';
+import { 
+  Building2, 
+  Pill, 
+  TestTube, 
+  Shield, 
+  Users,
+  AlertCircle,
+  RefreshCw,
+  CheckCircle,
+  XCircle
+} from 'lucide-react';
 import StatCard from './overview/StatCard';
-import ServiceStatusDetails from './overview/ServiceStatusDetails';
-import { format } from 'date-fns';
+import type { SystemStats } from '@/services/AdminDataService';
 
 interface SystemOverviewProps {
   stats: SystemStats | null;
@@ -17,164 +25,172 @@ interface SystemOverviewProps {
 const SystemOverview = ({ stats, loading }: SystemOverviewProps) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[...Array(7)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="h-4 bg-gray-200 rounded w-24"></div>
-              <div className="h-4 w-4 bg-gray-200 rounded"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-8 bg-gray-200 rounded w-16 mb-1"></div>
-              <div className="h-3 bg-gray-200 rounded w-20"></div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading system statistics...</p>
+        </div>
       </div>
     );
   }
 
-  // Handle case when stats is null
   if (!stats) {
     return (
-      <div className="space-y-6">
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Unable to load system statistics. Please try refreshing the page.
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Failed to load system statistics. Please try refreshing the page.
+        </AlertDescription>
+      </Alert>
     );
   }
+
+  const hasErrors = stats.errors && stats.errors.length > 0;
 
   return (
     <div className="space-y-6">
-      {/* Frontend Sync Status */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+      {/* System Status */}
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-800">
-            <Database className="h-5 w-5" />
-            Frontend Data Sync Status
+          <CardTitle className="flex items-center gap-2">
+            <RefreshCw className="h-5 w-5" />
+            System Status
           </CardTitle>
-          <CardDescription className="text-blue-600">
-            Real-time reflection of all frontend listings and data
+          <CardDescription>
+            Real-time overview of all platform services and data
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-lg font-semibold text-blue-800">{stats.loadedServices?.length || 0}/7</div>
-              <div className="text-sm text-blue-600">Services Active</div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {hasErrors ? (
+                <XCircle className="h-5 w-5 text-red-500" />
+              ) : (
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              )}
+              <span className="font-medium">
+                {hasErrors ? 'Issues Detected' : 'All Systems Operational'}
+              </span>
             </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold text-green-800">
-                {(stats.activePharmacies || 0) + (stats.activeHospitals || 0) + (stats.activeLabs || 0)}
-              </div>
-              <div className="text-sm text-green-600">Active Providers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold text-purple-800">
-                {(stats.activeMedications || 0) + (stats.activeLabTests || 0)}
-              </div>
-              <div className="text-sm text-purple-600">Active Services</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold text-orange-800">
-                {stats.lastSyncTime ? format(new Date(stats.lastSyncTime), 'p') : 'N/A'}
-              </div>
-              <div className="text-sm text-orange-600">Last Sync</div>
-            </div>
+            <Badge variant="secondary">
+              Last Updated: {new Date(stats.lastSyncTime).toLocaleTimeString()}
+            </Badge>
           </div>
+          
+          {hasErrors && (
+            <div className="mt-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-1">
+                    {stats.errors.map((error, index) => (
+                      <div key={index}>• {error}</div>
+                    ))}
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Error Alerts */}
-      {stats.errors && stats.errors.length > 0 && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <div className="font-medium mb-2">System Issues Detected:</div>
-            <ul className="space-y-1">
-              {stats.errors.map((error, index) => (
-                <li key={index} className="text-sm">• {error}</li>
-              ))}
-            </ul>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* System Status */}
-      <div className="flex items-center gap-4 mb-6">
-        <Badge variant={(stats.errors?.length || 0) === 0 ? "default" : "destructive"} className="text-sm">
-          {(stats.errors?.length || 0) === 0 ? 'All Systems Operational' : `${stats.errors?.length || 0} Service(s) Down`}
-        </Badge>
-        <Badge variant="outline" className="text-sm">
-          Frontend Data: {stats.loadedServices?.length || 0}/7 Services Synced
-        </Badge>
-      </div>
-
-      {/* Statistics Grid - Reflecting Frontend Data */}
+      {/* Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Hospitals"
           icon={Building2}
-          total={stats.totalHospitals || 0}
-          active={stats.activeHospitals || 0}
+          total={stats.totalHospitals}
+          active={stats.activeHospitals}
           description="Active medical facilities"
         />
-
-        <StatCard
-          title="Pharmacies"
-          icon={Pill}
-          total={stats.totalPharmacies || 0}
-          active={stats.activePharmacies || 0}
-          description="Active drug stores"
-        />
-
+        
         <StatCard
           title="Medications"
           icon={Pill}
-          total={stats.totalMedications || 0}
-          active={stats.activeMedications || 0}
-          description="Available drugs"
+          total={stats.totalMedications}
+          active={stats.activeMedications}
+          description="Available medications"
         />
-
+        
         <StatCard
           title="Laboratories"
           icon={TestTube}
-          total={stats.totalLabs || 0}
-          active={stats.activeLabs || 0}
-          description="Active testing centers"
+          total={stats.totalLabs + stats.totalLabTests}
+          active={stats.activeLabs + stats.activeLabTests}
+          description="Labs & diagnostic tests"
         />
-
-        <StatCard
-          title="Test Catalog"
-          icon={TestTube}
-          total={stats.totalLabTests || 0}
-          active={stats.activeLabTests || 0}
-          description="Available tests"
-        />
-
+        
         <StatCard
           title="Insurance Plans"
-          icon={FileText}
-          total={stats.totalInsurancePlans || 0}
-          active={stats.activeInsurancePlans || 0}
-          description="Available plans"
-        />
-
-        <StatCard
-          title="Telemedicine"
-          icon={Video}
-          total={stats.totalTelemedicineProviders || 0}
-          active={stats.activeTelemedicineProviders || 0}
-          description="Online doctors"
+          icon={Shield}
+          total={stats.totalInsurancePlans}
+          active={stats.activeInsurancePlans}
+          description="Available insurance plans"
         />
       </div>
 
-      {/* Service Status Details */}
-      <ServiceStatusDetails stats={stats} />
+      {/* Detailed Service Status */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Healthcare Services</CardTitle>
+            <CardDescription>Status of core healthcare services</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span>Medical Facilities</span>
+              <Badge variant={stats.activeHospitals > 0 ? "default" : "secondary"}>
+                {stats.activeHospitals} Active
+              </Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Laboratory Network</span>
+              <Badge variant={stats.activeLabs > 0 ? "default" : "secondary"}>
+                {stats.activeLabs} Labs
+              </Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Diagnostic Tests</span>
+              <Badge variant={stats.activeLabTests > 0 ? "default" : "secondary"}>
+                {stats.activeLabTests} Tests
+              </Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Telemedicine</span>
+              <Badge variant={stats.activeTelemedicineProviders > 0 ? "default" : "secondary"}>
+                {stats.activeTelemedicineProviders} Providers
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Commerce & Insurance</CardTitle>
+            <CardDescription>Status of commerce and insurance services</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span>Pharmacy Network</span>
+              <Badge variant={stats.activePharmacies > 0 ? "default" : "secondary"}>
+                {stats.activePharmacies} Active
+              </Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Available Medications</span>
+              <Badge variant={stats.activeMedications > 0 ? "default" : "secondary"}>
+                {stats.activeMedications} Active
+              </Badge>
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Insurance Plans</span>
+              <Badge variant={stats.activeInsurancePlans > 0 ? "default" : "secondary"}>
+                {stats.activeInsurancePlans} Plans
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
