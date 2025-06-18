@@ -398,22 +398,29 @@ const ResourceCenter = () => {
         'Garden eggs provide folate and fiber essential for fetal development',
         'Moringa leaves are rich in iron, calcium, and vitamins A & C',
         'Palm fruit oil contains vitamin A crucial for baby\'s vision development',
-        'Bitter leaf helps regulate blood sugar during pregnancy'
+        'Bitter leaf helps regulate blood sugar during pregnancy',
+        'Ugwu (fluted pumpkin) leaves are excellent sources of protein and iron',
+        'Waterleaf contains omega-3 fatty acids for brain development'
       ],
       isPopular: true,
       region: 'All Nigeria'
     },
     {
       id: 2,
-      title: 'Nigerian Vaccination Schedule',
-      description: 'Complete immunization calendar following Nigerian health ministry guidelines.',
+      title: 'Complete Nigerian Vaccination Schedule',
+      description: 'Comprehensive immunization calendar following Nigerian health ministry guidelines.',
       category: 'Vaccination',
       icon: Shield,
       tips: [
         'BCG vaccine at birth protects against tuberculosis',
         'Polio drops at birth, 6, 10, and 14 weeks',
         'Pentavalent vaccine at 6, 10, and 14 weeks',
-        'Measles vaccine at 9 months, Yellow fever at 9-12 months'
+        'Measles vaccine at 9 months, Yellow fever at 9-12 months',
+        'Pneumococcal vaccine at 6, 10, 14 weeks',
+        'Rotavirus vaccine at 6, 10, 14 weeks',
+        'IPV (Injectable Polio) at 14 weeks',
+        'Vitamin A supplementation at 6 months and every 6 months after',
+        'Meningitis A vaccine at 9-18 months in northern states'
       ],
       isPopular: true,
       region: 'All Nigeria'
@@ -428,22 +435,30 @@ const ResourceCenter = () => {
         'Join "omugwo" support circles with experienced mothers',
         'Practice deep breathing with traditional herbs like scent leaf',
         'Maintain social connections through family visits',
-        'Seek help from community health workers if feeling overwhelmed'
+        'Seek help from community health workers if feeling overwhelmed',
+        'Use prayer and meditation as coping mechanisms',
+        'Create a support network of new mothers in your area',
+        'Don\'t hesitate to discuss feelings with healthcare providers',
+        'Take advantage of family help during the first 40 days'
       ],
       isPopular: true,
       region: 'All Nigeria'
     },
     {
       id: 4,
-      title: 'Seasonal Health Preparation',
-      description: 'Preparing for harmattan, rainy season health challenges.',
+      title: 'Seasonal Health Preparation in Nigeria',
+      description: 'Preparing for harmattan, rainy season, and extreme weather health challenges.',
       category: 'Seasonal Care',
       icon: Activity,
       tips: [
-        'Stock up on vitamin C-rich fruits during harmattan',
+        'Stock up on vitamin C-rich fruits during harmattan (oranges, guava)',
+        'Use petroleum jelly to protect skin during dry season',
         'Maintain clean water sources during rainy season',
         'Use mosquito nets to prevent malaria year-round',
-        'Keep oral rehydration salts for diarrhea management'
+        'Keep oral rehydration salts for diarrhea management',
+        'Ensure adequate ventilation to prevent respiratory infections',
+        'Store medications in cool, dry places during hot season',
+        'Increase fluid intake during harmattan to prevent dehydration'
       ],
       isPopular: false,
       region: 'Northern Nigeria'
@@ -458,9 +473,203 @@ const ResourceCenter = () => {
         'Always inform your doctor about herbal remedies you\'re taking',
         'Use ginger tea for morning sickness (consult first)',
         'Palm kernel oil massage for stretch mark prevention',
-        'Avoid self-medication with unknown traditional mixtures'
+        'Avoid self-medication with unknown traditional mixtures',
+        'Research traditional medicines through verified sources',
+        'Combine traditional and modern practices under medical supervision',
+        'Keep records of traditional remedies and their effects',
+        'Consult traditional medicine practitioners with proper credentials'
       ],
       isPopular: false,
+      region: 'All Nigeria'
+    },
+    {
+      id: 6,
+      title: 'Breastfeeding Success in Nigeria',
+      description: 'Comprehensive guide to successful breastfeeding in Nigerian context.',
+      category: 'Breastfeeding',
+      icon: Heart,
+      tips: [
+        'Start breastfeeding within one hour of birth',
+        'Practice exclusive breastfeeding for first 6 months',
+        'Eat nutritious local foods like beans, fish, and vegetables',
+        'Drink plenty of fluids including zobo and kunun aya',
+        'Get adequate rest and family support',
+        'Learn proper latching techniques from healthcare workers',
+        'Join local breastfeeding support groups',
+        'Continue breastfeeding up to 2 years with complementary foods'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 7,
+      title: 'Child Nutrition (0-5 years)',
+      description: 'Complete nutrition guide for Nigerian children using local foods.',
+      category: 'Child Nutrition',
+      icon: Apple,
+      tips: [
+        'Introduce complementary foods at 6 months',
+        'Use iron-rich foods like beans, fish, and green vegetables',
+        'Prepare enriched pap with groundnuts and fish',
+        'Include fruits like banana, papaya, and orange daily',
+        'Ensure adequate protein from eggs, beans, and fish',
+        'Use iodized salt in food preparation',
+        'Avoid giving honey to children under 1 year',
+        'Practice good hygiene when preparing baby food'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 8,
+      title: 'Managing Malaria in Pregnancy',
+      description: 'Prevention and treatment of malaria during pregnancy.',
+      category: 'Disease Prevention',
+      icon: Shield,
+      tips: [
+        'Sleep under insecticide-treated nets every night',
+        'Take sulfadoxine-pyrimethamine (SP) as prescribed',
+        'Attend all antenatal care appointments',
+        'Report fever immediately to healthcare provider',
+        'Use approved insect repellents on exposed skin',
+        'Clear stagnant water around your home',
+        'Wear long-sleeved clothes during peak mosquito hours',
+        'Ensure early diagnosis and treatment if infected'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 9,
+      title: 'Hypertension Management',
+      description: 'Managing high blood pressure with lifestyle and medication.',
+      category: 'Chronic Conditions',
+      icon: Heart,
+      tips: [
+        'Reduce salt intake and avoid excessive seasoning',
+        'Exercise regularly - walking 30 minutes daily',
+        'Eat potassium-rich foods like bananas and vegetables',
+        'Limit alcohol consumption and avoid smoking',
+        'Take medications as prescribed by your doctor',
+        'Monitor blood pressure regularly at home',
+        'Manage stress through relaxation techniques',
+        'Maintain healthy weight through proper diet'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 10,
+      title: 'Diabetes Management in Nigeria',
+      description: 'Living well with diabetes using local resources and foods.',
+      category: 'Chronic Conditions',
+      icon: Activity,
+      tips: [
+        'Choose complex carbohydrates like brown rice and yam',
+        'Monitor blood sugar levels regularly',
+        'Exercise daily - walking, swimming, or dancing',
+        'Eat regular meals to maintain stable blood sugar',
+        'Include fiber-rich foods like beans and vegetables',
+        'Limit sugary drinks and processed foods',
+        'Take medications exactly as prescribed',
+        'Learn to recognize symptoms of high/low blood sugar'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 11,
+      title: 'Women\'s Health Essentials',
+      description: 'Comprehensive women\'s health guide for all life stages.',
+      category: 'Women\'s Health',
+      icon: Heart,
+      tips: [
+        'Perform monthly breast self-examinations',
+        'Get regular cervical cancer screening (Pap smear)',
+        'Practice good menstrual hygiene',
+        'Maintain healthy weight through balanced diet',
+        'Take folic acid supplements if planning pregnancy',
+        'Get regular check-ups for reproductive health',
+        'Practice safe sex and use contraception if needed',
+        'Stay up-to-date with HPV and other relevant vaccines'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 12,
+      title: 'Men\'s Health Essentials',
+      description: 'Important health practices for Nigerian men.',
+      category: 'Men\'s Health',
+      icon: Activity,
+      tips: [
+        'Get regular prostate screenings after age 40',
+        'Perform monthly testicular self-examinations',
+        'Maintain healthy weight and exercise regularly',
+        'Limit alcohol consumption and avoid smoking',
+        'Manage stress through healthy outlets',
+        'Get regular blood pressure and cholesterol checks',
+        'Practice good hygiene and safe sexual practices',
+        'Don\'t ignore unusual symptoms - seek medical help'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 13,
+      title: 'Mental Health Awareness',
+      description: 'Understanding and maintaining good mental health.',
+      category: 'Mental Health',
+      icon: Brain,
+      tips: [
+        'Recognize signs of depression and anxiety',
+        'Maintain social connections with family and friends',
+        'Practice stress management techniques',
+        'Get adequate sleep (7-9 hours nightly)',
+        'Engage in regular physical activity',
+        'Seek professional help when needed',
+        'Avoid self-medication with alcohol or drugs',
+        'Practice mindfulness and relaxation techniques'
+      ],
+      isPopular: true,
+      region: 'All Nigeria'
+    },
+    {
+      id: 14,
+      title: 'Elderly Care and Health',
+      description: 'Health maintenance for older adults in Nigeria.',
+      category: 'Elderly Care',
+      icon: Heart,
+      tips: [
+        'Get regular health screenings and check-ups',
+        'Stay physically active with age-appropriate exercises',
+        'Maintain social connections to prevent isolation',
+        'Eat nutritious foods rich in calcium and vitamins',
+        'Take medications as prescribed and avoid polypharmacy',
+        'Ensure home safety to prevent falls',
+        'Keep up with vaccinations including flu shots',
+        'Monitor for signs of cognitive decline'
+      ],
+      isPopular: false,
+      region: 'All Nigeria'
+    },
+    {
+      id: 15,
+      title: 'First Aid Essentials',
+      description: 'Basic first aid knowledge every Nigerian should have.',
+      category: 'Emergency Care',
+      icon: Shield,
+      tips: [
+        'Learn CPR and basic life support techniques',
+        'Know how to treat cuts, burns, and wounds',
+        'Recognize signs of stroke and heart attack',
+        'Keep a well-stocked first aid kit at home',
+        'Know emergency contact numbers by heart',
+        'Learn how to treat snake bites and insect stings',
+        'Understand when to seek immediate medical help',
+        'Practice the recovery position for unconscious victims'
+      ],
+      isPopular: true,
       region: 'All Nigeria'
     }
   ];
@@ -513,6 +722,36 @@ const ResourceCenter = () => {
       points: 40,
       badge: 'bronze',
       progress: 2
+    },
+    {
+      id: 6,
+      title: 'Wellness Warrior',
+      description: 'Maintained consistent health metrics tracking for 90 days',
+      icon: Heart,
+      achieved: false,
+      points: 150,
+      badge: 'gold',
+      progress: 45
+    },
+    {
+      id: 7,
+      title: 'Prevention Pioneer',
+      description: 'Completed all recommended health screenings',
+      icon: Shield,
+      achieved: false,
+      points: 80,
+      badge: 'silver',
+      progress: 3
+    },
+    {
+      id: 8,
+      title: 'Knowledge Keeper',
+      description: 'Shared health tips with 10 community members',
+      icon: Brain,
+      achieved: false,
+      points: 90,
+      badge: 'silver',
+      progress: 7
     }
   ];
 
@@ -521,10 +760,10 @@ const ResourceCenter = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Maternal Health Resource Centre
+            Comprehensive Health Resource Centre
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive resources, expert guidance, and support for Nigerian mothers and their families
+            Your complete guide to health and wellness in Nigeria - from pregnancy to elderly care, covering every aspect of health management
           </p>
         </div>
 
@@ -533,7 +772,7 @@ const ResourceCenter = () => {
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Search resources..."
+              placeholder="Search health resources..."
               className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -541,16 +780,20 @@ const ResourceCenter = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="articles" className="w-full">
+        <Tabs defaultValue="health-tips" className="w-full">
           <TabsList className="grid w-full grid-cols-7">
+            <TabsTrigger value="health-tips">Health Tips</TabsTrigger>
             <TabsTrigger value="articles">Articles</TabsTrigger>
             <TabsTrigger value="videos">Videos</TabsTrigger>
             <TabsTrigger value="checklists">Checklists</TabsTrigger>
-            <TabsTrigger value="health-tips">Health Tips</TabsTrigger>
-            <TabsTrigger value="gamification">Milestones</TabsTrigger>
-            <TabsTrigger value="experts">Expert Network</TabsTrigger>
+            <TabsTrigger value="experts">Experts</TabsTrigger>
+            <TabsTrigger value="milestones">Milestones</TabsTrigger>
             <TabsTrigger value="emergency">Emergency</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="health-tips" className="mt-6">
+            <ResourceHealthTips healthTips={healthTips} searchTerm={searchTerm} />
+          </TabsContent>
 
           <TabsContent value="articles" className="mt-6">
             <ResourceArticles articles={articles} searchTerm={searchTerm} />
@@ -564,16 +807,12 @@ const ResourceCenter = () => {
             <ResourceChecklists checklists={checklists} searchTerm={searchTerm} />
           </TabsContent>
 
-          <TabsContent value="health-tips" className="mt-6">
-            <ResourceHealthTips healthTips={healthTips} searchTerm={searchTerm} />
-          </TabsContent>
-
-          <TabsContent value="gamification" className="mt-6">
-            <ResourceGamification milestones={gamificationMilestones} />
-          </TabsContent>
-
           <TabsContent value="experts" className="mt-6">
             <ResourceExperts experts={experts} />
+          </TabsContent>
+
+          <TabsContent value="milestones" className="mt-6">
+            <ResourceGamification milestones={gamificationMilestones} />
           </TabsContent>
 
           <TabsContent value="emergency" className="mt-6">
