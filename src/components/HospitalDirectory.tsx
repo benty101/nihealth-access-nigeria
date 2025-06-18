@@ -41,8 +41,17 @@ const HospitalDirectory = () => {
         count: data.hospitals.length,
         totalCount: data.totalCount,
         hasMore: data.hasMore,
-        currentPage: page
+        currentPage: page,
+        firstHospital: data.hospitals[0]?.name
       });
+      
+      // Debug: Show actual total in UI temporarily
+      if (data.totalCount !== 215) {
+        toast({
+          title: "Debug Info",
+          description: `Database actually has ${data.totalCount} hospitals, not 215`,
+        });
+      }
     } catch (error) {
       console.error("Failed to fetch hospitals", error);
       toast({
@@ -56,6 +65,7 @@ const HospitalDirectory = () => {
   };
 
   useEffect(() => {
+    console.log('HospitalDirectory: useEffect triggered, fetching hospitals...');
     fetchHospitals(1, filters);
     setCurrentPage(1);
   }, [filters]);
