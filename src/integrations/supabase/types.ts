@@ -9,6 +9,219 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      consultations: {
+        Row: {
+          chief_complaint: string | null
+          consultation_fee: number
+          consultation_notes: string | null
+          consultation_number: string
+          consultation_type: string
+          created_at: string | null
+          diagnosis: string | null
+          doctor_id: string
+          duration_minutes: number | null
+          ended_at: string | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          hospital_id: string | null
+          id: string
+          patient_id: string
+          patient_satisfaction_rating: number | null
+          payment_status: string | null
+          prescription_notes: string | null
+          scheduled_at: string
+          started_at: string | null
+          status: string
+          symptoms: string | null
+          treatment_plan: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          chief_complaint?: string | null
+          consultation_fee: number
+          consultation_notes?: string | null
+          consultation_number: string
+          consultation_type?: string
+          created_at?: string | null
+          diagnosis?: string | null
+          doctor_id: string
+          duration_minutes?: number | null
+          ended_at?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          hospital_id?: string | null
+          id?: string
+          patient_id: string
+          patient_satisfaction_rating?: number | null
+          payment_status?: string | null
+          prescription_notes?: string | null
+          scheduled_at: string
+          started_at?: string | null
+          status?: string
+          symptoms?: string | null
+          treatment_plan?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          chief_complaint?: string | null
+          consultation_fee?: number
+          consultation_notes?: string | null
+          consultation_number?: string
+          consultation_type?: string
+          created_at?: string | null
+          diagnosis?: string | null
+          doctor_id?: string
+          duration_minutes?: number | null
+          ended_at?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean | null
+          hospital_id?: string | null
+          id?: string
+          patient_id?: string
+          patient_satisfaction_rating?: number | null
+          payment_status?: string | null
+          prescription_notes?: string | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: string
+          symptoms?: string | null
+          treatment_plan?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultations_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "telemedicine_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultations_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doctor_availability: {
+        Row: {
+          break_end_time: string | null
+          break_start_time: string | null
+          created_at: string | null
+          day_of_week: number
+          doctor_id: string
+          end_time: string
+          hospital_id: string | null
+          id: string
+          is_available: boolean | null
+          max_patients_per_slot: number | null
+          slot_duration_minutes: number | null
+          start_time: string
+          updated_at: string | null
+        }
+        Insert: {
+          break_end_time?: string | null
+          break_start_time?: string | null
+          created_at?: string | null
+          day_of_week: number
+          doctor_id: string
+          end_time: string
+          hospital_id?: string | null
+          id?: string
+          is_available?: boolean | null
+          max_patients_per_slot?: number | null
+          slot_duration_minutes?: number | null
+          start_time: string
+          updated_at?: string | null
+        }
+        Update: {
+          break_end_time?: string | null
+          break_start_time?: string | null
+          created_at?: string | null
+          day_of_week?: number
+          doctor_id?: string
+          end_time?: string
+          hospital_id?: string | null
+          id?: string
+          is_available?: boolean | null
+          max_patients_per_slot?: number | null
+          slot_duration_minutes?: number | null
+          start_time?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_availability_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "telemedicine_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctor_availability_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospital_doctors: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          doctor_id: string
+          employment_type: string | null
+          hospital_id: string
+          id: string
+          is_active: boolean | null
+          joined_date: string | null
+          position: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          doctor_id: string
+          employment_type?: string | null
+          hospital_id: string
+          id?: string
+          is_active?: boolean | null
+          joined_date?: string | null
+          position?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          doctor_id?: string
+          employment_type?: string | null
+          hospital_id?: string
+          id?: string
+          is_active?: boolean | null
+          joined_date?: string | null
+          position?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_doctors_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "telemedicine_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hospital_doctors_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hospital_staff: {
         Row: {
           created_at: string | null
@@ -956,6 +1169,99 @@ export type Database = {
           },
         ]
       }
+      patient_records: {
+        Row: {
+          admission_date: string | null
+          admission_type: string | null
+          allergies: string | null
+          attending_doctor_id: string | null
+          bed_number: string | null
+          chief_complaint: string | null
+          created_at: string | null
+          current_medications: string | null
+          department: string | null
+          diagnosis: string | null
+          discharge_date: string | null
+          discharge_summary: string | null
+          follow_up_instructions: string | null
+          hospital_id: string
+          id: string
+          medical_history: string | null
+          patient_id: string
+          record_number: string
+          room_number: string | null
+          status: string | null
+          treatment_plan: string | null
+          updated_at: string | null
+          vital_signs: Json | null
+        }
+        Insert: {
+          admission_date?: string | null
+          admission_type?: string | null
+          allergies?: string | null
+          attending_doctor_id?: string | null
+          bed_number?: string | null
+          chief_complaint?: string | null
+          created_at?: string | null
+          current_medications?: string | null
+          department?: string | null
+          diagnosis?: string | null
+          discharge_date?: string | null
+          discharge_summary?: string | null
+          follow_up_instructions?: string | null
+          hospital_id: string
+          id?: string
+          medical_history?: string | null
+          patient_id: string
+          record_number: string
+          room_number?: string | null
+          status?: string | null
+          treatment_plan?: string | null
+          updated_at?: string | null
+          vital_signs?: Json | null
+        }
+        Update: {
+          admission_date?: string | null
+          admission_type?: string | null
+          allergies?: string | null
+          attending_doctor_id?: string | null
+          bed_number?: string | null
+          chief_complaint?: string | null
+          created_at?: string | null
+          current_medications?: string | null
+          department?: string | null
+          diagnosis?: string | null
+          discharge_date?: string | null
+          discharge_summary?: string | null
+          follow_up_instructions?: string | null
+          hospital_id?: string
+          id?: string
+          medical_history?: string | null
+          patient_id?: string
+          record_number?: string
+          room_number?: string | null
+          status?: string | null
+          treatment_plan?: string | null
+          updated_at?: string | null
+          vital_signs?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_records_attending_doctor_id_fkey"
+            columns: ["attending_doctor_id"]
+            isOneToOne: false
+            referencedRelation: "telemedicine_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_records_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pharmacies: {
         Row: {
           address: string | null
@@ -1222,11 +1528,19 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      generate_consultation_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_lab_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
       generate_order_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_patient_record_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
