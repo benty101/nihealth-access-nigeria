@@ -1577,6 +1577,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      is_hospital_admin_for: {
+        Args: { _user_id: string; _hospital_id: string }
+        Returns: boolean
+      }
       is_super_admin: {
         Args: { _user_id: string }
         Returns: boolean
