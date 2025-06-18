@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,18 +8,16 @@ import { AppointmentService, Appointment } from '@/services/AppointmentService';
 import { useToast } from '@/hooks/use-toast';
 import BookAppointmentModal from './BookAppointmentModal';
 
-const RealTimeUpcomingAppointments = () => {
+export interface AppointmentsRef {
+  loadAppointments: () => void;
+}
+
+const RealTimeUpcomingAppointments = forwardRef<AppointmentsRef>((props, ref) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      loadAppointments();
-    }
-  }, [user]);
 
   const loadAppointments = async () => {
     if (!user) return;
@@ -48,6 +46,16 @@ const RealTimeUpcomingAppointments = () => {
       setLoading(false);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    loadAppointments
+  }));
+
+  useEffect(() => {
+    if (user) {
+      loadAppointments();
+    }
+  }, [user]);
 
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString);
@@ -176,6 +184,8 @@ const RealTimeUpcomingAppointments = () => {
       />
     </>
   );
-};
+});
+
+RealTimeUpcomingAppointments.displayName = 'RealTimeUpcomingAppointments';
 
 export default RealTimeUpcomingAppointments;

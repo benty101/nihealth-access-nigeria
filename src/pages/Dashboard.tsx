@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import RealTimeHealthStats from '@/components/dashboard/RealTimeHealthStats';
-import RealTimeUpcomingAppointments from '@/components/dashboard/RealTimeUpcomingAppointments';
+import RealTimeUpcomingAppointments, { AppointmentsRef } from '@/components/dashboard/RealTimeUpcomingAppointments';
 import RealTimeHealthReminders from '@/components/dashboard/RealTimeHealthReminders';
 import RecentActivity from '@/components/dashboard/RecentActivity';
 import PersonalizedRecommendations from '@/components/dashboard/PersonalizedRecommendations';
@@ -19,7 +19,7 @@ import { PersonalizationService } from '@/services/PersonalizationService';
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
-  const appointmentsRef = useRef<{ loadAppointments: () => void } | null>(null);
+  const appointmentsRef = useRef<AppointmentsRef>(null);
 
   const onboardingData = PersonalizationService.getOnboardingData();
   const recommendations = PersonalizationService.getPersonalizedRecommendations(onboardingData);
@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   const handleAppointmentBooked = () => {
     // Trigger refresh of appointments component
-    if (appointmentsRef.current && 'loadAppointments' in appointmentsRef.current) {
+    if (appointmentsRef.current) {
       appointmentsRef.current.loadAppointments();
     }
   };
