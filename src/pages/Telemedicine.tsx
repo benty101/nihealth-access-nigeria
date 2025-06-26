@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,7 +5,8 @@ import Navbar from '@/components/Navbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Video, Clock, Shield, Star, Calendar, UserPlus, Smartphone, Monitor, MessageSquare } from 'lucide-react';
+import { Video, Clock, Shield, Star, Calendar, UserPlus, Smartphone, Monitor, MessageSquare, Dna, TestTube, Microscope } from 'lucide-react';
+import EnhancedTelemedicineConsultation from '@/components/telemedicine/EnhancedTelemedicineConsultation';
 
 const Telemedicine = () => {
   const { user } = useAuth();
@@ -86,6 +86,27 @@ const Telemedicine = () => {
     }
   ];
 
+  const biotechFeatures = [
+    {
+      title: 'Molecular Diagnostics',
+      description: 'Advanced genomic and proteomic testing for precision medicine',
+      icon: <Dna className="h-6 w-6" />,
+      color: 'purple'
+    },
+    {
+      title: 'Sample Tracking',
+      description: 'Real-time monitoring of biospecimens with chain of custody',  
+      icon: <TestTube className="h-6 w-6" />,
+      color: 'blue'
+    },
+    {
+      title: 'EMR Integration',
+      description: 'Seamless integration with electronic medical records',
+      icon: <Microscope className="h-6 w-6" />,
+      color: 'green'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -94,16 +115,16 @@ const Telemedicine = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Telemedicine Consultations
+              Advanced Telemedicine & Molecular Diagnostics
             </h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Connect with qualified healthcare professionals from the comfort of your home
+              Connect with qualified healthcare professionals and access cutting-edge biotechnology testing from the comfort of your home
             </p>
             {!user && (
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center justify-center gap-2 text-blue-700">
                   <UserPlus className="h-5 w-5" />
-                  <span>Create an account to book consultations and access your medical history</span>
+                  <span>Create an account to access molecular diagnostics and advanced features</span>
                   <Button 
                     onClick={() => navigate('/auth')} 
                     size="sm" 
@@ -114,6 +135,20 @@ const Telemedicine = () => {
                 </div>
               </div>
             )}
+            
+            {/* Biotech Features Highlight */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+              {biotechFeatures.map((feature, index) => (
+                <div key={index} className={`p-4 bg-${feature.color}-50 border border-${feature.color}-200 rounded-lg`}>
+                  <div className={`text-${feature.color}-600 mb-2`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="font-semibold text-gray-900">{feature.title}</h3>
+                  <p className="text-sm text-gray-600">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+
             <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
               <div className="flex items-center">
                 <Shield className="h-4 w-4 mr-2 text-green-600" />
@@ -124,11 +159,22 @@ const Telemedicine = () => {
                 HD Video & Audio
               </div>
               <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2 text-purple-600" />
+                <Dna className="h-4 w-4 mr-2 text-purple-600" />
+                Molecular Diagnostics
+              </div>
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 mr-2 text-orange-600" />
                 Same-day appointments
               </div>
             </div>
           </div>
+
+          {/* Enhanced Consultation Platform */}
+          {user && (
+            <div className="mb-12">
+              <EnhancedTelemedicineConsultation />
+            </div>
+          )}
 
           {/* How It Works */}
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
@@ -272,6 +318,39 @@ const Telemedicine = () => {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </div>
+
+          {/* Molecular Diagnostics Information */}
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-8 mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Advanced Molecular Diagnostics</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Dna className="h-5 w-5 text-purple-600" />
+                  Available Tests
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li>• Comprehensive Genomic Profiling</li>
+                  <li>• Liquid Biopsy Panels</li>
+                  <li>• Pharmacogenomics Testing</li>
+                  <li>• Biomarker Analysis</li>
+                  <li>• Personalized Medicine Panels</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <TestTube className="h-5 w-5 text-blue-600" />
+                  Sample Collection
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li>• Home collection service</li>
+                  <li>• Temperature-controlled transport</li>
+                  <li>• Real-time sample tracking</li>
+                  <li>• Chain of custody documentation</li>
+                  <li>• Multiple sample types supported</li>
+                </ul>
+              </div>
             </div>
           </div>
 
