@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -23,7 +24,7 @@ function App() {
               <Route
                 path="/admin"
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute>
                     <AdminDashboard />
                   </ProtectedRoute>
                 }

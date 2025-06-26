@@ -14,7 +14,7 @@ import {
   Shield,
   BarChart3,
   Cpu,
-  Memory,
+  HardDrive,
   Clock,
   Users,
   AlertTriangle,

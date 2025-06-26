@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,14 +12,15 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Play, 
   Square, 
-  Plus, 
-  Cpu, 
-  Memory, 
-  Clock,
-  Terminal,
-  Code,
+  Settings, 
+  Plus,
+  Cpu,
+  HardDrive,
   Zap,
-  AlertCircle
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2
 } from 'lucide-react';
 import { mlAnalyticsService, type MLEnvironment } from '@/services/MLAnalyticsService';
 import { useToast } from '@/hooks/use-toast';
@@ -32,7 +33,8 @@ interface MLEnvironmentManagerProps {
 const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironmentManagerProps) => {
   const [creating, setCreating] = useState(false);
   const [starting, setStarting] = useState<string | null>(null);
-  const [newEnv, setNewEnv] = useState({
+  const [stopping, setStopping] = useState<string | null>(null);
+  const [newEnvironment, setNewEnvironment] = useState({
     name: '',
     cpu: 2,
     memory: 4,
@@ -43,12 +45,32 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
 
   const availableLibraries = [
     'pandas', 'numpy', 'scikit-learn', 'tensorflow', 'pytorch', 
-    'matplotlib', 'seaborn', 'plotly', 'jupyter', 'biopython',
-    'scipy', 'statsmodels', 'xgboost', 'lightgbm', 'catboost'
+    'matplotlib', 'seaborn', 'plotly', 'jupyter', 'keras',
+    'xgboost', 'lightgbm', 'scipy', 'statsmodels', 'networkx'
   ];
 
+  const getStatusColor = (status: MLEnvironment['status']) => {
+    switch (status) {
+      case 'running': return 'bg-green-100 text-green-800';
+      case 'stopped': return 'bg-gray-100 text-gray-800';
+      case 'starting': return 'bg-yellow-100 text-yellow-800';
+      case 'error': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusIcon = (status: MLEnvironment['status']) => {
+    switch (status) {
+      case 'running': return <CheckCircle2 className="h-4 w-4" />;
+      case 'stopped': return <Square className="h-4 w-4" />;
+      case 'starting': return <Loader2 className="h-4 w-4 animate-spin" />;
+      case 'error': return <AlertTriangle className="h-4 w-4" />;
+      default: return <Clock className="h-4 w-4" />;
+    }
+  };
+
   const handleCreateEnvironment = async () => {
-    if (!newEnv.name.trim()) {
+    if (!newEnvironment.name.trim()) {
       toast({
         title: "Validation Error",
         description: "Environment name is required",
@@ -60,22 +82,22 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
     setCreating(true);
     try {
       await mlAnalyticsService.createEnvironment({
-        name: newEnv.name,
+        name: newEnvironment.name,
         resources: {
-          cpu: newEnv.cpu,
-          memory: newEnv.memory,
-          gpu: newEnv.gpu
+          cpu: newEnvironment.cpu,
+          memory: newEnvironment.memory,
+          gpu: newEnvironment.gpu
         },
-        libraries: newEnv.libraries
+        libraries: newEnvironment.libraries
       });
-
+      
       toast({
         title: "Environment Created",
-        description: `${newEnv.name} environment is being set up`,
+        description: "ML environment has been created successfully",
       });
-
-      setNewEnv({ name: '', cpu: 2, memory: 4, gpu: false, libraries: [] });
+      
       onEnvironmentChange();
+      setNewEnvironment({ name: '', cpu: 2, memory: 4, gpu: false, libraries: [] });
     } catch (error) {
       toast({
         title: "Creation Failed",
@@ -87,10 +109,10 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
     }
   };
 
-  const handleStartEnvironment = async (envId: string) => {
-    setStarting(envId);
+  const handleStartEnvironment = async (environmentId: string) => {
+    setStarting(environmentId);
     try {
-      await mlAnalyticsService.startEnvironment(envId);
+      await mlAnalyticsService.startEnvironment(environmentId);
       toast({
         title: "Environment Started",
         description: "ML environment is now running",
@@ -107,9 +129,10 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
     }
   };
 
-  const handleStopEnvironment = async (envId: string) => {
+  const handleStopEnvironment = async (environmentId: string) => {
+    setStopping(environmentId);
     try {
-      await mlAnalyticsService.stopEnvironment(envId);
+      await mlAnalyticsService.stopEnvironment(environmentId);
       toast({
         title: "Environment Stopped",
         description: "ML environment has been stopped",
@@ -121,21 +144,13 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
         description: "Failed to stop ML environment",
         variant: "destructive"
       });
-    }
-  };
-
-  const getStatusColor = (status: MLEnvironment['status']) => {
-    switch (status) {
-      case 'running': return 'bg-green-100 text-green-800';
-      case 'stopped': return 'bg-gray-100 text-gray-800';
-      case 'starting': return 'bg-blue-100 text-blue-800';
-      case 'error': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+    } finally {
+      setStopping(null);
     }
   };
 
   const toggleLibrary = (library: string) => {
-    setNewEnv(prev => ({
+    setNewEnvironment(prev => ({
       ...prev,
       libraries: prev.libraries.includes(library)
         ? prev.libraries.filter(lib => lib !== library)
@@ -145,16 +160,15 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
 
   return (
     <div className="space-y-6">
-      {/* Header with Create Button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">ML Environments</h2>
-          <p className="text-gray-600">Manage your sandboxed ML computing environments</p>
+          <h2 className="text-2xl font-bold">ML Environment Manager</h2>
+          <p className="text-gray-600">Manage sandboxed machine learning environments</p>
         </div>
         
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700">
+            <Button className="bg-teal-600 hover:bg-teal-700">
               <Plus className="h-4 w-4 mr-2" />
               Create Environment
             </Button>
@@ -164,65 +178,80 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
               <DialogTitle>Create ML Environment</DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  ML environments are sandboxed and isolated for security. All data processing 
+                  happens in a controlled environment with no external network access.
+                </AlertDescription>
+              </Alert>
+
               <div className="space-y-2">
-                <Label htmlFor="env-name">Environment Name</Label>
+                <Label>Environment Name</Label>
                 <Input
-                  id="env-name"
-                  value={newEnv.name}
-                  onChange={(e) => setNewEnv(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="My ML Environment"
+                  value={newEnvironment.name}
+                  onChange={(e) => setNewEnvironment(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="e.g., Outbreak Analysis Environment"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>CPU Cores</Label>
-                  <Select value={newEnv.cpu.toString()} onValueChange={(value) => setNewEnv(prev => ({ ...prev, cpu: parseInt(value) }))}>
+                  <Select 
+                    value={newEnvironment.cpu.toString()} 
+                    onValueChange={(value) => setNewEnvironment(prev => ({ ...prev, cpu: parseInt(value) }))}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="2">2 cores</SelectItem>
-                      <SelectItem value="4">4 cores</SelectItem>
-                      <SelectItem value="8">8 cores</SelectItem>
-                      <SelectItem value="16">16 cores</SelectItem>
+                      <SelectItem value="1">1 Core</SelectItem>
+                      <SelectItem value="2">2 Cores</SelectItem>
+                      <SelectItem value="4">4 Cores</SelectItem>
+                      <SelectItem value="8">8 Cores</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Memory (GB)</Label>
-                  <Select value={newEnv.memory.toString()} onValueChange={(value) => setNewEnv(prev => ({ ...prev, memory: parseInt(value) }))}>
+                  <Select 
+                    value={newEnvironment.memory.toString()} 
+                    onValueChange={(value) => setNewEnvironment(prev => ({ ...prev, memory: parseInt(value) }))}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="2">2 GB</SelectItem>
                       <SelectItem value="4">4 GB</SelectItem>
                       <SelectItem value="8">8 GB</SelectItem>
                       <SelectItem value="16">16 GB</SelectItem>
-                      <SelectItem value="32">32 GB</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="gpu-enabled"
-                  checked={newEnv.gpu}
-                  onCheckedChange={(checked) => setNewEnv(prev => ({ ...prev, gpu: !!checked }))}
-                />
-                <Label htmlFor="gpu-enabled">Enable GPU acceleration</Label>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="gpu-enabled"
+                    checked={newEnvironment.gpu}
+                    onCheckedChange={(checked) => setNewEnvironment(prev => ({ ...prev, gpu: !!checked }))}
+                  />
+                  <Label htmlFor="gpu-enabled">Enable GPU Support (for deep learning)</Label>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Pre-installed Libraries</Label>
+                <Label>ML Libraries</Label>
                 <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto border rounded p-3">
                   {availableLibraries.map((library) => (
                     <div key={library} className="flex items-center space-x-2">
                       <Checkbox
                         id={library}
-                        checked={newEnv.libraries.includes(library)}
+                        checked={newEnvironment.libraries.includes(library)}
                         onCheckedChange={() => toggleLibrary(library)}
                       />
                       <Label htmlFor={library} className="text-sm">{library}</Label>
@@ -231,16 +260,8 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
                 </div>
               </div>
 
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Environments are automatically sandboxed and cannot access production data directly. 
-                  All data access goes through the approved dataset curator.
-                </AlertDescription>
-              </Alert>
-
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setNewEnv({ name: '', cpu: 2, memory: 4, gpu: false, libraries: [] })}>
+                <Button variant="outline" onClick={() => setNewEnvironment({ name: '', cpu: 2, memory: 4, gpu: false, libraries: [] })}>
                   Reset
                 </Button>
                 <Button onClick={handleCreateEnvironment} disabled={creating}>
@@ -252,107 +273,96 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
         </Dialog>
       </div>
 
-      {/* Environment List */}
       <div className="grid gap-6">
         {environments.map((env) => (
-          <Card key={env.id} className="border-l-4 border-l-purple-500">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Terminal className="h-6 w-6 text-purple-600" />
-                  <div>
-                    <CardTitle className="text-lg">{env.name}</CardTitle>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge className={getStatusColor(env.status)}>
-                        {env.status.toUpperCase()}
-                      </Badge>
-                      <span className="text-sm text-gray-600">
-                        <Clock className="h-3 w-3 inline mr-1" />
-                        Last accessed: {new Date(env.last_accessed).toLocaleDateString()}
-                      </span>
+          <Card key={env.id} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-3 h-3 rounded-full bg-teal-500"></div>
+                    <h3 className="text-lg font-semibold">{env.name}</h3>
+                    <Badge className={getStatusColor(env.status)}>
+                      {getStatusIcon(env.status)}
+                      <span className="ml-1 capitalize">{env.status}</span>
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
+                    <div className="flex items-center gap-2">
+                      <Cpu className="h-4 w-4 text-gray-500" />
+                      <span>{env.resources.cpu} CPU cores</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <HardDrive className="h-4 w-4 text-gray-500" />
+                      <span>{env.resources.memory} GB RAM</span>
+                    </div>
+                    {env.resources.gpu && (
+                      <div className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-yellow-500" />
+                        <span>GPU Enabled</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-gray-500" />
+                      <span>Last used: {new Date(env.last_accessed).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1">
+                    {env.libraries.slice(0, 6).map((lib) => (
+                      <Badge key={lib} variant="outline" className="text-xs">
+                        {lib}
+                      </Badge>
+                    ))}
+                    {env.libraries.length > 6 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{env.libraries.length - 6} more
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {env.status === 'running' ? (
+                <div className="flex items-center gap-2 ml-4">
+                  {env.status === 'stopped' && (
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleStartEnvironment(env.id)}
+                      disabled={starting === env.id}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {starting === env.id ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Play className="h-4 w-4 mr-2" />
+                      )}
+                      Start
+                    </Button>
+                  )}
+                  
+                  {env.status === 'running' && (
                     <>
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                        <Code className="h-4 w-4 mr-2" />
+                      <Button size="sm" variant="outline">
+                        <Settings className="h-4 w-4 mr-2" />
                         Open Jupyter
                       </Button>
                       <Button 
                         size="sm" 
                         variant="outline"
                         onClick={() => handleStopEnvironment(env.id)}
+                        disabled={stopping === env.id}
                       >
-                        <Square className="h-4 w-4 mr-2" />
+                        {stopping === env.id ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Square className="h-4 w-4 mr-2" />
+                        )}
                         Stop
                       </Button>
                     </>
-                  ) : (
-                    <Button 
-                      size="sm"
-                      onClick={() => handleStartEnvironment(env.id)}
-                      disabled={starting === env.id}
-                    >
-                      {starting === env.id ? (
-                        <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-                          Starting...
-                        </div>
-                      ) : (
-                        <>
-                          <Play className="h-4 w-4 mr-2" />
-                          Start
-                        </>
-                      )}
-                    </Button>
                   )}
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-2">
-                  <Cpu className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">
-                    <strong>{env.resources.cpu}</strong> CPU cores
-                  </span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Memory className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm">
-                    <strong>{env.resources.memory} GB</strong> memory
-                  </span>
-                </div>
-                
-                {env.resources.gpu && (
-                  <div className="flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm">GPU enabled</span>
-                  </div>
-                )}
-              </div>
-
-              {env.libraries.length > 0 && (
-                <div className="mt-4">
-                  <div className="text-sm font-medium mb-2">Installed Libraries:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {env.libraries.slice(0, 8).map((lib) => (
-                      <Badge key={lib} variant="outline" className="text-xs">
-                        {lib}
-                      </Badge>
-                    ))}
-                    {env.libraries.length > 8 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{env.libraries.length - 8} more
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         ))}
@@ -361,19 +371,11 @@ const MLEnvironmentManager = ({ environments, onEnvironmentChange }: MLEnvironme
       {environments.length === 0 && (
         <Card>
           <CardContent className="text-center py-12">
-            <Terminal className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <Cpu className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">No ML Environments</h3>
             <p className="text-gray-600 mb-4">
               Create your first ML environment to start building and training models
             </p>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="bg-purple-600 hover:bg-purple-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Environment
-                </Button>
-              </DialogTrigger>
-            </Dialog>
           </CardContent>
         </Card>
       )}
