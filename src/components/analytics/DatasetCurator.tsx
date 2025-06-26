@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,7 +22,7 @@ import {
   Info
 } from 'lucide-react';
 import { mlAnalyticsService, type Dataset } from '@/services/MLAnalyticsService';
-import { useToast } = '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface DatasetCuratorProps {
   datasets: Dataset[];
