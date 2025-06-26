@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +23,7 @@ import PatientRecordsView from './PatientRecordsView';
 import PatientMedications from './PatientMedications';
 import PatientLabResults from './PatientLabResults';
 import PatientCommunication from './PatientCommunication';
+import PatientGenomics from './PatientGenomics';
 
 const PatientPortal = () => {
   const { user } = useAuth();
@@ -106,7 +106,7 @@ const PatientPortal = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Overview
@@ -118,6 +118,10 @@ const PatientPortal = () => {
             <TabsTrigger value="records" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Records
+            </TabsTrigger>
+            <TabsTrigger value="genomics" className="flex items-center gap-2">
+              <TestTube className="h-4 w-4" />
+              Genomics
             </TabsTrigger>
             <TabsTrigger value="medications" className="flex items-center gap-2">
               <Pill className="h-4 w-4" />
@@ -143,6 +147,10 @@ const PatientPortal = () => {
 
           <TabsContent value="records" className="mt-6">
             <PatientRecordsView />
+          </TabsContent>
+
+          <TabsContent value="genomics" className="mt-6">
+            <PatientGenomics patientId={user?.id || 'demo-patient'} userRole="patient" />
           </TabsContent>
 
           <TabsContent value="medications" className="mt-6">
