@@ -1,25 +1,172 @@
 
 @layer utilities {
-  .maternal-button {
-    background: linear-gradient(135deg, #0891b2, #10b981);
-    transition: all 0.3s ease;
+  /* Apple-inspired Interactive Elements */
+  .apple-button {
+    @apply relative overflow-hidden bg-gradient-primary text-primary-foreground font-medium shadow-md;
+    @apply transition-all duration-200 ease-apple;
+    @apply hover:shadow-lg hover:scale-[1.02];
+    @apply active:scale-[0.98] active:shadow-sm;
+    @apply focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 
-  .maternal-button:hover {
-    background: linear-gradient(135deg, #0e7490, #047857);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+  .apple-button::before {
+    @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-200;
+    content: '';
   }
 
-  .health-pulse {
-    animation: healthPulse 2s ease-in-out infinite;
+  .apple-button:hover::before {
+    @apply opacity-10;
   }
 
-  .animate-skeleton {
-    animation: skeleton 1.5s ease-in-out infinite;
+  .glass-card {
+    @apply backdrop-blur-xl bg-card/80 border border-border/50 shadow-xl;
+    @apply relative overflow-hidden;
   }
 
-  .page-transition {
-    animation: pageTransition 0.5s ease-out;
+  .glass-card::before {
+    @apply absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none;
+    content: '';
+  }
+
+  /* Health-specific components */
+  .health-card {
+    @apply bg-card border border-border rounded-xl p-6 shadow-sm;
+    @apply transition-all duration-200 ease-apple;
+    @apply hover:shadow-md hover:border-border-strong hover:scale-[1.01];
+  }
+
+  .health-status-success {
+    @apply bg-health-success/10 text-health-success border-health-success/20;
+  }
+
+  .health-status-warning {
+    @apply bg-health-warning/10 text-health-warning border-health-warning/20;
+  }
+
+  .health-status-danger {
+    @apply bg-health-danger/10 text-health-danger border-health-danger/20;
+  }
+
+  .health-status-info {
+    @apply bg-health-info/10 text-health-info border-health-info/20;
+  }
+
+  /* Timeline-specific components */
+  .timeline-card {
+    @apply health-card relative;
+    @apply before:absolute before:left-0 before:top-0 before:w-1 before:h-full;
+    @apply before:bg-gradient-to-b before:from-primary before:to-primary-glow before:rounded-r-full;
+  }
+
+  .timeline-dot {
+    @apply w-3 h-3 rounded-full bg-primary ring-4 ring-primary/20;
+    @apply animate-pulse-soft;
+  }
+
+  /* Navigation & Interface */
+  .nav-link {
+    @apply relative px-4 py-2 text-sm font-medium transition-all duration-200 ease-apple;
+    @apply hover:text-primary;
+  }
+
+  .nav-link::after {
+    @apply absolute bottom-0 left-1/2 w-0 h-0.5 bg-primary transition-all duration-200 ease-apple;
+    @apply transform -translate-x-1/2;
+    content: '';
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  /* Form elements */
+  .form-input {
+    @apply w-full px-4 py-3 bg-card border border-border rounded-lg;
+    @apply text-foreground placeholder:text-muted-foreground;
+    @apply transition-all duration-200 ease-apple;
+    @apply focus:border-primary focus:ring-2 focus:ring-ring focus:ring-offset-0;
+    @apply hover:border-border-strong;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-foreground mb-2;
+    @apply tracking-tight;
+  }
+
+  /* Loading states */
+  .skeleton {
+    @apply animate-shimmer bg-gradient-to-r from-muted via-muted-hover to-muted;
+    @apply relative overflow-hidden rounded;
+  }
+
+  .skeleton::after {
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent;
+    @apply animate-shimmer;
+    content: '';
+  }
+
+  /* Micro-interactions */
+  .hover-lift {
+    @apply transition-all duration-200 ease-apple;
+    @apply hover:transform hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-200 ease-apple;
+    @apply hover:shadow-xl hover:shadow-primary/25;
+  }
+
+  .press-effect {
+    @apply transition-transform duration-100 ease-apple;
+    @apply active:scale-[0.97];
+  }
+
+  /* Text effects */
+  .gradient-text {
+    @apply bg-gradient-primary bg-clip-text text-transparent;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Layout utilities */
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-margin {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .content-width {
+    @apply max-w-7xl mx-auto;
+  }
+
+  /* Animation delays for staggered effects */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  /* Backdrop effects */
+  .backdrop-glass {
+    @apply backdrop-blur-md backdrop-saturate-150 bg-background/80;
+  }
+
+  /* Focus management */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* Dark mode specific */
+  .dark .glass-card {
+    @apply bg-card/40 border-border/30;
+  }
+
+  .dark .glass-card::before {
+    @apply from-white/5;
   }
 }
