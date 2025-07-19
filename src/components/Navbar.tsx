@@ -4,10 +4,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import NavLogo from './navbar/NavLogo';
 import UserMenu from './navbar/UserMenu';
+import MobileMenu from './navbar/MobileMenu';
 import { useStreamlinedNavigation, StreamlinedDesktopNavigation } from './navbar/StreamlinedNavigation';
 import { useSuperAdminNavigation, SuperAdminDesktopNavigation } from './navbar/SuperAdminNavigation';
 import { Button } from '@/components/ui/button';
-import { Star } from 'lucide-react';
+import { Star, Map } from 'lucide-react';
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -41,8 +42,21 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Right side - Premium Link + User Menu */}
+          {/* Right side - Site Map + Premium Link + User Menu */}
           <div className="flex items-center gap-4">
+            {/* Site Map Link */}
+            <div className="hidden md:block animate-fade-in animation-delay-400">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.location.href = '/sitemap'}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Map className="h-4 w-4 mr-1" />
+                Site Map
+              </Button>
+            </div>
+
             {user && !isSuperAdmin && (
               <div className="hidden md:block animate-fade-in animation-delay-500">
                 <Button
@@ -56,8 +70,14 @@ const Navbar = () => {
                 </Button>
               </div>
             )}
+            
             <div className="flex items-center animate-fade-in animation-delay-600">
               <UserMenu />
+            </div>
+            
+            {/* Mobile Menu */}
+            <div className="lg:hidden">
+              <MobileMenu />
             </div>
           </div>
         </div>

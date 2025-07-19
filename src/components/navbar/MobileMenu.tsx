@@ -1,60 +1,47 @@
 
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { Menu, X, User, Shield, Building2, Home, Calendar, FileText, MapPin, Heart } from 'lucide-react';
+import { 
+  Menu, 
+  User, 
+  LogOut, 
+  Shield, 
+  Building2, 
+  TrendingUp,
+  Heart,
+  Calendar,
+  FileText,
+  Users,
+  Activity,
+  Star,
+  Phone
+} from 'lucide-react';
 
-interface MobileMenuProps {
-  items?: Array<{
-    path: string;
-    label: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }>;
-}
-
-const MobileMenu: React.FC<MobileMenuProps> = ({ items = [] }) => {
+const MobileMenu = () => {
   const { user, signOut } = useAuth();
   const { role } = useUserRole();
-  const location = useLocation();
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  // Default navigation items when no items are provided or user is not logged in
-  const defaultNavItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/hospitals', label: 'Hospitals', icon: MapPin },
-    { path: '/insurance', label: 'Insurance', icon: Shield },
-    { path: '/resources', label: 'Resources', icon: FileText },
-    { path: '/emergency', label: 'Emergency', icon: Heart },
-  ];
-
-  // User dashboard items
-  const userDashboardItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: Home },
-    { path: '/appointments', label: 'Appointments', icon: Calendar },
-    { path: '/records', label: 'Health Records', icon: FileText },
-    { path: '/pediatric', label: 'Mother & Child', icon: Heart },
-    { path: '/hospitals', label: 'Hospitals', icon: MapPin },
-    { path: '/insurance', label: 'Insurance', icon: Shield },
-    { path: '/telemedicine', label: 'Telemedicine', icon: User },
-    { path: '/pharmacy', label: 'Pharmacy', icon: Building2 },
-    { path: '/labs', label: 'Labs', icon: FileText },
-    { path: '/emergency', label: 'Emergency', icon: Heart },
-  ];
-
-  // Use provided items, or fall back to appropriate default navigation
-  const navigationItems = items.length > 0 ? items : (user ? userDashboardItems : defaultNavItems);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-    setIsMenuOpen(false);
+    try {
+      await signOut();
+      navigate('/');
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsOpen(false);
+  };
 
   const getRoleColor = (userRole: string | null) => {
     switch (userRole) {
@@ -78,124 +65,165 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items = [] }) => {
     }
   };
 
+  const getRoleLabel = (userRole: string | null) => {
+    switch (userRole) {
+      case 'super_admin':
+        return 'SUPER ADMIN';
+      case 'hospital_admin':
+        return 'HOSPITAL ADMIN';
+      default:
+        return 'PATIENT';
+    }
+  };
+
+  const getNavigationItems = () => {
+    if (!user) return [];
+
+    const baseItems = [
+      { path: '/dashboard', label: 'Dashboard', icon: Activity },
+      { path: '/appointments', label: 'Appointments', icon: Calendar },
+      { path: '/records', label: 'Health Records', icon: FileText },
+      { path: '/hospitals', label: 'Hospitals', icon: Building2 },
+      { path: '/insurance', label: 'Insurance', icon: Shield },
+      { path: '/labs', label: 'Laboratory', icon: Activity },
+      { path: '/pharmacy', label: 'Pharmacy', icon: Heart },
+      { path: '/telemedicine', label: 'Telemedicine', icon: Phone },
+      { path: '/diagnostics', label: 'Diagnostics', icon: Activity },
+      { path: '/pediatric', label: 'Pediatric Care', icon: Heart },
+      { path: '/emergency', label: 'Emergency', icon: Phone },
+      { path: '/resources', label: 'Resources', icon: FileText },
+    ];
+
+    const roleSpecificItems = [];
+
+    if (role === 'super_admin') {
+      roleSpecificItems.push(
+        { path: '/admin', label: 'System Admin', icon: Shield },
+        { path: '/hospital-dashboard', label: 'Hospital Management', icon: Building2 },
+        { path: '/broker-dashboard', label: 'Broker Dashboard', icon: TrendingUp },
+        { path: '/ml-analytics', label: 'ML Analytics', icon: Activity }
+      );
+    }
+
+    if (role === 'hospital_admin') {
+      roleSpecificItems.push(
+        { path: '/hospital-dashboard', label: 'Hospital Dashboard', icon: Building2 }
+      );
+    }
+
+    return [...roleSpecificItems, ...baseItems];
+  };
+
+  const navigationItems = getNavigationItems();
+
   return (
-    <>
-      {/* Menu button - always visible */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="relative p-2 hover:bg-gray-100 transition-colors"
-        aria-label="Toggle navigation menu"
-      >
-        {isMenuOpen ? (
-          <X className="h-6 w-6 text-gray-700" />
-        ) : (
-          <Menu className="h-6 w-6 text-gray-700" />
-        )}
-      </Button>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="lg:hidden">
+          <Menu className="h-6 w-6" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-80">
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 pb-6 border-b">
+            <div className="w-8 h-8 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center">
+              <Heart className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold tracking-tight">MeddyPal</span>
+          </div>
 
-      {/* Navigation Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50">
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm" 
-            onClick={() => setIsMenuOpen(false)}
-          />
-          
-          {/* Menu Panel */}
-          <div className="fixed top-0 right-0 w-80 max-w-[90vw] h-full bg-white shadow-2xl overflow-y-auto">
-            <div className="p-6">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-6 pb-4 border-b">
-                <h2 className="text-lg font-semibold text-gray-900">Navigation</h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="p-1 hover:bg-gray-100 rounded-full"
-                >
-                  <X className="h-5 w-5 text-gray-500" />
-                </Button>
+          {/* User Info */}
+          {user && (
+            <div className="py-4 border-b">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">
+                    {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user.user_metadata?.full_name || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-600 truncate">
+                    {user.email}
+                  </p>
+                </div>
               </div>
-
-              {/* User Info (if logged in) */}
-              {user && (
-                <div className="mb-6 p-4 bg-teal-50 rounded-lg border border-teal-200">
-                  <p className="text-sm text-gray-600 mb-1">Signed in as:</p>
-                  <p className="font-medium text-gray-900 truncate">{user.email}</p>
-                  {role && (
-                    <Badge className={`${getRoleColor(role)} text-xs flex items-center gap-1 mt-2 w-fit`}>
-                      {getRoleIcon(role)}
-                      {role.replace('_', ' ').toUpperCase()}
-                    </Badge>
-                  )}
-                </div>
-              )}
-
-              {/* Navigation Items */}
-              <nav className="space-y-1">
-                {navigationItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
-                      isActive(item.path)
-                        ? 'bg-teal-100 text-teal-700 border border-teal-200 shadow-sm'
-                        : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.icon && (
-                      <item.icon className={`h-5 w-5 ${
-                        isActive(item.path) ? 'text-teal-600' : 'text-gray-500'
-                      }`} />
-                    )}
-                    <span>{item.label}</span>
-                  </Link>
-                ))}
-              </nav>
-
-              {/* User Actions (if logged in) */}
-              {user && (
-                <div className="mt-8 pt-6 border-t space-y-2">
-                  <Link
-                    to="/profile"
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-lg transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="h-5 w-5 text-gray-500" />
-                    Profile Settings
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <X className="h-5 w-5" />
-                    Sign Out
-                  </button>
-                </div>
-              )}
-
-              {/* Auth actions for non-logged in users */}
-              {!user && (
-                <div className="mt-8 pt-6 border-t">
-                  <Link
-                    to="/auth"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors shadow-sm"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="h-4 w-4" />
-                    Sign In / Register
-                  </Link>
-                </div>
+              {role && role !== 'patient' && (
+                <Badge className={`${getRoleColor(role)} text-xs flex items-center gap-1 w-fit`}>
+                  {getRoleIcon(role)}
+                  <span>{getRoleLabel(role)}</span>
+                </Badge>
               )}
             </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex-1 py-4">
+            {user ? (
+              <div className="space-y-2">
+                {/* Premium Link */}
+                {role !== 'super_admin' && (
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start border-yellow-300 text-yellow-700 hover:bg-yellow-50 mb-4"
+                    onClick={() => handleNavigation('/premium')}
+                  >
+                    <Star className="h-4 w-4 mr-2" />
+                    Premium Features
+                  </Button>
+                )}
+
+                {/* Navigation Items */}
+                {navigationItems.map((item) => (
+                  <Button
+                    key={item.path}
+                    variant="ghost"
+                    className="w-full justify-start"
+                    onClick={() => handleNavigation(item.path)}
+                  >
+                    <item.icon className="h-4 w-4 mr-3" />
+                    {item.label}
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <Button
+                  className="w-full"
+                  onClick={() => handleNavigation('/auth')}
+                >
+                  Get Started
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => handleNavigation('/auth')}
+                >
+                  Sign In
+                </Button>
+              </div>
+            )}
           </div>
+
+          {/* Footer */}
+          {user && (
+            <div className="pt-4 border-t">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={handleSignOut}
+              >
+                <LogOut className="h-4 w-4 mr-3" />
+                Sign Out
+              </Button>
+            </div>
+          )}
         </div>
-      )}
-    </>
+      </SheetContent>
+    </Sheet>
   );
 };
 

@@ -30,6 +30,8 @@ import NotFound from './pages/NotFound';
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
 import OnboardingProtectedRoute from './components/OnboardingProtectedRoute';
+import SiteMap from './components/navigation/SiteMap';
+import PageLayout from './components/layout/PageLayout';
 import { Toaster } from '@/components/ui/toaster';
 
 const queryClient = new QueryClient();
@@ -44,6 +46,11 @@ function App() {
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/sitemap" element={
+                <PageLayout title="Site Map" showBreadcrumbs={false}>
+                  <SiteMap />
+                </PageLayout>
+              } />
               
               {/* Protected Routes - Require Authentication */}
               <Route path="/onboarding" element={
