@@ -1,14 +1,14 @@
 
 import React from 'react';
 import ContextualNavbar from '@/components/navbar/ContextualNavbar';
-import MaternalResourceCenter from '@/components/MaternalResourceCenter';
+import ModernResourceCenter from '@/components/resources/ModernResourceCenter';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Resources = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <ContextualNavbar />
-      <MaternalResourceCenter />
+      <ModernResourceCenter />
       
       {/* Floating Emergency Button */}
       <FloatingEmergencyButton />
