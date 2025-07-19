@@ -27,7 +27,9 @@ import {
   RefreshCw,
   TrendingUp,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Stethoscope,
+  DollarSign
 } from 'lucide-react';
 
 import SystemOverview from './SystemOverview';
@@ -42,45 +44,45 @@ import { adminDataService, type SystemStats } from '@/services/AdminDataService'
 const adminMenuItems = [
   { 
     id: 'overview', 
-    title: 'System Overview', 
+    title: 'Platform Overview', 
     icon: BarChart3, 
-    description: 'Platform analytics & performance'
+    description: 'Marketplace metrics & revenue'
   },
   { 
-    id: 'users', 
-    title: 'User Management', 
-    icon: Users, 
-    description: 'User accounts & permissions'
-  },
-  { 
-    id: 'hospitals', 
+    id: 'providers', 
     title: 'Provider Network', 
     icon: Building2, 
-    description: 'Hospitals & healthcare facilities'
+    description: 'Onboard hospitals, labs & pharmacies'
   },
   { 
-    id: 'medications', 
-    title: 'Drug Catalog', 
-    icon: Pill, 
-    description: 'Medication database management'
-  },
-  { 
-    id: 'laboratories', 
-    title: 'Lab Services', 
-    icon: TestTube, 
-    description: 'Diagnostic test management'
+    id: 'telemedicine', 
+    title: 'Our Telemedicine', 
+    icon: Stethoscope, 
+    description: 'Direct telemedicine services'
   },
   { 
     id: 'insurance', 
-    title: 'Insurance Plans', 
+    title: 'Insurance Partners', 
     icon: Shield, 
-    description: 'Coverage plans & policies'
+    description: 'Insurer integrations & commissions'
   },
   { 
     id: 'orders', 
-    title: 'Transaction Hub', 
+    title: 'Platform Orders', 
     icon: Package, 
-    description: 'All platform transactions'
+    description: 'All marketplace transactions'
+  },
+  { 
+    id: 'revenue', 
+    title: 'Revenue Analytics', 
+    icon: DollarSign, 
+    description: 'Commission tracking & insights'
+  },
+  { 
+    id: 'users', 
+    title: 'Platform Users', 
+    icon: Users, 
+    description: 'Customer management'
   }
 ];
 
@@ -98,9 +100,8 @@ const AdminSidebar = ({ activeTab, onTabChange, stats }: AdminSidebarProps) => {
     if (!stats) return 0;
     
     switch (tabId) {
-      case 'hospitals': return stats.totalHospitals;
-      case 'medications': return stats.totalMedications;
-      case 'laboratories': return stats.totalLabTests;
+      case 'providers': return stats.totalHospitals + stats.totalLabs + stats.totalPharmacies;
+      case 'telemedicine': return stats.totalTelemedicineProviders;
       case 'insurance': return stats.totalInsurancePlans;
       default: return 0;
     }
@@ -243,18 +244,28 @@ const ModernAdminDashboard = () => {
     switch (activeTab) {
       case 'overview':
         return <SystemOverview stats={stats} loading={loading} />;
-      case 'users':
-        return <UserManagement />;
-      case 'hospitals':
+      case 'providers':
         return <HospitalManagement onStatsChange={loadStats} />;
-      case 'medications':
-        return <MedicationManagement onStatsChange={loadStats} />;
-      case 'laboratories':
-        return <LabTestManagement onStatsChange={loadStats} />;
+      case 'telemedicine':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">MeddyPal Telemedicine Services</h2>
+            <p className="text-muted-foreground">Manage our direct telemedicine offerings - coming soon!</p>
+          </div>
+        );
       case 'insurance':
         return <InsuranceManagement onStatsChange={loadStats} />;
       case 'orders':
         return <UnifiedOrderManagement />;
+      case 'revenue':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Revenue Analytics</h2>
+            <p className="text-muted-foreground">Commission tracking and financial insights - coming soon!</p>
+          </div>
+        );
+      case 'users':
+        return <UserManagement />;
       default:
         return <SystemOverview stats={stats} loading={loading} />;
     }
