@@ -28,7 +28,9 @@ import {
   Heart,
   Building2,
   AlertCircle,
-  Settings
+  Settings,
+  Briefcase,
+  FileText
 } from 'lucide-react';
 import { useHospitalAuth } from '@/hooks/useHospitalAuth';
 import HospitalDashboard from './HospitalDashboard';
@@ -38,6 +40,8 @@ import PatientRecords from './PatientRecords';
 import ConsultationScheduler from './ConsultationScheduler';
 import HospitalRecentActivity from './HospitalRecentActivity';
 import HospitalSettings from './HospitalSettings';
+import HospitalServices from './HospitalServices';
+import HospitalReports from './HospitalReports';
 
 const hospitalMenuItems = [
   { 
@@ -47,6 +51,12 @@ const hospitalMenuItems = [
     description: 'Hospital performance & metrics'
   },
   { 
+    id: 'services', 
+    title: 'Hospital Services', 
+    icon: Briefcase, 
+    description: 'Manage medical specialties & services'
+  },
+  { 
     id: 'doctors', 
     title: 'Medical Staff', 
     icon: UserPlus, 
@@ -54,27 +64,33 @@ const hospitalMenuItems = [
   },
   { 
     id: 'availability', 
-    title: 'Availability', 
+    title: 'Staff Schedules', 
     icon: Calendar, 
-    description: 'Staff schedules & time slots'
+    description: 'Doctor availability & time slots'
   },
   { 
     id: 'consultations', 
-    title: 'Consultations', 
+    title: 'Appointments', 
     icon: Stethoscope, 
-    description: 'Patient appointments & sessions'
+    description: 'Patient consultations & bookings'
   },
   { 
     id: 'patients', 
     title: 'Patient Records', 
     icon: ClipboardList, 
-    description: 'Medical records & history'
+    description: 'Medical records & patient history'
+  },
+  { 
+    id: 'reports', 
+    title: 'Reports & Analytics', 
+    icon: FileText, 
+    description: 'Performance reports & insights'
   },
   { 
     id: 'settings', 
     title: 'Hospital Settings', 
     icon: Settings, 
-    description: 'Facility configuration'
+    description: 'Facility info & configuration'
   }
 ];
 
@@ -218,6 +234,8 @@ const ModernHospitalDashboard = () => {
     switch (activeTab) {
       case 'overview':
         return <HospitalDashboard />;
+      case 'services':
+        return <HospitalServices hospitalId={hospitalId} />;
       case 'doctors':
         return <DoctorManagement hospitalId={hospitalId} onStatsUpdate={handleStatsUpdate} />;
       case 'availability':
@@ -226,6 +244,8 @@ const ModernHospitalDashboard = () => {
         return <ConsultationScheduler hospitalId={hospitalId} onStatsUpdate={handleStatsUpdate} />;
       case 'patients':
         return <PatientRecords hospitalId={hospitalId} onStatsUpdate={handleStatsUpdate} />;
+      case 'reports':
+        return <HospitalReports hospitalId={hospitalId} />;
       case 'settings':
         return <HospitalSettings hospitalId={hospitalId} />;
       default:
