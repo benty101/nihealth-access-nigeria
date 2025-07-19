@@ -20,6 +20,7 @@ import FamilyHealthHub from '@/components/dashboard/FamilyHealthHub';
 import AIHealthInsights from '@/components/dashboard/AIHealthInsights';
 import { HealthTimeline } from '@/components/health-timeline/HealthTimeline';
 import { PersonalizationService } from '@/services/PersonalizationService';
+import MedicalChat from '@/components/patient/MedicalChat';
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
@@ -77,6 +78,7 @@ const Dashboard = () => {
           
           {/* Right Column - Sidebar */}
           <div className="xl:col-span-4 space-y-6">
+            <MedicalChat />
             <AIHealthInsights />
             <FamilyHealthHub />
             <InsuranceStatusCard />
