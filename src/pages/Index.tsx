@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Heart, Shield, Clock, Users, ChevronDown, Play, Star, Check } from 'lucide-react';
+import { ArrowRight, Heart, Shield, Clock, Users, ChevronDown, Play, Star, Check, Baby, Stethoscope, Phone, Calendar } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -43,9 +42,9 @@ const Index = () => {
             
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="nav-link">Features</a>
-              <a href="#how-it-works" className="nav-link">How it Works</a>
-              <a href="#testimonials" className="nav-link">Stories</a>
-              <a href="#pricing" className="nav-link">Pricing</a>
+              <a href="#services" className="nav-link">Services</a>
+              <a href="#about" className="nav-link">About</a>
+              <a href="#contact" className="nav-link">Contact</a>
             </div>
 
             <div className="flex items-center gap-3">
@@ -76,26 +75,26 @@ const Index = () => {
           <div className="text-center max-w-4xl mx-auto">
             {/* Hero Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm font-medium mb-8 animate-fade-in">
-              <Star className="w-4 h-4" />
-              <span>Your Complete Health Timeline - Finally</span>
+              <span className="text-base">🇳🇬</span>
+              <span>Trusted Maternal Health Companion in Nigeria</span>
             </div>
 
             {/* Hero Title */}
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-balance mb-6 animate-fade-in delay-100">
-              Remember Every
-              <span className="gradient-text block">Health Moment</span>
+              Empowering
+              <span className="gradient-text block">Nigerian Mothers</span>
             </h1>
 
             {/* Hero Subtitle */}
             <p className="text-xl text-muted-foreground text-balance mb-8 max-w-2xl mx-auto animate-fade-in delay-200">
-              Like a social timeline for your health. Never forget a symptom, appointment, or treatment again. 
-              AI-powered insights connect the dots others miss.
+              Your comprehensive maternal and child health platform. From pregnancy to pediatric care, 
+              we support Nigerian families with quality healthcare services and expert guidance.
             </p>
 
             {/* Hero CTA */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-in delay-300">
               <Button size="lg" onClick={handleGetStarted} className="apple-button text-lg px-8 py-4">
-                Start Your Health Timeline
+                Start Your Journey
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <Button size="lg" variant="ghost" className="press-effect text-lg px-8 py-4 group">
@@ -114,7 +113,7 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
-                <span>Trusted by 10,000+ users</span>
+                <span>Trusted by 50,000+ Nigerian mothers</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="flex text-yellow-400">
@@ -122,7 +121,7 @@ const Index = () => {
                     <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <span>4.9/5 rating</span>
+                <span>4.8/5 rating</span>
               </div>
             </div>
           </div>
@@ -139,32 +138,50 @@ const Index = () => {
         <div className="content-width section-padding">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold tracking-tight mb-4">
-              Your Health, <span className="gradient-text">Reimagined</span>
+              Comprehensive <span className="gradient-text">Maternal Care</span>
             </h2>
             <p className="text-xl text-muted-foreground text-balance max-w-2xl mx-auto">
-              Every interaction becomes part of your health story. AI connects patterns you never noticed.
+              Everything you need for a healthy pregnancy and beyond, designed specifically for Nigerian mothers.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: Clock,
-                title: "Health Timeline",
-                description: "Every appointment, symptom, and treatment recorded chronologically. Never lose track of your health journey.",
+                icon: Baby,
+                title: "Pregnancy Tracking",
+                description: "Track your pregnancy journey with personalized insights, appointments, and milestone reminders.",
                 color: "text-health-info"
               },
               {
-                icon: Shield,
-                title: "AI Pattern Recognition",
-                description: "Advanced AI spots connections between your past and present health events, providing insights doctors miss.",
+                icon: Stethoscope,
+                title: "Expert Consultations",
+                description: "Connect with qualified Nigerian healthcare professionals for virtual and in-person consultations.",
                 color: "text-health-success"
               },
               {
-                icon: Users,
-                title: "Genomics Integration",
-                description: "Connect your DNA data with your health timeline for truly personalized healthcare insights.",
+                icon: Shield,
+                title: "Insurance Support",
+                description: "Navigate Nigerian health insurance options and find coverage that works for your family.",
                 color: "text-health-warning"
+              },
+              {
+                icon: Heart,
+                title: "Child Health Records",
+                description: "Maintain digital health records for your children with vaccination tracking and growth monitoring.",
+                color: "text-primary"
+              },
+              {
+                icon: Calendar,
+                title: "Appointment Booking",
+                description: "Book appointments with top hospitals and clinics across Nigeria with ease.",
+                color: "text-health-info"
+              },
+              {
+                icon: Phone,
+                title: "24/7 Support",
+                description: "Access emergency support and health advice whenever you need it, day or night.",
+                color: "text-health-success"
               }
             ].map((feature, i) => (
               <div 
@@ -182,42 +199,89 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="section-margin">
+      {/* Services Section */}
+      <section id="services" className="section-margin">
         <div className="content-width section-padding">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold tracking-tight mb-4">
-              Three Steps to <span className="gradient-text">Better Health</span>
+              Our <span className="gradient-text">Services</span>
             </h2>
             <p className="text-xl text-muted-foreground text-balance max-w-2xl mx-auto">
-              Getting started is as simple as posting on social media.
+              Comprehensive healthcare services tailored for Nigerian families.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {[
-              {
-                step: "01",
-                title: "Record Everything",
-                description: "Add symptoms, appointments, medications - everything gets timestamped in your personal health timeline."
-              },
-              {
-                step: "02",
-                title: "AI Analyzes Patterns",
-                description: "Our advanced AI reviews your timeline, connecting dots between past and present health events."
-              },
-              {
-                step: "03",
-                title: "Get Insights",
-                description: "Receive personalized health insights and recommendations based on your unique health journey."
-              }
-            ].map((step, i) => (
-              <div key={i} className={`text-center animate-fade-in-up delay-${i * 200 + 200}`}>
-                <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-6">
-                  {step.step}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              {[
+                {
+                  title: "Maternal Health Support",
+                  description: "Comprehensive pregnancy care, prenatal support, and postnatal guidance from qualified professionals."
+                },
+                {
+                  title: "Pediatric Care",
+                  description: "Complete child health services including vaccinations, growth monitoring, and development tracking."
+                },
+                {
+                  title: "Telemedicine",
+                  description: "Virtual consultations with certified doctors, making quality healthcare accessible anywhere in Nigeria."
+                },
+                {
+                  title: "Health Insurance",
+                  description: "Expert guidance on Nigerian health insurance options to ensure your family is protected."
+                }
+              ].map((service, i) => (
+                <div key={i} className={`flex gap-4 animate-fade-in-left delay-${i * 200 + 200}`}>
+                  <div className="w-6 h-6 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                    <p className="text-muted-foreground text-balance">{service.description}</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                <p className="text-muted-foreground text-balance">{step.description}</p>
+              ))}
+            </div>
+            
+            <div className="relative animate-fade-in-right delay-400">
+              <div className="glass-card p-8 text-center">
+                <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Heart className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Made for Nigeria</h3>
+                <p className="text-muted-foreground mb-6">
+                  Built specifically for Nigerian healthcare needs, with local partnerships and culturally sensitive care.
+                </p>
+                <div className="flex items-center justify-center gap-2 text-sm text-primary font-medium">
+                  <span className="text-base">🇳🇬</span>
+                  <span>Proudly Nigerian</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="section-margin bg-gradient-subtle">
+        <div className="content-width section-padding text-center">
+          <h2 className="text-4xl font-bold tracking-tight mb-6">
+            About <span className="gradient-text">MeddyPal</span>
+          </h2>
+          <p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto mb-8">
+            MeddyPal is Nigeria's leading maternal and child health platform, connecting families with quality 
+            healthcare services. We're committed to reducing maternal mortality and improving health outcomes 
+            for Nigerian mothers and children.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            {[
+              { number: "50,000+", label: "Mothers Served" },
+              { number: "500+", label: "Healthcare Partners" },
+              { number: "36", label: "States Covered" }
+            ].map((stat, i) => (
+              <div key={i} className="glass-card p-6">
+                <div className="text-3xl font-bold text-primary mb-2">{stat.number}</div>
+                <div className="text-muted-foreground">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -225,20 +289,20 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="section-margin bg-gradient-primary text-white">
+      <section id="contact" className="section-margin bg-gradient-primary text-white">
         <div className="content-width section-padding text-center">
           <h2 className="text-4xl font-bold tracking-tight mb-4">
-            Ready to Transform Your Health?
+            Ready to Start Your Journey?
           </h2>
           <p className="text-xl opacity-90 text-balance max-w-2xl mx-auto mb-8">
-            Join thousands who've already started their health journey with MeddyPal.
+            Join thousands of Nigerian mothers who trust MeddyPal for their family's health needs.
           </p>
           <Button 
             size="lg" 
             onClick={handleGetStarted}
             className="bg-white text-primary hover:bg-gray-50 text-lg px-8 py-4 hover-glow"
           >
-            Get Started Free
+            Get Started Today
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
@@ -254,9 +318,13 @@ const Index = () => {
               </div>
               <span className="text-xl font-bold tracking-tight">MeddyPal</span>
             </div>
-            <p className="text-muted-foreground">
-              Your health timeline, powered by AI. Built in Nigeria, for the world.
+            <p className="text-muted-foreground mb-4">
+              Empowering Nigerian mothers with quality healthcare access and support.
             </p>
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <span className="text-base">🇳🇬</span>
+              <span>Made with ❤️ in Nigeria • MeddyPal © 2025</span>
+            </div>
           </div>
         </div>
       </footer>

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import Index from './pages/Index';
+import Auth from './pages/Auth';
 import PatientPortal from './components/patient/PatientPortal';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,6 +21,7 @@ function App() {
           <div className="min-h-screen bg-gray-50">
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<PatientPortal />} />
               <Route
                 path="/admin"
