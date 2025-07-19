@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const HUGGING_FACE_API_URL = "https://api-inference.huggingface.co/models/google/medgemma-4b-it"
+const HUGGING_FACE_API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large"
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -174,7 +174,7 @@ Please ensure your response is evidence-based and includes appropriate medical d
       JSON.stringify({ 
         response: generatedText + disclaimer,
         type: type || 'general',
-        model: 'medgemma-4b-it'
+        model: 'DialoGPT-large'
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
