@@ -29,11 +29,22 @@ export const useAuthRedirect = () => {
     }
   }, []);
 
-  // Redirect if already authenticated
+  // Redirect authenticated users based on onboarding status
   useEffect(() => {
     if (user && !loading) {
       secureLogger.auth('authenticated_user_secure_redirect', user.id);
-      navigate('/dashboard');
+      
+      // Check if user has completed onboarding
+      const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+      const userOnboardingData = localStorage.getItem('userOnboardingData');
+      
+      if (!onboardingCompleted || !userOnboardingData) {
+        console.log('useAuthRedirect: User needs onboarding, redirecting to /onboarding');
+        navigate('/onboarding');
+      } else {
+        console.log('useAuthRedirect: User authenticated and onboarded, redirecting to /dashboard');
+        navigate('/dashboard');
+      }
     }
   }, [user, loading, navigate]);
 

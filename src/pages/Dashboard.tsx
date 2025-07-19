@@ -21,6 +21,7 @@ import AIHealthInsights from '@/components/dashboard/AIHealthInsights';
 import { HealthTimeline } from '@/components/health-timeline/HealthTimeline';
 import { PersonalizationService } from '@/services/PersonalizationService';
 import MedicalChat from '@/components/patient/MedicalChat';
+import OnboardingPrompt from '@/components/dashboard/OnboardingPrompt';
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
@@ -37,6 +38,18 @@ const Dashboard = () => {
       appointmentsRef.current.loadAppointments();
     }
   };
+
+  // If no onboarding data, show the prompt prominently
+  if (!onboardingData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <ContextualNavbar />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <OnboardingPrompt />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
