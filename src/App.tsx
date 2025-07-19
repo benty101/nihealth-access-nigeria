@@ -25,6 +25,11 @@ import AdminDashboard from './pages/AdminDashboard';
 import HospitalDashboard from './pages/HospitalDashboard';
 import BrokerDashboard from './pages/BrokerDashboard';
 import MLAnalyticsPage from './pages/MLAnalytics';
+import Profile from './pages/Profile';
+import BookAppointment from './pages/BookAppointment';
+import BookLabTest from './pages/BookLabTest';
+import Consultations from './pages/Consultations';
+import MyOrders from './pages/MyOrders';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -136,6 +141,37 @@ function App() {
               <Route path="/premium" element={
                 <OnboardingProtectedRoute>
                   <Premium />
+                </OnboardingProtectedRoute>
+              } />
+              
+              {/* User Profile and Action Routes */}
+              <Route path="/profile" element={
+                <OnboardingProtectedRoute>
+                  <Profile />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/book-appointment" element={
+                <OnboardingProtectedRoute>
+                  <BookAppointment />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/book-lab-test" element={
+                <OnboardingProtectedRoute>
+                  <BookLabTest />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/consultations" element={
+                <OnboardingProtectedRoute>
+                  <Consultations />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/my-orders" element={
+                <OnboardingProtectedRoute>
+                  <MyOrders />
                 </OnboardingProtectedRoute>
               } />
               

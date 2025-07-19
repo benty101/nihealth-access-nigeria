@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Stethoscope, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const UpcomingAppointments = () => {
+  const navigate = useNavigate();
   const upcomingAppointments = [
     {
       doctor: 'Dr. Amina Hassan',
@@ -31,7 +33,7 @@ const UpcomingAppointments = () => {
             <Calendar className="h-5 w-5 mr-2 text-blue-600" />
             Upcoming Appointments
           </div>
-          <Button variant="outline" size="sm" className="w-full sm:w-auto">View All</Button>
+          <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => navigate('/consultations')}>View All</Button>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -54,7 +56,7 @@ const UpcomingAppointments = () => {
                   </div>
                 </div>
               </div>
-              <Button size="sm" variant="outline" className="w-full sm:w-auto">
+              <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => navigate('/consultations')}>
                 Details
               </Button>
             </div>
