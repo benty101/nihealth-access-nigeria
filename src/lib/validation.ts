@@ -98,8 +98,8 @@ export const profileSchema = z.object({
   emergency_contact_name: nameSchema,
   emergency_contact_phone: nigerianPhoneSchema,
   is_pregnant: z.boolean(),
-  due_date: z.string().optional().refine(date => {
-    if (!date || date === '') return true;
+  due_date: z.string().nullable().optional().refine(date => {
+    if (!date || date === '' || date === null) return true;
     const dueDate = new Date(date);
     const today = new Date();
     const tenMonthsFromNow = new Date();
@@ -110,8 +110,8 @@ export const profileSchema = z.object({
   genotype: z.string().optional(),
   allergies: z.array(z.string()).optional(),
   chronic_conditions: z.array(z.string()).optional(),
-  insurance_provider: z.string().max(100).optional(),
-  insurance_number: z.string().max(50).optional(),
+  insurance_provider: z.string().max(100).nullable().optional(),
+  insurance_number: z.string().max(50).nullable().optional(),
   preferred_language: z.enum(['english', 'hausa', 'yoruba', 'igbo']).default('english')
 });
 
