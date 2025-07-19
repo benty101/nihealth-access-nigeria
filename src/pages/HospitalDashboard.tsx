@@ -1,15 +1,13 @@
 
 import React from 'react';
 import ContextualNavbar from '@/components/navbar/ContextualNavbar';
-import HospitalDashboard from '@/components/hospital/HospitalDashboard';
+import ModernHospitalDashboard from '@/components/hospital/ModernHospitalDashboard';
 
 const HospitalDashboardPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <ContextualNavbar />
-      <div className="container mx-auto px-4 py-8">
-        <HospitalDashboard />
-      </div>
+      <ModernHospitalDashboard />
     </div>
   );
 };
