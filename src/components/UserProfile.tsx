@@ -115,6 +115,18 @@ const UserProfile = () => {
           errors[err.path[0]] = err.message;
         }
       });
+      
+      // Show validation errors in toast for debugging
+      if (Object.keys(errors).length > 0) {
+        console.log('Validation errors:', errors);
+        const errorMessages = Object.entries(errors).map(([field, message]) => `${field}: ${message}`);
+        toast({
+          title: "Validation Errors",
+          description: errorMessages.slice(0, 3).join(', ') + (errorMessages.length > 3 ? '...' : ''),
+          variant: "destructive",
+        });
+      }
+      
       setValidationErrors(errors);
       return false;
     }
