@@ -153,7 +153,17 @@ export class ConsentService {
     return data?.consent_given || false;
   }
 
-  static async hasRequiredConsents(userId: string): Promise<boolean> {
+  static async hasRequiredConsents(userId: string, requiredConsentTypes?: string[]): Promise<boolean> {
+    // If specific consent types are provided, check those
+    if (requiredConsentTypes && requiredConsentTypes.length > 0) {
+      for (const consentType of requiredConsentTypes) {
+        const hasConsent = await this.getConsentStatus(userId, consentType);
+        if (!hasConsent) return false;
+      }
+      return true;
+    }
+    
+    // Otherwise check globally required consents
     const requiredConsents = this.getConsentTypes().filter(c => c.required);
     
     for (const consent of requiredConsents) {

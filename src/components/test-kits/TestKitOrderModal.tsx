@@ -60,7 +60,7 @@ export const TestKitOrderModal: React.FC<TestKitOrderModalProps> = ({
 
     // Check if genomic test requires consent
     if (requiresConsent) {
-      const hasRequiredConsents = await ConsentService.hasRequiredConsents(user.id);
+      const hasRequiredConsents = await ConsentService.hasRequiredConsents(user.id, requiredConsents);
       if (!hasRequiredConsents) {
         setShowConsentModal(true);
         return;
