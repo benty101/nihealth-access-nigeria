@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Video, Clock, Shield, Star, Calendar, UserPlus, Smartphone, Monitor, MessageSquare, Dna, TestTube, Microscope } from 'lucide-react';
-import EnhancedTelemedicineConsultation from '@/components/telemedicine/EnhancedTelemedicineConsultation';
+import AvailableDoctors from '@/components/telemedicine/AvailableDoctors';
 
 const Telemedicine = () => {
   const { user } = useAuth();
@@ -169,10 +169,13 @@ const Telemedicine = () => {
             </div>
           </div>
 
-          {/* Enhanced Consultation Platform */}
+          {/* Real Available Doctors from Database */}
           {user && (
             <div className="mb-12">
-              <EnhancedTelemedicineConsultation />
+              <AvailableDoctors onBookConsultation={(doctor, type) => {
+                console.log('Booking consultation:', doctor.name, type);
+                // Handle booking logic here
+              }} />
             </div>
           )}
 
