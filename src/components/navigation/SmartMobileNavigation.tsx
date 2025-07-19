@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,12 +25,6 @@ import {
   Clock,
   Plus
 } from 'lucide-react';
-
-interface GestureNavigation {
-  isGestureActive: boolean;
-  direction: 'left' | 'right' | 'up' | 'down' | null;
-  confidence: number;
-}
 
 interface SmartCategory {
   id: string;
@@ -218,31 +211,10 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const [gestureNav, setGestureNav] = useState<GestureNavigation>({
-    isGestureActive: false,
-    direction: null,
-    confidence: 0
-  });
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   
   const { categories } = useSmartMobileNavigation();
 
-  // Gesture-based navigation
-  const handlePan = (event: any, info: PanInfo) => {
-    const { offset, velocity } = info;
-    const threshold = 50;
-    const velocityThreshold = 500;
-
-    if (Math.abs(offset.x) > threshold || Math.abs(velocity.x) > velocityThreshold) {
-      if (offset.x > 0) {
-        // Swipe right - could trigger back navigation
-        setGestureNav({ isGestureActive: true, direction: 'right', confidence: Math.min(Math.abs(offset.x) / 100, 1) });
-      } else {
-        // Swipe left - could trigger forward navigation
-        setGestureNav({ isGestureActive: true, direction: 'left', confidence: Math.min(Math.abs(offset.x) / 100, 1) });
-      }
-    }
-  };
 
   const handleSignOut = async () => {
     try {
@@ -269,11 +241,7 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
   const getUrgencyIndicator = (urgency: 'low' | 'medium' | 'high') => {
     switch (urgency) {
       case 'high':
-        return <motion.div 
-          className="w-2 h-2 bg-red-500 rounded-full" 
-          animate={{ scale: [1, 1.3, 1] }}
-          transition={{ duration: 1, repeat: Infinity }}
-        />;
+        return <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />;
       case 'medium':
         return <div className="w-2 h-2 bg-yellow-500 rounded-full" />;
       default:
@@ -292,19 +260,9 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
         side="right" 
         className="w-full sm:w-96 p-0 bg-gradient-to-br from-background via-background to-muted/20"
       >
-        <motion.div 
-          className="flex flex-col h-full"
-          onPan={handlePan}
-          onPanEnd={() => setGestureNav({ isGestureActive: false, direction: null, confidence: 0 })}
-        >
-          {/* Header with psychological hierarchy */}
+        <div className="flex flex-col h-full">
           <div className="relative p-6 bg-gradient-to-r from-primary/5 to-primary/10 border-b">
-            <motion.div 
-              className="flex items-center justify-between"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
                   <Heart className="w-5 h-5 text-primary-foreground" />
@@ -317,16 +275,10 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
               <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
                 <X className="h-5 w-5" />
               </Button>
-            </motion.div>
+            </div>
 
-            {/* User context - psychological anchoring */}
             {user && (
-              <motion.div 
-                className="mt-4 p-3 bg-card rounded-lg border"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
+              <div className="mt-4 p-3 bg-card rounded-lg border">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
                     <span className="text-primary-foreground font-semibold text-sm">
@@ -347,21 +299,16 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
                     </Badge>
                   )}
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
 
-          {/* Smart categorized navigation */}
           <div className="flex-1 overflow-y-auto p-4">
-            <AnimatePresence>
-              {categories.map((category, index) => (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="mb-4"
-                >
+            {categories.map((category, index) => (
+              <div
+                key={category.id}
+                className="mb-4"
+              >
                   <Button
                     variant="ghost"
                     className="w-full justify-between p-4 h-auto"
@@ -380,45 +327,32 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
                         </p>
                       </div>
                     </div>
-                    <motion.div
-                      animate={{ rotate: expandedCategory === category.id ? 90 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
+                    <div className="transition-transform duration-200">
                       <ArrowRight className="h-4 w-4" />
-                    </motion.div>
+                    </div>
                   </Button>
 
-                  <AnimatePresence>
-                    {expandedCategory === category.id && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="ml-4 mt-2 space-y-2"
-                      >
-                        {category.items.map((item) => (
-                          <motion.button
-                            key={item.path}
-                            className="w-full text-left p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-                            onClick={() => handleNavigation(item.path)}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium text-sm">{item.label}</p>
-                                <p className="text-xs text-muted-foreground">{item.description}</p>
-                              </div>
-                              {getUrgencyIndicator(item.urgency)}
+                  {expandedCategory === category.id && (
+                    <div className="ml-4 mt-2 space-y-2 overflow-hidden transition-all duration-300">
+                      {category.items.map((item) => (
+                        <button
+                          key={item.path}
+                          className="w-full text-left p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors transform hover:scale-105"
+                          onClick={() => handleNavigation(item.path)}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-sm">{item.label}</p>
+                              <p className="text-xs text-muted-foreground">{item.description}</p>
                             </div>
-                          </motion.button>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                            {getUrgencyIndicator(item.urgency)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+              </div>
+            ))}
           </div>
 
           {/* Quick actions footer */}
@@ -444,7 +378,7 @@ export const SmartMobileNavigation: React.FC<SmartMobileNavigationProps> = ({ cl
               </Button>
             </div>
           )}
-        </motion.div>
+        </div>
       </SheetContent>
     </Sheet>
   );

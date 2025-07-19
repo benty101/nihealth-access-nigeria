@@ -77,18 +77,7 @@ export class NotificationService {
       },
     };
 
-    // Simulate a new notification after 5 seconds
-    setTimeout(() => {
-      callback({
-        id: Math.random().toString(),
-        user_id: userId,
-        title: '🎉 Health Milestone Achieved!',
-        message: 'Congratulations on completing your first week of health tracking!',
-        type: 'milestone',
-        is_read: false,
-        created_at: new Date().toISOString(),
-      });
-    }, 5000);
+    // Removed auto-milestone notification that was causing popup spam
 
     return channel;
   }

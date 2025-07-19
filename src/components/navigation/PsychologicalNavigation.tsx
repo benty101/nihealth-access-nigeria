@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useAuth } from '@/contexts/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, 
   Calendar, 
@@ -172,117 +171,75 @@ export const PsychologicalNavigation: React.FC<PsychologicalNavigationProps> = (
   const { navigationItems, contextualActions, context } = usePsychologicalNavigation();
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [focusedCategory, setFocusedCategory] = useState<string | null>(null);
-
-  // Principle: Visual hierarchy based on urgency and context
-  const getItemScale = (item: NavigationItem, isHovered: boolean) => {
-    const baseScale = item.visualWeight / 10;
-    const hoverBoost = isHovered ? 0.1 : 0;
-    const urgencyBoost = item.urgency === 'high' ? 0.05 : 0;
-    return Math.min(1.0 + baseScale * 0.2 + hoverBoost + urgencyBoost, 1.3);
-  };
-
-  const getItemOpacity = (item: NavigationItem) => {
-    if (!focusedCategory) return 1;
-    return item.category === focusedCategory ? 1 : 0.4;
-  };
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className={`flex items-center ${className}`}>
-      {/* Primary Navigation - Psychological grouping */}
+      {/* Primary Navigation - Clean and focused */}
       <div className="flex items-center space-x-2">
-        <AnimatePresence>
-          {navigationItems.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ 
-                opacity: getItemOpacity(item), 
-                scale: getItemScale(item, hoveredItem === item.id)
-              }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              onHoverStart={() => setHoveredItem(item.id)}
-              onHoverEnd={() => setHoveredItem(null)}
-              onFocus={() => setFocusedCategory(item.category)}
-              onBlur={() => setFocusedCategory(null)}
+        {navigationItems.map((item) => (
+          <div
+            key={item.id}
+            onMouseEnter={() => setHoveredItem(item.id)}
+            onMouseLeave={() => setHoveredItem(null)}
+            className="relative"
+          >
+            <Link
+              to={item.path}
+              className={`group relative flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                isActive(item.path)
+                  ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary shadow-lg shadow-primary/10'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`}
             >
-              <Link
-                to={item.path}
-                className={`group relative flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-                  isActive(item.path)
-                    ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary shadow-lg shadow-primary/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                {/* Urgency indicator */}
-                {item.urgency === 'high' && (
-                  <motion.div
-                    className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                )}
+              {/* Urgency indicator */}
+              {item.urgency === 'high' && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+              )}
 
-                <item.icon className={`h-4 w-4 transition-transform duration-200 ${
-                  hoveredItem === item.id ? 'scale-110' : ''
-                }`} />
-                
-                <span className="text-sm">{item.label}</span>
+              <item.icon className={`h-4 w-4 transition-transform duration-200 ${
+                hoveredItem === item.id ? 'scale-110' : ''
+              }`} />
+              
+              <span className="text-sm">{item.label}</span>
 
-                {/* Contextual hints on hover */}
-                <AnimatePresence>
-                  {hoveredItem === item.id && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                      className="absolute top-full left-0 mt-2 p-3 bg-card border shadow-lg rounded-lg z-50 min-w-64"
-                    >
-                      <p className="text-xs font-medium text-foreground mb-1">{item.description}</p>
-                      <div className="space-y-1">
-                        {item.contextualHints.map((hint, index) => (
-                          <div key={index} className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <ArrowRight className="h-3 w-3" />
-                            {hint}
-                          </div>
-                        ))}
+              {/* Contextual hints on hover */}
+              {hoveredItem === item.id && (
+                <div className="absolute top-full left-0 mt-2 p-3 bg-card border shadow-lg rounded-lg z-50 min-w-64 animate-fade-in">
+                  <p className="text-xs font-medium text-foreground mb-1">{item.description}</p>
+                  <div className="space-y-1">
+                    {item.contextualHints.map((hint, index) => (
+                      <div key={index} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <ArrowRight className="h-3 w-3" />
+                        {hint}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </Link>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Link>
+          </div>
+        ))}
       </div>
 
-      {/* Contextual Actions - Adaptive to user state */}
+      {/* Contextual Actions */}
       <div className="flex items-center gap-2 ml-6">
-        <AnimatePresence>
-          {contextualActions.map((action) => (
-            <motion.div
-              key={action.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+        {contextualActions.map((action) => (
+          <div key={action.id}>
+            <Button
+              size="sm"
+              variant={action.urgency === 'high' ? 'default' : 'outline'}
+              className={`relative ${action.urgency === 'high' ? 'animate-pulse' : ''}`}
+              onClick={action.action}
             >
-              <Button
-                size="sm"
-                variant={action.urgency === 'high' ? 'default' : 'outline'}
-                className={`relative ${action.urgency === 'high' ? 'animate-pulse' : ''}`}
-                onClick={action.action}
-              >
-                {action.urgency === 'high' && <Sparkles className="h-3 w-3 mr-1" />}
-                {action.label}
-              </Button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              {action.urgency === 'high' && <Sparkles className="h-3 w-3 mr-1" />}
+              {action.label}
+            </Button>
+          </div>
+        ))}
 
-        {/* Quick actions - Anticipatory design */}
+        {/* Quick actions */}
         <div className="flex items-center gap-1 ml-2">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
             <Search className="h-4 w-4" />
