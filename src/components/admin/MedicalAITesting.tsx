@@ -45,19 +45,41 @@ const MedicalAITesting = () => {
         }
       });
 
+      console.log('Supabase function raw response:', { data, error });
+
       if (error) {
         console.error('Supabase function error:', error);
+        
+        // Handle specific error cases
+        if (error.message?.includes('Failed to connect') || error.message?.includes('network')) {
+          throw new Error('Network connection error. Please check your internet connection.');
+        }
+        
+        if (error.message?.includes('non-2xx status code')) {
+          throw new Error('Service temporarily unavailable. The AI model might be loading, please try again in 20-30 seconds.');
+        }
+        
         throw error;
       }
 
+      if (!data) {
+        throw new Error('No response received from the AI service');
+      }
+
       console.log('Medical AI response:', data);
-      setResponse(data.response || 'No response received');
-      toast.success('Medical AI response generated successfully');
+      setResponse(data.response || data.error || 'No response received');
+      
+      if (data.error) {
+        toast.error(`AI Service Error: ${data.error}`);
+      } else {
+        toast.success('Medical AI response generated successfully');
+      }
       
     } catch (error) {
       console.error('Error testing medical AI:', error);
-      toast.error(`Error: ${error.message}`);
-      setResponse(`Error: ${error.message}`);
+      const errorMessage = error.message || 'Unknown error occurred';
+      toast.error(`Error: ${errorMessage}`);
+      setResponse(`Error: ${errorMessage}\n\nTroubleshooting tips:\n- Check that your Hugging Face API token is configured\n- The model may take 15-30 seconds to load on first use\n- Check the Edge Function logs for more details`);
     } finally {
       setLoading(false);
     }

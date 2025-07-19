@@ -16,11 +16,23 @@ serve(async (req) => {
 
   try {
     const HUGGING_FACE_TOKEN = Deno.env.get('HUGGING_FACE_ACCESS_TOKEN')
+    console.log('Checking Hugging Face token availability:', HUGGING_FACE_TOKEN ? 'Token found' : 'Token missing')
+    
     if (!HUGGING_FACE_TOKEN) {
-      throw new Error('HUGGING_FACE_ACCESS_TOKEN is not configured')
+      console.error('HUGGING_FACE_ACCESS_TOKEN environment variable is not set')
+      return new Response(
+        JSON.stringify({ error: "Hugging Face API token is not configured. Please check your environment variables." }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500 
+        }
+      )
     }
 
-    const { prompt, context, type } = await req.json()
+    const body = await req.json()
+    console.log('Request body received:', JSON.stringify(body, null, 2))
+    
+    const { prompt, context, type } = body
     
     if (!prompt) {
       return new Response(
