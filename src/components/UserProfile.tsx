@@ -105,40 +105,16 @@ const UserProfile = () => {
 
   const validateForm = (data: any): boolean => {
     try {
-      // Debug: Log the data being validated
-      console.log('=== PROFILE VALIDATION DEBUG ===');
-      console.log('Raw data being validated:', JSON.stringify(data, null, 2));
-      
-      // Check each required field individually
-      const requiredFields = ['full_name', 'phone_number', 'date_of_birth', 'gender', 'state_of_residence', 'lga', 'address', 'emergency_contact_name', 'emergency_contact_phone'];
-      requiredFields.forEach(field => {
-        const value = data[field];
-        console.log(`${field}:`, value, typeof value, value ? `"${value}"` : 'EMPTY/NULL');
-      });
-      
       profileSchema.parse(data);
       setValidationErrors({});
-      console.log('✅ Validation passed!');
       return true;
     } catch (error: any) {
       const errors: Record<string, string> = {};
-      console.log('❌ Validation failed:', error);
-      
-      if (error.errors) {
-        console.log('Individual field errors:');
-        error.errors.forEach((err: any, index: number) => {
-          console.log(`Error ${index + 1}:`, {
-            path: err.path,
-            message: err.message,
-            code: err.code,
-            received: err.received
-          });
-          if (err.path && err.path.length > 0) {
-            errors[err.path[0]] = err.message;
-          }
-        });
-      }
-      
+      error.errors?.forEach((err: any) => {
+        if (err.path?.[0]) {
+          errors[err.path[0]] = err.message;
+        }
+      });
       setValidationErrors(errors);
       return false;
     }
