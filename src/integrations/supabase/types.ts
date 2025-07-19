@@ -2020,6 +2020,18 @@ export type Database = {
         Args: { event_type: string; user_id?: string; details?: Json }
         Returns: undefined
       }
+      require_secure_session: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      track_failed_auth_attempt: {
+        Args: { user_email: string; attempt_type?: string; ip_address?: string }
+        Returns: undefined
+      }
+      validate_secure_session: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       user_role: "super_admin" | "hospital_admin" | "patient" | "broker"
