@@ -1,282 +1,267 @@
-import React, { useState } from 'react';
-import PageLayout from '@/components/layout/PageLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, Video, User, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Video, Phone, Calendar, Clock, User, Search, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
+
+interface Consultation {
+  id: string;
+  consultation_number: string;
+  scheduled_at: string;
+  status: string;
+  consultation_type: string;
+  chief_complaint?: string;
+  symptoms?: string;
+  diagnosis?: string;
+  treatment_plan?: string;
+  consultation_fee: number;
+  payment_status?: string;
+  doctor_id: string;
+  created_at: string;
+}
+
+interface TelemedicineProvider {
+  id: string;
+  name: string;
+  specialization?: string;
+}
 
 const Consultations = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
+  const [consultations, setConsultations] = useState<(Consultation & { doctor: TelemedicineProvider })[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const upcomingConsultations = [
-    {
-      id: '1',
-      doctor: 'Dr. Amina Hassan',
-      specialty: 'Cardiology',
-      date: '2024-01-20',
-      time: '2:30 PM',
-      type: 'video',
-      status: 'confirmed',
-      hospital: 'Lagos University Teaching Hospital'
-    },
-    {
-      id: '2',
-      doctor: 'Dr. Chidi Okafor',
-      specialty: 'General Practice',
-      date: '2024-01-22',
-      time: '10:00 AM',
-      type: 'phone',
-      status: 'pending',
-      hospital: 'National Hospital Abuja'
-    }
-  ];
+  useEffect(() => {
+    loadConsultations();
+  }, []);
 
-  const pastConsultations = [
-    {
-      id: '3',
-      doctor: 'Dr. Fatima Abubakar',
-      specialty: 'Pediatrics',
-      date: '2024-01-15',
-      time: '3:00 PM',
-      type: 'video',
-      status: 'completed',
-      diagnosis: 'Common Cold',
-      prescription: 'Prescribed rest and fluids',
-      hospital: 'Ahmadu Bello University Teaching Hospital'
-    },
-    {
-      id: '4',
-      doctor: 'Dr. Emeka Nwosu',
-      specialty: 'Orthopedics',
-      date: '2024-01-10',
-      time: '11:30 AM',
-      type: 'video',
-      status: 'completed',
-      diagnosis: 'Mild Sprain',
-      prescription: 'Physical therapy recommended',
-      hospital: 'University of Nigeria Teaching Hospital'
-    }
-  ];
+  const loadConsultations = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to view your consultations",
+          variant: "destructive"
+        });
+        return;
+      }
 
-  const handleJoinConsultation = (consultationId: string, type: 'video' | 'phone') => {
-    toast({
-      title: "Joining Consultation",
-      description: `Starting ${type} consultation...`,
-    });
-    // Simulate joining consultation
-    setTimeout(() => {
+      const { data, error } = await supabase
+        .from('consultations')
+        .select(`
+          *,
+          doctor:telemedicine_providers(id, name, specialization)
+        `)
+        .eq('patient_id', user.id)
+        .order('scheduled_at', { ascending: false });
+
+      if (error) throw error;
+      setConsultations(data || []);
+    } catch (error) {
+      console.error('Error loading consultations:', error);
       toast({
-        title: "Consultation Started",
-        description: "You are now connected with your doctor.",
+        title: "Error",
+        description: "Failed to load consultations",
+        variant: "destructive"
       });
-    }, 2000);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleViewDetails = (consultationId: string) => {
-    navigate(`/consultations/${consultationId}`);
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'cancelled':
+        return <XCircle className="h-4 w-4 text-red-600" />;
+      case 'in_progress':
+        return <Video className="h-4 w-4 text-blue-600" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-yellow-600" />;
+    }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'completed': return 'bg-blue-100 text-blue-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'scheduled':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    return type === 'video' ? Video : Phone;
+  const handleJoinConsultation = (consultationId: string) => {
+    // For prototype, this would link to a video call platform
+    toast({
+      title: "Consultation Link",
+      description: "In a production app, this would open the video consultation"
+    });
   };
 
-  const filteredUpcoming = upcomingConsultations.filter(consultation =>
-    consultation.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.specialty.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredPast = pastConsultations.filter(consultation =>
-    consultation.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.specialty.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <ContextualNavbar />
+        <div className="container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="flex items-center justify-center py-16">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading your consultations...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <PageLayout title="My Consultations" showBreadcrumbs={true}>
-      <div className="space-y-6">
-        {/* Header with Search and Book Button */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search consultations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+    <div className="min-h-screen bg-background">
+      <ContextualNavbar />
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">My Consultations</h1>
+            <p className="text-muted-foreground">View and manage your telemedicine appointments</p>
           </div>
-          <Button onClick={() => navigate('/book-appointment')} className="w-full sm:w-auto">
-            <Plus className="h-4 w-4 mr-2" />
+          <Button onClick={() => window.location.href = '/telemedicine'}>
             Book New Consultation
           </Button>
         </div>
 
-        <Tabs defaultValue="upcoming" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-            <TabsTrigger value="past">Past Consultations</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="upcoming" className="space-y-4">
-            {filteredUpcoming.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Calendar className="h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Upcoming Consultations</h3>
-                  <p className="text-gray-600 text-center mb-4">You don't have any consultations scheduled.</p>
-                  <Button onClick={() => navigate('/book-appointment')}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Book Your First Consultation
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              filteredUpcoming.map((consultation) => {
-                const TypeIcon = getTypeIcon(consultation.type);
-                return (
-                  <Card key={consultation.id}>
-                    <CardContent className="p-6">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
-                            <User className="h-6 w-6 text-teal-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900">{consultation.doctor}</h3>
-                            <p className="text-sm text-gray-600">{consultation.specialty}</p>
-                            <p className="text-sm text-gray-500">{consultation.hospital}</p>
-                            <div className="flex items-center mt-2 space-x-4">
-                              <div className="flex items-center text-sm text-gray-600">
-                                <Calendar className="h-4 w-4 mr-1" />
-                                {consultation.date}
-                              </div>
-                              <div className="flex items-center text-sm text-gray-600">
-                                <Clock className="h-4 w-4 mr-1" />
-                                {consultation.time}
-                              </div>
-                              <div className="flex items-center text-sm text-gray-600">
-                                <TypeIcon className="h-4 w-4 mr-1" />
-                                {consultation.type === 'video' ? 'Video Call' : 'Phone Call'}
-                              </div>
-                            </div>
-                          </div>
+        {consultations.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-12">
+              <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">No Consultations Yet</h3>
+              <p className="text-muted-foreground mb-4">
+                You haven't booked any consultations yet. Start by booking your first consultation.
+              </p>
+              <Button onClick={() => window.location.href = '/telemedicine'}>
+                Book Consultation
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-6">
+            {consultations.map((consultation) => (
+              <Card key={consultation.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <User className="h-5 w-5" />
+                        {consultation.doctor?.name || 'Doctor'}
+                      </CardTitle>
+                      <CardDescription>
+                        {consultation.doctor?.specialization} • {consultation.consultation_number}
+                      </CardDescription>
+                    </div>
+                    <Badge className={getStatusColor(consultation.status)}>
+                      <div className="flex items-center gap-1">
+                        {getStatusIcon(consultation.status)}
+                        {consultation.status.replace('_', ' ').toUpperCase()}
+                      </div>
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Appointment Details */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium">Appointment Details</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span>{format(new Date(consultation.scheduled_at), 'MMM dd, yyyy')}</span>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                          <Badge className={getStatusColor(consultation.status)}>
-                            {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
-                          </Badge>
-                          <div className="flex space-x-2 w-full sm:w-auto">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleViewDetails(consultation.id)}
-                              className="flex-1 sm:flex-none"
-                            >
-                              Details
-                            </Button>
-                            {consultation.status === 'confirmed' && (
-                              <Button
-                                size="sm"
-                                onClick={() => handleJoinConsultation(consultation.id, consultation.type as 'video' | 'phone')}
-                                className="flex-1 sm:flex-none"
-                              >
-                                <TypeIcon className="h-4 w-4 mr-1" />
-                                Join
-                              </Button>
-                            )}
-                          </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <span>{format(new Date(consultation.scheduled_at), 'h:mm a')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Video className="h-4 w-4 text-muted-foreground" />
+                          <span>{consultation.consultation_type} consultation</span>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
-            )}
-          </TabsContent>
+                    </div>
 
-          <TabsContent value="past" className="space-y-4">
-            {filteredPast.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Clock className="h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Past Consultations</h3>
-                  <p className="text-gray-600 text-center">Your consultation history will appear here.</p>
+                    {/* Health Information */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium">Health Information</h4>
+                      <div className="space-y-2 text-sm">
+                        {consultation.chief_complaint && (
+                          <div>
+                            <span className="font-medium">Chief Complaint:</span>
+                            <p className="text-muted-foreground">{consultation.chief_complaint}</p>
+                          </div>
+                        )}
+                        {consultation.symptoms && (
+                          <div>
+                            <span className="font-medium">Symptoms:</span>
+                            <p className="text-muted-foreground">{consultation.symptoms}</p>
+                          </div>
+                        )}
+                        {consultation.diagnosis && (
+                          <div>
+                            <span className="font-medium">Diagnosis:</span>
+                            <p className="text-muted-foreground">{consultation.diagnosis}</p>
+                          </div>
+                        )}
+                        {consultation.treatment_plan && (
+                          <div>
+                            <span className="font-medium">Treatment Plan:</span>
+                            <p className="text-muted-foreground">{consultation.treatment_plan}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 mt-6">
+                    {consultation.status === 'scheduled' && (
+                      <Button 
+                        onClick={() => handleJoinConsultation(consultation.id)}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <Video className="h-4 w-4 mr-2" />
+                        Join Consultation
+                      </Button>
+                    )}
+                    {consultation.status === 'completed' && (
+                      <Button variant="outline">
+                        View Summary
+                      </Button>
+                    )}
+                    <Button variant="outline">
+                      Reschedule
+                    </Button>
+                    <Button variant="outline">
+                      Cancel
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
-            ) : (
-              filteredPast.map((consultation) => {
-                const TypeIcon = getTypeIcon(consultation.type);
-                return (
-                  <Card key={consultation.id}>
-                    <CardContent className="p-6">
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <User className="h-6 w-6 text-blue-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900">{consultation.doctor}</h3>
-                            <p className="text-sm text-gray-600">{consultation.specialty}</p>
-                            <p className="text-sm text-gray-500">{consultation.hospital}</p>
-                            <div className="flex items-center mt-2 space-x-4">
-                              <div className="flex items-center text-sm text-gray-600">
-                                <Calendar className="h-4 w-4 mr-1" />
-                                {consultation.date}
-                              </div>
-                              <div className="flex items-center text-sm text-gray-600">
-                                <Clock className="h-4 w-4 mr-1" />
-                                {consultation.time}
-                              </div>
-                              <div className="flex items-center text-sm text-gray-600">
-                                <TypeIcon className="h-4 w-4 mr-1" />
-                                {consultation.type === 'video' ? 'Video Call' : 'Phone Call'}
-                              </div>
-                            </div>
-                            {consultation.diagnosis && (
-                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                                <p className="text-sm font-medium text-gray-900">Diagnosis: {consultation.diagnosis}</p>
-                                <p className="text-sm text-gray-600">{consultation.prescription}</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-start space-y-2">
-                          <Badge className={getStatusColor(consultation.status)}>
-                            {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
-                          </Badge>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewDetails(consultation.id)}
-                          >
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })
-            )}
-          </TabsContent>
-        </Tabs>
+            ))}
+          </div>
+        )}
       </div>
-    </PageLayout>
+    </div>
   );
 };
 
