@@ -164,23 +164,31 @@ const MedicalAITesting = () => {
           </div>
 
           {/* Test Button */}
-          <Button 
-            onClick={handleTest} 
-            disabled={loading || !prompt.trim()}
-            className="w-full"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing with MedGemma-4B...
-              </>
-            ) : (
-              <>
-                <TestTube className="mr-2 h-4 w-4" />
-                Test Medical AI
-              </>
+          <div className="space-y-2">
+            <Button 
+              onClick={handleTest} 
+              disabled={loading || !prompt.trim()}
+              className="w-full"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing with MedGemma-4B... (this may take 20-30 seconds on first use)
+                </>
+              ) : (
+                <>
+                  <TestTube className="mr-2 h-4 w-4" />
+                  Test Medical AI
+                </>
+              )}
+            </Button>
+            
+            {loading && (
+              <div className="text-center text-sm text-muted-foreground">
+                ⏳ Model is loading... Please wait 20-30 seconds for first use
+              </div>
             )}
-          </Button>
+          </div>
         </CardContent>
       </Card>
 
