@@ -241,6 +241,42 @@ export type Database = {
           },
         ]
       }
+      family_connections: {
+        Row: {
+          connected_user_id: string | null
+          connection_status: string
+          created_at: string
+          id: string
+          invited_email: string | null
+          mutual_sharing: boolean
+          relationship: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          connected_user_id?: string | null
+          connection_status?: string
+          created_at?: string
+          id?: string
+          invited_email?: string | null
+          mutual_sharing?: boolean
+          relationship: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          connected_user_id?: string | null
+          connection_status?: string
+          created_at?: string
+          id?: string
+          invited_email?: string | null
+          mutual_sharing?: boolean
+          relationship?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       family_health_records: {
         Row: {
           age_at_death: number | null
@@ -291,6 +327,45 @@ export type Database = {
           medications?: string[] | null
           relationship?: string
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      family_health_shares: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          health_data_type: string
+          id: string
+          permission_level: string
+          related_id: string | null
+          shared_with_user_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          health_data_type: string
+          id?: string
+          permission_level?: string
+          related_id?: string | null
+          shared_with_user_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          health_data_type?: string
+          id?: string
+          permission_level?: string
+          related_id?: string | null
+          shared_with_user_id?: string
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -1370,6 +1445,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          related_id: string | null
+          related_type: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          related_id?: string | null
+          related_type?: string | null
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          related_id?: string | null
+          related_type?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       order_status_history: {
         Row: {

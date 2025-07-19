@@ -26,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import RealTimeNotifications from '@/components/dashboard/RealTimeNotifications';
 
 export const useStreamlinedNavigation = () => {
   const { role } = useUserRole();
@@ -161,6 +162,9 @@ export const StreamlinedDesktopNavigation: React.FC<StreamlinedNavigationProps> 
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Real-time notifications */}
+      <RealTimeNotifications />
     </div>
   );
 };

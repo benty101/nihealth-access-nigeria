@@ -16,6 +16,8 @@ import UserGuidance from '@/components/onboarding/UserGuidance';
 import EnhancedQuickLinks from '@/components/dashboard/EnhancedQuickLinks';
 import ProfileCompletion from '@/components/dashboard/ProfileCompletion';
 import PremiumUpgradeCard from '@/components/dashboard/PremiumUpgradeCard';
+import FamilyHealthHub from '@/components/dashboard/FamilyHealthHub';
+import AIHealthInsights from '@/components/dashboard/AIHealthInsights';
 import { HealthTimeline } from '@/components/health-timeline/HealthTimeline';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
@@ -75,6 +77,8 @@ const Dashboard = () => {
           
           {/* Right Column - Sidebar */}
           <div className="xl:col-span-4 space-y-6">
+            <AIHealthInsights />
+            <FamilyHealthHub />
             <InsuranceStatusCard />
             <EmergencyContactCard />
             <RealTimeHealthReminders />
