@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const HUGGING_FACE_API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large"
+const HUGGING_FACE_API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -138,6 +138,20 @@ Please ensure your response is evidence-based and includes appropriate medical d
       const errorText = await response.text()
       console.error('Hugging Face API error:', errorText)
       
+      // Handle specific error cases
+      if (errorText.toLowerCase().includes('shutdown')) {
+        return new Response(
+          JSON.stringify({ 
+            error: "AI service is temporarily unavailable (shutdown). Please try again later or use a different model.",
+            retry_after: 60 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 503 
+          }
+        )
+      }
+      
       if (response.status === 503) {
         return new Response(
           JSON.stringify({ 
@@ -174,7 +188,7 @@ Please ensure your response is evidence-based and includes appropriate medical d
       JSON.stringify({ 
         response: generatedText + disclaimer,
         type: type || 'general',
-        model: 'DialoGPT-large'
+        model: 'DialoGPT-medium'
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
