@@ -23,6 +23,7 @@ import PatientRecordsView from './PatientRecordsView';
 import PatientMedications from './PatientMedications';
 import PatientLabResults from './PatientLabResults';
 import PatientCommunication from './PatientCommunication';
+import MedicalChat from './MedicalChat';
 import PatientGenomics from './PatientGenomics';
 
 const PatientPortal = () => {
@@ -106,7 +107,7 @@ const PatientPortal = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-6">
+          <TabsList className="grid w-full grid-cols-8 mb-6">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Overview
@@ -131,8 +132,12 @@ const PatientPortal = () => {
               <TestTube className="h-4 w-4" />
               Lab Results
             </TabsTrigger>
-            <TabsTrigger value="communication" className="flex items-center gap-2">
+            <TabsTrigger value="ai-chat" className="flex items-center gap-2">
               <MessageCircle className="h-4 w-4" />
+              AI Chat
+            </TabsTrigger>
+            <TabsTrigger value="communication" className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
               Messages
             </TabsTrigger>
           </TabsList>
@@ -159,6 +164,10 @@ const PatientPortal = () => {
 
           <TabsContent value="lab-results" className="mt-6">
             <PatientLabResults />
+          </TabsContent>
+
+          <TabsContent value="ai-chat" className="mt-6">
+            <MedicalChat />
           </TabsContent>
 
           <TabsContent value="communication" className="mt-6">
