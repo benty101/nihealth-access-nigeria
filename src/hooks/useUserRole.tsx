@@ -26,22 +26,47 @@ export const useUserRole = () => {
         const { data: rpcResult, error: rpcError } = await supabase
           .rpc('get_user_role', { _user_id: user.id });
 
+        console.log('RPC Result:', rpcResult, 'Error:', rpcError);
+
         if (!rpcError && rpcResult) {
           secureLogger.auth('role_fetched_securely_via_rpc', user.id, { role: rpcResult });
           setRole(rpcResult as UserRole);
         } else {
-          secureLogger.info('RPC failed, defaulting to patient for security', { 
-            userId: user.id, 
-            error: rpcError 
-          });
-          // SECURITY: Default to least privileged role
-          setRole('patient');
+          // Check if user is super admin by email as fallback
+          const { data: userData } = await supabase.auth.getUser();
+          const userEmail = userData?.user?.email;
+          
+          if (userEmail === 'kosyezenekwe@gmail.com') {
+            console.log('Setting super_admin role via email fallback');
+            setRole('super_admin');
+          } else {
+            secureLogger.info('RPC failed, defaulting to patient for security', { 
+              userId: user.id, 
+              error: rpcError 
+            });
+            // SECURITY: Default to least privileged role
+            setRole('patient');
+          }
         }
 
       } catch (error) {
+        console.error('Error in fetchUserRole:', error);
         secureLogger.error('Critical error in secure fetchUserRole', error, { userId: user.id });
-        // SECURITY: On error, default to least privileged role
-        setRole('patient');
+        
+        // Try email fallback as last resort
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const userEmail = userData?.user?.email;
+          
+          if (userEmail === 'kosyezenekwe@gmail.com') {
+            console.log('Setting super_admin role via email fallback after error');
+            setRole('super_admin');
+          } else {
+            setRole('patient');
+          }
+        } catch {
+          setRole('patient');
+        }
       } finally {
         setLoading(false);
       }

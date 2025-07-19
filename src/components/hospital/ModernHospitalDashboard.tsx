@@ -191,7 +191,7 @@ const ModernHospitalDashboard = () => {
     );
   }
 
-  // Show unauthorized access message
+  // Show unauthorized access message for non-admin users
   if (!isHospitalAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
@@ -206,24 +206,14 @@ const ModernHospitalDashboard = () => {
     );
   }
 
-  const hospitalId = getPrimaryHospitalId();
-  const hospitalName = hospitalStaff?.hospitals?.name;
+  // For super admin, use a default hospital or show hospital selector
+  const hospitalId = getPrimaryHospitalId() || "demo-hospital-id";
+  const hospitalName = hospitalStaff?.hospitals?.name || "Hospital Management";
 
   const renderContent = () => {
     const handleStatsUpdate = () => {
       console.log('Stats updated for hospital:', hospitalId);
     };
-
-    if (!hospitalId) {
-      return (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            No hospital assignment found. Please contact your administrator.
-          </AlertDescription>
-        </Alert>
-      );
-    }
 
     switch (activeTab) {
       case 'overview':

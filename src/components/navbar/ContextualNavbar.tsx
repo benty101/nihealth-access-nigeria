@@ -13,8 +13,11 @@ import { Link } from 'react-router-dom';
 
 const ContextualNavbar = () => {
   const { user, loading } = useAuth();
-  const { role } = useUserRole();
+  const { role, loading: roleLoading } = useUserRole();
   const location = useLocation();
+  
+  // Debug logging
+  console.log('ContextualNavbar - User:', user?.id, 'Role:', role, 'Loading:', loading, 'RoleLoading:', roleLoading);
   
   // Determine navigation context
   const isHomePage = location.pathname === '/';
@@ -31,8 +34,8 @@ const ContextualNavbar = () => {
   const superAdminItems = useSuperAdminNavigation();
   const { primaryItems, secondaryItems } = useStreamlinedNavigation();
 
-  // Don't render navbar while auth is loading
-  if (loading) {
+  // Don't render navbar while auth or role is loading
+  if (loading || roleLoading) {
     return (
       <nav className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
