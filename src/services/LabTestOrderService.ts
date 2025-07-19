@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { HealthTimelineService } from './HealthTimelineService';
 
 export interface LabTestOrder {
   id: string;
@@ -118,6 +119,9 @@ class LabTestOrderService {
 
     // Add initial status history
     await this.addStatusHistory(order.id, 'pending', 'Lab test order placed successfully');
+
+    // Create timeline event
+    await HealthTimelineService.createLabTestEvent(user.id, order);
 
     console.log('Lab test order created successfully:', order.order_number);
     return order.id;

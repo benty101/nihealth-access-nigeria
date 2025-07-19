@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { HealthTimelineService } from './HealthTimelineService';
 
 export interface Appointment {
   id: string;
@@ -107,6 +108,9 @@ export const AppointmentService = {
       console.error('Error booking appointment:', error);
       throw error;
     }
+
+    // Create timeline event
+    await HealthTimelineService.createConsultationEvent(user.id, data);
 
     return {
       id: data.id,

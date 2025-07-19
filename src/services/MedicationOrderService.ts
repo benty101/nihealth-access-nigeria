@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { orderStatusService } from './orders/OrderStatusService';
 import { paymentService } from './orders/PaymentService';
+import { HealthTimelineService } from './HealthTimelineService';
 
 export interface MedicationOrder {
   id: string;
@@ -108,6 +109,9 @@ class MedicationOrderService {
 
     // Add initial status history
     await orderStatusService.addStatusHistory(order.id, 'pending', 'Order placed successfully');
+
+    // Create timeline event
+    await HealthTimelineService.createMedicationEvent(user.id, order);
 
     console.log('Order created successfully:', order.order_number);
     return order.id;

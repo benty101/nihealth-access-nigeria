@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { HomeTestKitService, TestKitType } from '@/services/HomeTestKitService';
 import { HealthTimelineService } from '@/services/HealthTimelineService';
+import { ConsentService } from '@/services/ConsentService';
+import { ConsentManagementModal } from '@/components/consent/ConsentManagementModal';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,7 +33,11 @@ export const TestKitOrderModal: React.FC<TestKitOrderModalProps> = ({
   const [shippingAddress, setShippingAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
+  const [showConsentModal, setShowConsentModal] = useState(false);
   const { toast } = useToast();
+
+  const requiresConsent = testKit.type === 'genomic';
+  const requiredConsents = requiresConsent ? ['research', 'biobanking', 'genomic_analysis'] : [];
 
   const handleOrder = async () => {
     if (!user) {
@@ -52,9 +58,22 @@ export const TestKitOrderModal: React.FC<TestKitOrderModalProps> = ({
       return;
     }
 
+    // Check if genomic test requires consent
+    if (requiresConsent) {
+      const hasRequiredConsents = await ConsentService.hasRequiredConsents(user.id);
+      if (!hasRequiredConsents) {
+        setShowConsentModal(true);
+        return;
+      }
+    }
+
+    await processOrder();
+  };
+
+  const processOrder = async () => {
+    if (!user) return;
     setLoading(true);
     try {
-      // Create the test kit order
       const orderData = {
         user_id: user.id,
         kit_type: testKit.type,
@@ -88,6 +107,11 @@ export const TestKitOrderModal: React.FC<TestKitOrderModalProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleConsentComplete = () => {
+    setShowConsentModal(false);
+    processOrder();
   };
 
   return (
@@ -232,6 +256,16 @@ export const TestKitOrderModal: React.FC<TestKitOrderModalProps> = ({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Consent Management Modal */}
+      <ConsentManagementModal
+        isOpen={showConsentModal}
+        onClose={() => setShowConsentModal(false)}
+        onConsentsComplete={handleConsentComplete}
+        requiredConsents={requiredConsents}
+        title="Genomic Testing Consent"
+        description="Before proceeding with genomic testing, please review and provide consent for data usage in research and biobanking."
+      />
     </Dialog>
   );
 };
