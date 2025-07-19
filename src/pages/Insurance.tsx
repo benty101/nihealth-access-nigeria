@@ -146,55 +146,88 @@ const Insurance = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20">
         <ContextualNavbar />
         
-        {/* Hero Section with Psychological Impact */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600">
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="relative">
-                  <Shield className="h-16 w-16 text-white animate-pulse" />
-                  <div className="absolute -top-2 -right-2 h-6 w-6 bg-green-400 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-4 w-4 text-white" />
+        {/* Clean Hero Section */}
+        <section className="bg-card border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                {/* Trust Indicator */}
+                <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2 text-sm font-medium text-primary">
+                  <Shield className="h-4 w-4" />
+                  Trusted by 50,000+ Nigerians
+                </div>
+                
+                {/* Clear Value Proposition */}
+                <div className="space-y-4">
+                  <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+                    Health Insurance 
+                    <span className="text-primary"> Made Simple</span>
+                  </h1>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    Compare plans, get instant quotes, and protect your family with 
+                    Nigeria's most trusted health insurance platform.
+                  </p>
+                </div>
+
+                {/* Key Benefits */}
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>No paperwork</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Instant coverage</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>24/7 support</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Best rates</span>
+                  </div>
+                </div>
+
+                {/* Simple CTA */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" className="font-semibold">
+                    Compare Plans Now
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="lg">
+                    <Phone className="mr-2 h-4 w-4" />
+                    Call Expert
+                  </Button>
+                </div>
+              </div>
+
+              {/* Clean Illustration */}
+              <div className="bg-muted/30 rounded-2xl p-8">
+                <div className="space-y-4">
+                  <div className="text-center space-y-2">
+                    <div className="text-2xl font-bold text-foreground">₦12,500/month</div>
+                    <div className="text-sm text-muted-foreground">Family of 4 coverage</div>
+                  </div>
+                  <div className="bg-card rounded-lg p-4 shadow-sm">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm">Hospital visits</span>
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm">Emergency care</span>
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Prescription drugs</span>
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    </div>
                   </div>
                 </div>
               </div>
-              
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Protect Your{' '}
-                <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                  Health & Wealth
-                </span>
-              </h1>
-              
-              <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Discover Nigeria's most trusted health insurance plans. From emergency coverage to 
-                comprehensive family protection - we've got you covered.
-              </p>
-
-              {/* Key Statistics */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-                {[
-                  { icon: Users, label: '50K+ Families Protected', color: 'text-green-400' },
-                  { icon: Award, label: '₦2B+ Claims Paid', color: 'text-yellow-400' },
-                  { icon: Star, label: '4.8/5 User Rating', color: 'text-orange-400' }
-                ].map((stat, index) => {
-                  const Icon = stat.icon;
-                  return (
-                    <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                      <Icon className={`h-8 w-8 ${stat.color} mx-auto mb-3`} />
-                      <p className="text-white font-semibold text-lg">{stat.label}</p>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           </div>
-
-          {/* Floating elements for visual interest */}
-          <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-float"></div>
-          <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-400/20 rounded-full animate-float-delayed"></div>
-        </div>
+        </section>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Search and Category Selection */}
