@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { adminService, type TelemedicineProvider } from '@/services/AdminService';
 import { useToast } from '@/hooks/use-toast';
+import TelemedicineProviderForm from '@/components/admin/forms/TelemedicineProviderForm';
 
 interface TelemedicineManagementProps {
   onStatsChange?: () => Promise<void>;
@@ -18,6 +19,7 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -120,7 +122,10 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
               Manage online healthcare providers and virtual consultations
             </CardDescription>
           </div>
-          <Button className="bg-teal-600 hover:bg-teal-700">
+          <Button 
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => setShowAddForm(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add Provider
           </Button>
@@ -227,6 +232,12 @@ const TelemedicineManagement = ({ onStatsChange }: TelemedicineManagementProps) 
           </div>
         )}
       </CardContent>
+
+      <TelemedicineProviderForm
+        open={showAddForm}
+        onOpenChange={setShowAddForm}
+        onSuccess={loadProviders}
+      />
     </Card>
   );
 };
