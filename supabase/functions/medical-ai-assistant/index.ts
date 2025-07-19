@@ -115,24 +115,31 @@ ${context ? `Additional context: ${context}` : ''}
 Please ensure your response is evidence-based and includes appropriate medical disclaimers.`
     }
 
-    // Call Hugging Face API
-    const response = await fetch(HUGGING_FACE_API_URL, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${HUGGING_FACE_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        inputs: medicalPrompt,
-        parameters: {
-          max_new_tokens: 1024,
-          temperature: 0.7,
-          top_p: 0.9,
-          do_sample: true,
-          return_full_text: false
-        }
+    // Call Hugging Face API with timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+    
+    try {
+      const response = await fetch(HUGGING_FACE_API_URL, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${HUGGING_FACE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: medicalPrompt,
+          parameters: {
+            max_new_tokens: 512,  // Reduced from 1024
+            temperature: 0.7,
+            top_p: 0.9,
+            do_sample: true,
+            return_full_text: false
+          }
+        }),
+        signal: controller.signal
       })
-    })
+      
+      clearTimeout(timeoutId)
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -195,6 +202,24 @@ Please ensure your response is evidence-based and includes appropriate medical d
         status: 200 
       }
     )
+
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      if (fetchError.name === 'AbortError') {
+        console.error('Request timeout - function taking too long')
+        return new Response(
+          JSON.stringify({ 
+            error: 'Request timeout. The AI service is taking too long to respond. Please try again with a shorter prompt.',
+            timeout: true 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 408 
+          }
+        )
+      }
+      throw fetchError
+    }
 
   } catch (error) {
     console.error('Error in medical-ai-assistant function:', error)
