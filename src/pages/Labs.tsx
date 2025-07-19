@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,13 +6,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, TestTube, Clock, MapPin, Star, Calendar, UserPlus, Droplets, Activity, Zap } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TestKitCatalog } from '@/components/test-kits/TestKitCatalog';
+import { TestKitOrderModal } from '@/components/test-kits/TestKitOrderModal';
+import { HomeTestKitService, TestKitType } from '@/services/HomeTestKitService';
+import { Search, TestTube, Clock, MapPin, Star, Calendar, UserPlus, Droplets, Activity, Zap, Package, Home } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Labs = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedKit, setSelectedKit] = useState<TestKitType | null>(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const { toast } = useToast();
 
   // Function to handle protected actions
   const handleProtectedAction = (action: string) => {
@@ -25,6 +32,22 @@ const Labs = () => {
       return false;
     }
     return true;
+  };
+
+  const handleOrderKit = (kit: TestKitType) => {
+    if (!handleProtectedAction('order a test kit')) return;
+    
+    setSelectedKit(kit);
+    setShowOrderModal(true);
+  };
+
+  const handleOrderComplete = () => {
+    setShowOrderModal(false);
+    setSelectedKit(null);
+    toast({
+      title: "Test Kit Ordered!",
+      description: "Your test kit has been ordered successfully. You'll receive tracking information via email.",
+    });
   };
 
   const categories = ['All', 'Blood Tests', 'Imaging', 'Specialized', 'Wellness', 'Infectious Disease'];
@@ -145,7 +168,7 @@ const Labs = () => {
               Laboratory Tests & Diagnostics
             </h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Book laboratory tests and diagnostic services with certified facilities across Nigeria
+              Book laboratory tests and diagnostic services with certified facilities across Nigeria, or order convenient home test kits
             </p>
             {!user && (
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -175,162 +198,196 @@ const Labs = () => {
                 <Activity className="h-4 w-4 mr-2 text-purple-600" />
                 Digital reports
               </div>
+              <div className="flex items-center">
+                <Home className="h-4 w-4 mr-2 text-orange-600" />
+                Home test kits
+              </div>
             </div>
           </div>
 
-          {/* Search and Filter */}
-          <div className="flex flex-col lg:flex-row gap-4 mb-8">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search lab tests..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
+          {/* Tabs for Lab Tests vs Home Test Kits */}
+          <Tabs defaultValue="lab-tests" className="w-full">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+              <TabsTrigger value="lab-tests" className="flex items-center gap-2">
+                <TestTube className="h-4 w-4" />
+                Lab Tests
+              </TabsTrigger>
+              <TabsTrigger value="home-kits" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Home Test Kits
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className={selectedCategory === category ? "bg-blue-600 hover:bg-blue-700" : ""}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
+            <TabsContent value="lab-tests">
+              {/* Search and Filter */}
+              <div className="flex flex-col lg:flex-row gap-4 mb-8">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Search lab tests..."
+                    className="pl-10"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Lab Tests */}
-            <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Tests</h2>
-              <div className="space-y-4">
-                {filteredTests.map((test, index) => (
-                  <Card key={index} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-4">
-                          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                            {test.category === 'Blood Tests' && <Droplets className="h-6 w-6 text-red-600" />}
-                            {test.category === 'Imaging' && <Activity className="h-6 w-6 text-blue-600" />}
-                            {test.category === 'Specialized' && <Zap className="h-6 w-6 text-purple-600" />}
-                            {test.category === 'Wellness' && <TestTube className="h-6 w-6 text-green-600" />}
-                            {test.category === 'Infectious Disease' && <TestTube className="h-6 w-6 text-orange-600" />}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-semibold text-gray-900">{test.name}</h3>
-                              {test.popular && (
-                                <Badge className="bg-orange-100 text-orange-800 text-xs">Popular</Badge>
-                              )}
-                            </div>
-                            <p className="text-gray-600 mb-3">{test.description}</p>
-                            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                              <div className="flex items-center">
-                                <Clock className="h-4 w-4 mr-1" />
-                                {test.duration}
+              {/* Category Filter */}
+              <div className="flex flex-wrap gap-2 mb-8">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className={selectedCategory === category ? "bg-blue-600 hover:bg-blue-700" : ""}
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Lab Tests */}
+                <div className="lg:col-span-2">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Tests</h2>
+                  <div className="space-y-4">
+                    {filteredTests.map((test, index) => (
+                      <Card key={index} className="hover:shadow-lg transition-shadow">
+                        <CardContent className="p-6">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start space-x-4">
+                              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                {test.category === 'Blood Tests' && <Droplets className="h-6 w-6 text-red-600" />}
+                                {test.category === 'Imaging' && <Activity className="h-6 w-6 text-blue-600" />}
+                                {test.category === 'Specialized' && <Zap className="h-6 w-6 text-purple-600" />}
+                                {test.category === 'Wellness' && <TestTube className="h-6 w-6 text-green-600" />}
+                                {test.category === 'Infectious Disease' && <TestTube className="h-6 w-6 text-orange-600" />}
                               </div>
-                              <Badge variant="outline" className="text-xs">
-                                {test.category}
-                              </Badge>
-                              {test.fasting && (
-                                <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                                  Fasting Required
-                                </Badge>
-                              )}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="text-lg font-semibold text-gray-900">{test.name}</h3>
+                                  {test.popular && (
+                                    <Badge className="bg-orange-100 text-orange-800 text-xs">Popular</Badge>
+                                  )}
+                                </div>
+                                <p className="text-gray-600 mb-3">{test.description}</p>
+                                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                  <div className="flex items-center">
+                                    <Clock className="h-4 w-4 mr-1" />
+                                    {test.duration}
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">
+                                    {test.category}
+                                  </Badge>
+                                  {test.fasting && (
+                                    <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                                      Fasting Required
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-green-600 mb-2">
+                                {test.price}
+                              </div>
+                              <Button 
+                                className="bg-blue-600 hover:bg-blue-700"
+                                onClick={() => handleProtectedAction('book this lab test')}
+                              >
+                                Book Test
+                              </Button>
                             </div>
                           </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-green-600 mb-2">
-                            {test.price}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Lab Locations Sidebar */}
+                <div className="lg:col-span-1">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <MapPin className="h-5 w-5 mr-2 text-blue-600" />
+                        Nearby Laboratories
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {labLocations.map((lab, index) => (
+                          <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                            <h4 className="font-semibold text-gray-900 mb-1">{lab.name}</h4>
+                            <p className="text-sm text-gray-600 mb-2">{lab.location}</p>
+                            <div className="flex items-center justify-between text-xs">
+                              <div className="flex items-center">
+                                <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
+                                <span>{lab.rating}</span>
+                                <span className="mx-1">•</span>
+                                <span>{lab.distance}</span>
+                              </div>
+                              <span className="text-green-600 font-medium">{lab.nextAvailable}</span>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full mt-2"
+                              onClick={() => handleProtectedAction('book at this location')}
+                            >
+                              Select Location
+                            </Button>
                           </div>
-                          <Button 
-                            className="bg-blue-600 hover:bg-blue-700"
-                            onClick={() => handleProtectedAction('book this lab test')}
-                          >
-                            Book Test
-                          </Button>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Test Preparation Info */}
+                  <Card className="mt-6">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Test Preparation</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-1">Fasting Tests</h4>
+                          <p className="text-gray-600">No food or drink (except water) for 8-12 hours before test</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-1">Regular Tests</h4>
+                          <p className="text-gray-600">No special preparation required</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-1">Medications</h4>
+                          <p className="text-gray-600">Continue regular medications unless advised otherwise</p>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                </div>
               </div>
-            </div>
+            </TabsContent>
 
-            {/* Lab Locations Sidebar */}
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <MapPin className="h-5 w-5 mr-2 text-blue-600" />
-                    Nearby Laboratories
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {labLocations.map((lab, index) => (
-                      <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                        <h4 className="font-semibold text-gray-900 mb-1">{lab.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2">{lab.location}</p>
-                        <div className="flex items-center justify-between text-xs">
-                          <div className="flex items-center">
-                            <Star className="h-3 w-3 text-yellow-400 fill-current mr-1" />
-                            <span>{lab.rating}</span>
-                            <span className="mx-1">•</span>
-                            <span>{lab.distance}</span>
-                          </div>
-                          <span className="text-green-600 font-medium">{lab.nextAvailable}</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="w-full mt-2"
-                          onClick={() => handleProtectedAction('book at this location')}
-                        >
-                          Select Location
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Test Preparation Info */}
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">Test Preparation</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Fasting Tests</h4>
-                      <p className="text-gray-600">No food or drink (except water) for 8-12 hours before test</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Regular Tests</h4>
-                      <p className="text-gray-600">No special preparation required</p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Medications</h4>
-                      <p className="text-gray-600">Continue regular medications unless advised otherwise</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+            <TabsContent value="home-kits">
+              <TestKitCatalog onOrderKit={handleOrderKit} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
+
+      {/* Test Kit Order Modal */}
+      {selectedKit && (
+        <TestKitOrderModal
+          isOpen={showOrderModal}
+          onClose={() => setShowOrderModal(false)}
+          testKit={selectedKit}
+          onOrderComplete={handleOrderComplete}
+        />
+      )}
     </div>
   );
 };

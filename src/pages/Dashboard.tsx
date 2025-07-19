@@ -16,6 +16,7 @@ import UserGuidance from '@/components/onboarding/UserGuidance';
 import EnhancedQuickLinks from '@/components/dashboard/EnhancedQuickLinks';
 import ProfileCompletion from '@/components/dashboard/ProfileCompletion';
 import PremiumUpgradeCard from '@/components/dashboard/PremiumUpgradeCard';
+import { HealthTimeline } from '@/components/health-timeline/HealthTimeline';
 import { PersonalizationService } from '@/services/PersonalizationService';
 
 const Dashboard = () => {
@@ -58,6 +59,10 @@ const Dashboard = () => {
           <div className="xl:col-span-8 space-y-6">
             <PersonalizedInsights onboardingData={onboardingData} />
             <ProgressTracker onboardingData={onboardingData} />
+            
+            {/* Health Timeline - New Social Health Experience */}
+            <HealthTimeline />
+            
             <RealTimeHealthMetrics />
             <SmartRecommendations onboardingData={onboardingData} />
             <PersonalizedRecommendations 
