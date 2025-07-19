@@ -100,7 +100,7 @@ const HealthNotifications = () => {
       description: `You've responded to: ${notification.title}`,
     });
     
-    // Send a congratulatory notification for milestones
+    // Note: Milestone notifications removed per user request
     if (notification.type === 'antenatal') {
       setTimeout(() => {
         sendNotification(

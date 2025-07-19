@@ -243,7 +243,7 @@ const UserProfile = () => {
 
           <Button 
             onClick={handleSave} 
-            className="w-full bg-teal-600 hover:bg-teal-700"
+            className="w-full"
             disabled={saving}
           >
             {saving ? 'Saving Profile...' : 'Update Profile'}

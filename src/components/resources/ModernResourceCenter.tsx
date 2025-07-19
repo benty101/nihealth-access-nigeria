@@ -200,7 +200,7 @@ const ModernResourceCenter = () => {
             Health Resources & Education
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Your Health <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Knowledge Center</span>
+            Your Health <span className="text-primary">Knowledge Center</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Evidence-based health information, expert advice, and practical guides tailored for Nigerian healthcare needs
@@ -279,20 +279,20 @@ const ModernResourceCenter = () => {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">500+</div>
-              <div className="text-sm text-muted-foreground">Expert Articles</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-health-success mb-2">100+</div>
-              <div className="text-sm text-muted-foreground">Video Guides</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-health-info mb-2">1M+</div>
-              <div className="text-sm text-muted-foreground">Monthly Readers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-2">50+</div>
-              <div className="text-sm text-muted-foreground">Medical Experts</div>
+            <div className="text-3xl font-bold text-primary mb-2">500+</div>
+            <div className="text-sm text-muted-foreground">Expert Articles</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-primary mb-2">100+</div>
+            <div className="text-sm text-muted-foreground">Video Guides</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-primary mb-2">1M+</div>
+            <div className="text-sm text-muted-foreground">Monthly Readers</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-primary mb-2">50+</div>
+            <div className="text-sm text-muted-foreground">Medical Experts</div>
             </div>
           </div>
         </div>
