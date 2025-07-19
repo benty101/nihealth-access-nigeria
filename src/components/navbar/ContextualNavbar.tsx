@@ -5,8 +5,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import NavLogo from './NavLogo';
 import UserMenu from './UserMenu';
 import MobileMenu from './MobileMenu';
-import { useStreamlinedNavigation, StreamlinedDesktopNavigation } from './StreamlinedNavigation';
-import { useSuperAdminNavigation, SuperAdminDesktopNavigation } from './SuperAdminNavigation';
+import { PsychologicalNavigation } from '../navigation/PsychologicalNavigation';
 import { Button } from '@/components/ui/button';
 import { Star, Map, ArrowRight, LayoutDashboard } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -29,10 +28,7 @@ const ContextualNavbar = () => {
                          ['/appointments', '/insurance', '/hospitals', '/labs', '/pharmacy', 
                           '/telemedicine', '/resources', '/records', '/profile'].includes(location.pathname);
   
-  // Use different navigation based on user role
-  const isSuperAdmin = role === 'super_admin';
-  const superAdminItems = useSuperAdminNavigation();
-  const { primaryItems, secondaryItems } = useStreamlinedNavigation();
+  // Use new psychological navigation for all authenticated users
 
   // Don't render navbar while auth or role is loading
   if (loading || roleLoading) {
@@ -89,17 +85,10 @@ const ContextualNavbar = () => {
             <NavLogo />
           </div>
 
-          {/* Center Navigation - Only show in dashboard areas for authenticated users */}
+          {/* Center Navigation - Psychological Design */}
           {user && isDashboardArea && (
             <div className="hidden lg:flex flex-1 justify-center animate-fade-in animation-delay-400">
-              {isSuperAdmin ? (
-                <SuperAdminDesktopNavigation items={superAdminItems} />
-              ) : (
-                <StreamlinedDesktopNavigation 
-                  primaryItems={primaryItems} 
-                  secondaryItems={secondaryItems} 
-                />
-              )}
+              <PsychologicalNavigation />
             </div>
           )}
 
@@ -138,7 +127,7 @@ const ContextualNavbar = () => {
                   </Button>
                 </div>
 
-                {!isSuperAdmin && (
+                {role !== 'super_admin' && (
                   <div className="hidden md:block animate-fade-in animation-delay-500">
                     <Button
                       variant="outline"
