@@ -15,10 +15,22 @@ import {
   ArrowRight,
   Plus,
   Search,
-  Bell
+  Bell,
+  ChevronDown,
+  TestTube,
+  Pill,
+  Baby,
+  Video
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Psychological principle: Progressive disclosure with contextual grouping
 interface NavigationContext {
@@ -64,26 +76,37 @@ export const usePsychologicalNavigation = () => {
   const getCoreNavigationItems = (): NavigationItem[] => {
     const baseItems: NavigationItem[] = [
       {
-        id: 'care-now',
-        label: 'Get Care Now',
-        path: '/care',
-        icon: Zap,
-        description: 'Immediate medical attention',
-        urgency: 'high',
-        category: 'care',
-        contextualHints: ['Book appointment', 'Emergency care', 'Quick consultation'],
-        visualWeight: 10
-      },
-      {
-        id: 'health-hub',
+        id: 'dashboard',
         label: 'Health Hub',
         path: '/dashboard',
         icon: Activity,
-        description: 'Your health overview',
+        description: 'Your health overview & timeline',
         urgency: 'medium',
         category: 'manage',
         contextualHints: ['Health timeline', 'Recent visits', 'Upcoming care'],
-        visualWeight: 8
+        visualWeight: 9
+      },
+      {
+        id: 'book-care',
+        label: 'Book Care',
+        path: '/appointments',
+        icon: Calendar,
+        description: 'Schedule appointments & consultations',
+        urgency: 'high',
+        category: 'care',
+        contextualHints: ['Book appointment', 'Find doctors', 'Quick consultation'],
+        visualWeight: 10
+      },
+      {
+        id: 'insurance',
+        label: 'Insurance',
+        path: '/insurance',
+        icon: Shield,
+        description: 'Manage coverage & claims',
+        urgency: 'medium',
+        category: 'manage',
+        contextualHints: ['Coverage details', 'Claims status', 'Compare plans'],
+        visualWeight: 7
       },
       {
         id: 'find-care',
@@ -94,18 +117,7 @@ export const usePsychologicalNavigation = () => {
         urgency: 'medium',
         category: 'care',
         contextualHints: ['Nearby hospitals', 'Specialist doctors', 'Reviews & ratings'],
-        visualWeight: 7
-      },
-      {
-        id: 'insurance',
-        label: 'Insurance',
-        path: '/insurance',
-        icon: Shield,
-        description: 'Manage your coverage',
-        urgency: 'low',
-        category: 'manage',
-        contextualHints: ['Coverage details', 'Claims status', 'Compare plans'],
-        visualWeight: 6
+        visualWeight: 8
       }
     ];
 
@@ -133,25 +145,25 @@ export const usePsychologicalNavigation = () => {
     
     const actions = [];
     
+    // Smart contextual actions based on user state and time
     if (context.userState === 'new') {
       actions.push({
         id: 'onboarding',
-        label: 'Get Started',
-        description: `${timeGreeting} Let's set up your health profile`,
-        action: () => console.log('Start onboarding'),
+        label: 'Complete Profile',
+        description: `${timeGreeting} Complete your health profile to get personalized recommendations`,
+        action: () => window.location.href = '/profile',
         urgency: 'high' as const
       });
     }
     
-    if (context.timeOfDay === 'morning') {
-      actions.push({
-        id: 'morning-checkup',
-        label: 'Morning Health Check',
-        description: 'Quick wellness assessment to start your day',
-        action: () => console.log('Morning check'),
-        urgency: 'medium' as const
-      });
-    }
+    // Emergency action always available
+    actions.push({
+      id: 'emergency',
+      label: 'Emergency',
+      description: 'Quick access to emergency services',
+      action: () => window.location.href = '/emergency',
+      urgency: 'high' as const
+    });
 
     return actions;
   };
@@ -221,6 +233,59 @@ export const PsychologicalNavigation: React.FC<PsychologicalNavigationProps> = (
             </Link>
           </div>
         ))}
+
+        {/* More Services Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 flex items-center gap-1"
+            >
+              More Services
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 bg-white border shadow-lg z-50">
+            <DropdownMenuItem asChild>
+              <Link to="/labs" className="flex items-center gap-3 w-full cursor-pointer hover:bg-primary/5">
+                <TestTube className="h-4 w-4 text-orange-600" />
+                Book Lab Test
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/pharmacy" className="flex items-center gap-3 w-full cursor-pointer hover:bg-primary/5">
+                <Pill className="h-4 w-4 text-green-600" />
+                Buy Medicine
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/pediatric" className="flex items-center gap-3 w-full cursor-pointer hover:bg-primary/5">
+                <Baby className="h-4 w-4 text-pink-600" />
+                Mother & Child Care
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/telemedicine" className="flex items-center gap-3 w-full cursor-pointer hover:bg-primary/5">
+                <Video className="h-4 w-4 text-purple-600" />
+                Telemedicine
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/records" className="flex items-center gap-3 w-full cursor-pointer hover:bg-primary/5">
+                <Activity className="h-4 w-4 text-blue-600" />
+                Health Records
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/resources" className="flex items-center gap-3 w-full cursor-pointer hover:bg-primary/5">
+                <Heart className="h-4 w-4 text-red-600" />
+                Health Resources
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Contextual Actions */}

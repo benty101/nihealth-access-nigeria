@@ -25,11 +25,9 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation - Psychological Design */}
-          {user && (
-            <div className="hidden lg:flex flex-1 justify-center animate-fade-in animation-delay-400">
-              <PsychologicalNavigation />
-            </div>
-          )}
+          <div className="hidden lg:flex flex-1 justify-center animate-fade-in animation-delay-400">
+            <PsychologicalNavigation />
+          </div>
 
           {/* Right side - Site Map + Premium Link + User Menu */}
           <div className="flex items-center gap-4">
