@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -21,7 +21,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
 }) => {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <ContextualNavbar />
       
       <main className={`container mx-auto px-4 py-6 ${className}`}>
         {showBreadcrumbs && <Breadcrumbs />}

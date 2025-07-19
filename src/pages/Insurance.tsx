@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import EnhancedInsuranceSearch from '@/components/insurance/EnhancedInsuranceSearch';
 import InsuranceFilters from '@/components/insurance/InsuranceFilters';
 import InsurancePlanCard from '@/components/insurance/InsurancePlanCard';
@@ -148,7 +148,7 @@ const Insurance = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <ContextualNavbar />
       <UserGuidance />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

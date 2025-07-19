@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import { Shield, Calendar, Heart, Baby, Stethoscope, Syringe, Users, Activity, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ const Pediatric = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <ContextualNavbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">

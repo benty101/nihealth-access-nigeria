@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -94,7 +94,7 @@ const Appointments = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
+        <ContextualNavbar />
         <div className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-center h-64">
@@ -109,7 +109,7 @@ const Appointments = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
+        <ContextualNavbar />
         
         <div className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

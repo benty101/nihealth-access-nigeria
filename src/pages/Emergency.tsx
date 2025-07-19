@@ -1,13 +1,13 @@
 
 import React from 'react';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import EmergencyServices from '@/components/emergency/EmergencyServices';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Emergency = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <ContextualNavbar />
       <EmergencyServices />
       
       {/* Floating Emergency Button */}

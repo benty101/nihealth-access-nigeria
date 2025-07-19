@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import SuperAdminHeader from '@/components/admin/dashboard/SuperAdminHeader';
 import UserManagement from '@/components/admin/UserManagement';
 import HospitalManagement from '@/components/admin/HospitalManagement';
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <ContextualNavbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SuperAdminHeader loading={loading} onRefresh={loadStats} />
