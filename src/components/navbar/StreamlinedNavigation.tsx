@@ -32,6 +32,7 @@ export const useStreamlinedNavigation = () => {
   const { role } = useUserRole();
 
   const getPrimaryItems = () => {
+    // Base items for regular users
     const items = [
       { path: '/dashboard', label: 'Dashboard', icon: Settings },
       { path: '/appointments', label: 'Book Care', icon: Calendar },
@@ -39,12 +40,15 @@ export const useStreamlinedNavigation = () => {
       { path: '/hospitals', label: 'Find Care', icon: MapPin }
     ];
 
-    // Add role-specific primary items for admins
+    // Add role-specific primary items
     if (role === 'super_admin') {
-      items.push({ path: '/admin', label: 'Admin', icon: Shield });
+      items.push({ path: '/admin', label: 'Admin Console', icon: Shield });
     }
     if (role === 'hospital_admin' || role === 'super_admin') {
-      items.push({ path: '/hospital', label: 'Hospital', icon: Building2 });
+      items.push({ path: '/hospital', label: 'Hospital Portal', icon: Building2 });
+    }
+    if (role === 'broker' || role === 'super_admin') {
+      items.push({ path: '/broker', label: 'Broker Hub', icon: TrendingUp });
     }
 
     return items;

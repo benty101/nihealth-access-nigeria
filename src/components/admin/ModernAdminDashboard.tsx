@@ -42,45 +42,45 @@ import { adminDataService, type SystemStats } from '@/services/AdminDataService'
 const adminMenuItems = [
   { 
     id: 'overview', 
-    title: 'Overview', 
+    title: 'System Overview', 
     icon: BarChart3, 
-    description: 'System analytics & insights'
+    description: 'Platform analytics & performance'
   },
   { 
     id: 'users', 
-    title: 'Users', 
+    title: 'User Management', 
     icon: Users, 
-    description: 'User management & roles'
+    description: 'User accounts & permissions'
   },
   { 
     id: 'hospitals', 
-    title: 'Hospitals', 
+    title: 'Provider Network', 
     icon: Building2, 
-    description: 'Healthcare providers'
+    description: 'Hospitals & healthcare facilities'
   },
   { 
     id: 'medications', 
-    title: 'Medications', 
+    title: 'Drug Catalog', 
     icon: Pill, 
-    description: 'Drug catalog & inventory'
+    description: 'Medication database management'
   },
   { 
     id: 'laboratories', 
-    title: 'Lab Tests', 
+    title: 'Lab Services', 
     icon: TestTube, 
-    description: 'Diagnostic services'
+    description: 'Diagnostic test management'
   },
   { 
     id: 'insurance', 
-    title: 'Insurance', 
+    title: 'Insurance Plans', 
     icon: Shield, 
-    description: 'Plans & coverage'
+    description: 'Coverage plans & policies'
   },
   { 
     id: 'orders', 
-    title: 'Orders', 
+    title: 'Transaction Hub', 
     icon: Package, 
-    description: 'Transaction management'
+    description: 'All platform transactions'
   }
 ];
 
