@@ -110,19 +110,31 @@ const UserProfile = () => {
       return true;
     } catch (error: any) {
       const errors: Record<string, string> = {};
+      
+      console.log('=== VALIDATION DEBUG ===');
+      console.log('Data being validated:', data);
+      
       error.errors?.forEach((err: any) => {
+        console.log('Validation error:', {
+          field: err.path?.[0],
+          message: err.message,
+          received: err.received,
+          code: err.code
+        });
+        
         if (err.path?.[0]) {
           errors[err.path[0]] = err.message;
         }
       });
       
-      // Show validation errors in toast for debugging
+      // Show specific validation errors
       if (Object.keys(errors).length > 0) {
-        console.log('Validation errors:', errors);
-        const errorMessages = Object.entries(errors).map(([field, message]) => `${field}: ${message}`);
+        const errorDetails = Object.entries(errors).map(([field, message]) => `${field}: ${message}`);
+        console.log('All validation errors:', errorDetails);
+        
         toast({
-          title: "Validation Errors",
-          description: errorMessages.slice(0, 3).join(', ') + (errorMessages.length > 3 ? '...' : ''),
+          title: "Validation Failed",
+          description: `Fields with errors: ${Object.keys(errors).join(', ')}`,
           variant: "destructive",
         });
       }
