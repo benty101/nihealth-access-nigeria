@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { secureLogger } from '@/lib/secureLogger';
 
-export type UserRole = 'super_admin' | 'hospital_admin' | 'patient';
+export type UserRole = 'super_admin' | 'hospital_admin' | 'patient' | 'broker';
 
 export const useUserRole = () => {
   const { user } = useAuth();

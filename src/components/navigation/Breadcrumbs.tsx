@@ -4,6 +4,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 import { useNavigationItems } from './SiteNavigation';
 
+interface BreadcrumbItem {
+  path: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }> | null;
+}
+
 const Breadcrumbs = () => {
   const location = useLocation();
   const navigationItems = useNavigationItems();
@@ -15,7 +21,7 @@ const Breadcrumbs = () => {
     return null;
   }
 
-  const breadcrumbs = [
+  const breadcrumbs: BreadcrumbItem[] = [
     { path: '/', label: 'Home', icon: Home }
   ];
 
