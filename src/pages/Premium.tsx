@@ -15,25 +15,25 @@ const Premium = () => {
       title: 'AI Health Insights',
       description: 'Advanced AI analysis of your health patterns with personalized recommendations',
       icon: Brain,
-      gradient: 'from-primary to-primary/80'
+      bgColor: 'bg-primary/10'
     },
     {
       title: 'Real-Time Monitoring',
       description: 'Continuous health monitoring with instant alerts and smart notifications',
       icon: Activity,
-      gradient: 'from-secondary to-secondary/80'
+      bgColor: 'bg-health-success/10'
     },
     {
       title: 'Family Health Hub',
       description: 'Connect with family members and share health data securely',
       icon: HeartHandshake,
-      gradient: 'from-accent to-accent/80'
+      bgColor: 'bg-health-info/10'
     },
     {
       title: 'Precision Goals',
       description: 'Smart goal setting with progress tracking and achievement rewards',
       icon: Target,
-      gradient: 'from-primary to-secondary'
+      bgColor: 'bg-secondary/10'
     },
   ];
 
@@ -152,8 +152,8 @@ const Premium = () => {
                 return (
                   <Card key={index} className="text-center hover:shadow-xl transition-all duration-300 border hover:-translate-y-2 group">
                     <CardHeader className="pb-4">
-                      <div className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                        <IconComponent className="h-10 w-10 text-white" />
+                      <div className={`w-20 h-20 ${feature.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                        <IconComponent className="h-10 w-10 text-primary" />
                       </div>
                       <CardTitle className="text-xl font-semibold text-foreground">{feature.title}</CardTitle>
                     </CardHeader>
@@ -186,7 +186,7 @@ const Premium = () => {
                 }`}>
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-6 py-2 text-sm font-semibold">
+                      <Badge className="bg-primary text-primary-foreground px-6 py-2 text-sm font-semibold">
                         Most Popular
                       </Badge>
                     </div>
@@ -214,7 +214,7 @@ const Premium = () => {
                     <ul className="space-y-3">
                       {plan.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start text-sm">
-                          <Check className="h-5 w-5 text-secondary mr-3 mt-0.5 flex-shrink-0" />
+                          <Check className="h-5 w-5 text-health-success mr-3 mt-0.5 flex-shrink-0" />
                           <span className="text-foreground">{feature}</span>
                         </li>
                       ))}
@@ -224,8 +224,8 @@ const Premium = () => {
                       onClick={() => handleSubscribe(plan.priceId, plan.name)}
                       className={`w-full py-3 text-base font-semibold transition-all duration-200 ${
                         plan.popular 
-                          ? 'bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg' 
-                          : 'bg-secondary hover:bg-secondary/90'
+                          ? 'bg-primary hover:bg-primary-hover text-primary-foreground shadow-lg' 
+                          : 'bg-secondary hover:bg-secondary-hover text-secondary-foreground'
                       }`}
                     >
                       {plan.buttonText}
@@ -243,7 +243,7 @@ const Premium = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4 text-primary-foreground font-bold text-lg">
+                <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-primary-foreground font-bold text-lg">
                   AO
                 </div>
                 <blockquote className="text-muted-foreground mb-4 italic">
@@ -254,7 +254,7 @@ const Premium = () => {
               </div>
               
               <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-secondary-foreground font-bold text-lg">
+                <div className="w-20 h-20 bg-health-success rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg">
                   FA
                 </div>
                 <blockquote className="text-muted-foreground mb-4 italic">
@@ -265,7 +265,7 @@ const Premium = () => {
               </div>
               
               <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center mx-auto mb-4 text-accent-foreground font-bold text-lg">
+                <div className="w-20 h-20 bg-health-info rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg">
                   CO
                 </div>
                 <blockquote className="text-muted-foreground mb-4 italic">

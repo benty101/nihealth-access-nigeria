@@ -164,7 +164,7 @@ const ModernResourceCenter = () => {
             {categories.find(c => c.id === resource.category)?.name}
           </Badge>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+            <Star className="h-3 w-3 fill-health-warning text-health-warning" />
             {resource.rating}
           </div>
         </div>
@@ -283,15 +283,15 @@ const ModernResourceCenter = () => {
               <div className="text-sm text-muted-foreground">Expert Articles</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-2">100+</div>
+              <div className="text-3xl font-bold text-health-success mb-2">100+</div>
               <div className="text-sm text-muted-foreground">Video Guides</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">1M+</div>
+              <div className="text-3xl font-bold text-health-info mb-2">1M+</div>
               <div className="text-sm text-muted-foreground">Monthly Readers</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">50+</div>
+              <div className="text-3xl font-bold text-secondary mb-2">50+</div>
               <div className="text-sm text-muted-foreground">Medical Experts</div>
             </div>
           </div>
