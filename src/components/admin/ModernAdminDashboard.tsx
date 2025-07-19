@@ -39,6 +39,7 @@ import MedicationManagement from './MedicationManagement';
 import LabTestManagement from './LabTestManagement';
 import InsuranceManagement from './InsuranceManagement';
 import UnifiedOrderManagement from './UnifiedOrderManagement';
+import TelemedicineManagement from './TelemedicineManagement';
 import { adminDataService, type SystemStats } from '@/services/AdminDataService';
 
 const adminMenuItems = [
@@ -247,12 +248,7 @@ const ModernAdminDashboard = () => {
       case 'providers':
         return <HospitalManagement onStatsChange={loadStats} />;
       case 'telemedicine':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">MeddyPal Telemedicine Services</h2>
-            <p className="text-muted-foreground">Manage our direct telemedicine offerings - coming soon!</p>
-          </div>
-        );
+        return <TelemedicineManagement onStatsChange={loadStats} />;
       case 'insurance':
         return <InsuranceManagement onStatsChange={loadStats} />;
       case 'orders':
