@@ -16,21 +16,6 @@ const ContextualNavbar = () => {
   const { role } = useUserRole();
   const location = useLocation();
   
-  // Don't render navbar while auth is loading
-  if (loading) {
-    return (
-      <nav className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="animate-fade-in animation-delay-200">
-              <NavLogo />
-            </div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
-  
   // Determine navigation context
   const isHomePage = location.pathname === '/';
   const isAuthPage = location.pathname === '/auth';
@@ -45,6 +30,21 @@ const ContextualNavbar = () => {
   const isSuperAdmin = role === 'super_admin';
   const superAdminItems = useSuperAdminNavigation();
   const { primaryItems, secondaryItems } = useStreamlinedNavigation();
+
+  // Don't render navbar while auth is loading
+  if (loading) {
+    return (
+      <nav className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="animate-fade-in animation-delay-200">
+              <NavLogo />
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   const getDashboardPath = () => {
     switch (role) {
