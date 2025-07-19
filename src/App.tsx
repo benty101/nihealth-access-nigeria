@@ -182,6 +182,19 @@ function App() {
                 </ProtectedRoute>
               } />
               
+              <Route path="/hospital" element={
+                <ProtectedRoute>
+                  <HospitalDashboard />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/broker" element={
+                <ProtectedRoute>
+                  <BrokerDashboard />
+                </ProtectedRoute>
+              } />
+              
+              {/* Legacy routes for backward compatibility */}
               <Route path="/hospital-dashboard" element={
                 <ProtectedRoute>
                   <HospitalDashboard />
@@ -191,6 +204,12 @@ function App() {
               <Route path="/broker-dashboard" element={
                 <ProtectedRoute>
                   <BrokerDashboard />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/patient-portal" element={
+                <ProtectedRoute>
+                  <Dashboard />
                 </ProtectedRoute>
               } />
               

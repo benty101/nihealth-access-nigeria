@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import Navbar from '@/components/Navbar';
+import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import Hero from '@/components/Hero';
 import WorldClassFeatures from '@/components/WorldClassFeatures';
 
@@ -10,7 +10,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <ContextualNavbar />
       <Hero />
       <WorldClassFeatures />
     </div>

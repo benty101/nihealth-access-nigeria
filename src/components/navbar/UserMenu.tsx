@@ -65,7 +65,9 @@ const UserMenu = () => {
       case 'super_admin':
         return '/admin';
       case 'hospital_admin':
-        return '/hospital-dashboard';
+        return '/hospital';
+      case 'broker':
+        return '/broker';
       default:
         return '/dashboard';
     }
