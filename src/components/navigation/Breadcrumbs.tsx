@@ -55,7 +55,7 @@ const Breadcrumbs = () => {
         const IconComponent = crumb.icon;
         
         return (
-          <React.Fragment key={crumb.path}>
+          <div key={crumb.path} className="flex items-center">
             {index > 0 && (
               <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
             )}
@@ -74,7 +74,7 @@ const Breadcrumbs = () => {
                 {crumb.label}
               </Link>
             )}
-          </React.Fragment>
+          </div>
         );
       })}
     </nav>
