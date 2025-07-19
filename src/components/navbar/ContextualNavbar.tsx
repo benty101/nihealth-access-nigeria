@@ -12,9 +12,24 @@ import { Star, Map, ArrowRight, LayoutDashboard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ContextualNavbar = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { role } = useUserRole();
   const location = useLocation();
+  
+  // Don't render navbar while auth is loading
+  if (loading) {
+    return (
+      <nav className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="animate-fade-in animation-delay-200">
+              <NavLogo />
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
   
   // Determine navigation context
   const isHomePage = location.pathname === '/';
