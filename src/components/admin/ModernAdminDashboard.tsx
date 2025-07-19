@@ -29,7 +29,8 @@ import {
   AlertCircle,
   CheckCircle,
   Stethoscope,
-  DollarSign
+  DollarSign,
+  Brain
 } from 'lucide-react';
 
 import SystemOverview from './SystemOverview';
@@ -40,6 +41,7 @@ import LabTestManagement from './LabTestManagement';
 import InsuranceManagement from './InsuranceManagement';
 import UnifiedOrderManagement from './UnifiedOrderManagement';
 import TelemedicineManagement from './TelemedicineManagement';
+import MedicalAITesting from './MedicalAITesting';
 import { adminDataService, type SystemStats } from '@/services/AdminDataService';
 
 const adminMenuItems = [
@@ -84,6 +86,12 @@ const adminMenuItems = [
     title: 'Platform Users', 
     icon: Users, 
     description: 'Customer management'
+  },
+  { 
+    id: 'medical-ai', 
+    title: 'Medical AI Testing', 
+    icon: Brain, 
+    description: 'Test MedGemma-4B integration'
   }
 ];
 
@@ -262,6 +270,8 @@ const ModernAdminDashboard = () => {
         );
       case 'users':
         return <UserManagement />;
+      case 'medical-ai':
+        return <MedicalAITesting />;
       default:
         return <SystemOverview stats={stats} loading={loading} />;
     }
