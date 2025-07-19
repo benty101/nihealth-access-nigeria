@@ -105,8 +105,12 @@ const UserProfile = () => {
 
   const validateForm = (data: any): boolean => {
     try {
+      // Debug: Log the data being validated
+      console.log('Validating profile data:', data);
+      
       profileSchema.parse(data);
       setValidationErrors({});
+      console.log('Validation passed!');
       return true;
     } catch (error: any) {
       const errors: Record<string, string> = {};
@@ -115,6 +119,11 @@ const UserProfile = () => {
           errors[err.path[0]] = err.message;
         }
       });
+      
+      // Debug: Log validation errors
+      console.log('Validation errors:', errors);
+      console.log('Full validation error:', error);
+      
       setValidationErrors(errors);
       return false;
     }
