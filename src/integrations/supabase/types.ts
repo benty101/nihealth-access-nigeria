@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      biobank_samples: {
+        Row: {
+          chain_of_custody: Json | null
+          collection_date: string
+          collection_method: string
+          consent_biobanking: boolean | null
+          consent_data_sharing: boolean | null
+          consent_research: boolean | null
+          created_at: string | null
+          id: string
+          lab_id: string | null
+          processing_status: string | null
+          quality_metrics: Json | null
+          sample_id: string
+          sample_type: string
+          storage_location: string | null
+          storage_temperature: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chain_of_custody?: Json | null
+          collection_date: string
+          collection_method: string
+          consent_biobanking?: boolean | null
+          consent_data_sharing?: boolean | null
+          consent_research?: boolean | null
+          created_at?: string | null
+          id?: string
+          lab_id?: string | null
+          processing_status?: string | null
+          quality_metrics?: Json | null
+          sample_id: string
+          sample_type: string
+          storage_location?: string | null
+          storage_temperature?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chain_of_custody?: Json | null
+          collection_date?: string
+          collection_method?: string
+          consent_biobanking?: boolean | null
+          consent_data_sharing?: boolean | null
+          consent_research?: boolean | null
+          created_at?: string | null
+          id?: string
+          lab_id?: string | null
+          processing_status?: string | null
+          quality_metrics?: Json | null
+          sample_id?: string
+          sample_type?: string
+          storage_location?: string | null
+          storage_temperature?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biobank_samples_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultations: {
         Row: {
           chief_complaint: string | null
@@ -169,6 +237,170 @@ export type Database = {
             columns: ["hospital_id"]
             isOneToOne: false
             referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_health_records: {
+        Row: {
+          age_at_death: number | null
+          allergies: string[] | null
+          birth_date: string | null
+          cause_of_death: string | null
+          consent_to_share: boolean | null
+          created_at: string | null
+          family_member_name: string
+          gender: string | null
+          genetic_conditions: string[] | null
+          id: string
+          medical_conditions: string[] | null
+          medications: string[] | null
+          relationship: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          age_at_death?: number | null
+          allergies?: string[] | null
+          birth_date?: string | null
+          cause_of_death?: string | null
+          consent_to_share?: boolean | null
+          created_at?: string | null
+          family_member_name: string
+          gender?: string | null
+          genetic_conditions?: string[] | null
+          id?: string
+          medical_conditions?: string[] | null
+          medications?: string[] | null
+          relationship: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          age_at_death?: number | null
+          allergies?: string[] | null
+          birth_date?: string | null
+          cause_of_death?: string | null
+          consent_to_share?: boolean | null
+          created_at?: string | null
+          family_member_name?: string
+          gender?: string | null
+          genetic_conditions?: string[] | null
+          id?: string
+          medical_conditions?: string[] | null
+          medications?: string[] | null
+          relationship?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      health_timeline_events: {
+        Row: {
+          created_at: string | null
+          event_date: string
+          event_description: string | null
+          event_title: string
+          event_type: string
+          id: string
+          is_milestone: boolean | null
+          metadata: Json | null
+          privacy_level: string | null
+          related_id: string | null
+          related_table: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_date: string
+          event_description?: string | null
+          event_title: string
+          event_type: string
+          id?: string
+          is_milestone?: boolean | null
+          metadata?: Json | null
+          privacy_level?: string | null
+          related_id?: string | null
+          related_table?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_date?: string
+          event_description?: string | null
+          event_title?: string
+          event_type?: string
+          id?: string
+          is_milestone?: boolean | null
+          metadata?: Json | null
+          privacy_level?: string | null
+          related_id?: string | null
+          related_table?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      home_test_kits: {
+        Row: {
+          collection_instructions: string | null
+          created_at: string | null
+          id: string
+          kit_name: string
+          kit_type: string
+          lab_id: string | null
+          order_number: string
+          price: number
+          results_available: boolean | null
+          results_url: string | null
+          return_shipping_label: string | null
+          shipping_address: string
+          status: string | null
+          tracking_number: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          collection_instructions?: string | null
+          created_at?: string | null
+          id?: string
+          kit_name: string
+          kit_type: string
+          lab_id?: string | null
+          order_number: string
+          price: number
+          results_available?: boolean | null
+          results_url?: string | null
+          return_shipping_label?: string | null
+          shipping_address: string
+          status?: string | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          collection_instructions?: string | null
+          created_at?: string | null
+          id?: string
+          kit_name?: string
+          kit_type?: string
+          lab_id?: string | null
+          order_number?: string
+          price?: number
+          results_available?: boolean | null
+          results_url?: string | null
+          return_shipping_label?: string | null
+          shipping_address?: string
+          status?: string | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_test_kits_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
             referencedColumns: ["id"]
           },
         ]
@@ -1506,6 +1738,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_consents: {
+        Row: {
+          consent_date: string
+          consent_given: boolean
+          consent_type: string
+          consent_version: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          updated_at: string | null
+          user_id: string
+          withdrawal_date: string | null
+        }
+        Insert: {
+          consent_date: string
+          consent_given: boolean
+          consent_type: string
+          consent_version: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+          user_id: string
+          withdrawal_date?: string | null
+        }
+        Update: {
+          consent_date?: string
+          consent_given?: boolean
+          consent_type?: string
+          consent_version?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+          user_id?: string
+          withdrawal_date?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1543,6 +1814,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_kit_order_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_lab_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1556,6 +1831,10 @@ export type Database = {
         Returns: string
       }
       generate_policy_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_sample_id: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
