@@ -4,9 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import NavLogo from './navbar/NavLogo';
 import UserMenu from './navbar/UserMenu';
-import MobileMenu from './navbar/MobileMenu';
-import { useStreamlinedNavigation, StreamlinedDesktopNavigation } from './navbar/StreamlinedNavigation';
-import { useSuperAdminNavigation, SuperAdminDesktopNavigation } from './navbar/SuperAdminNavigation';
+import { SmartMobileNavigation } from './navigation/SmartMobileNavigation';
+import { PsychologicalNavigation } from './navigation/PsychologicalNavigation';
 import { Button } from '@/components/ui/button';
 import { Star, Map } from 'lucide-react';
 
@@ -14,10 +13,7 @@ const Navbar = () => {
   const { user } = useAuth();
   const { role } = useUserRole();
   
-  // Use different navigation based on user role
-  const isSuperAdmin = role === 'super_admin';
-  const superAdminItems = useSuperAdminNavigation();
-  const { primaryItems, secondaryItems } = useStreamlinedNavigation();
+  // Psychological navigation - adapts to user context and behavior
 
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95 animate-fade-in">
@@ -28,17 +24,10 @@ const Navbar = () => {
             <NavLogo />
           </div>
 
-          {/* Desktop Navigation - Center */}
+          {/* Desktop Navigation - Psychological Design */}
           {user && (
             <div className="hidden lg:flex flex-1 justify-center animate-fade-in animation-delay-400">
-              {isSuperAdmin ? (
-                <SuperAdminDesktopNavigation items={superAdminItems} />
-              ) : (
-                <StreamlinedDesktopNavigation 
-                  primaryItems={primaryItems} 
-                  secondaryItems={secondaryItems} 
-                />
-              )}
+              <PsychologicalNavigation />
             </div>
           )}
 
@@ -57,7 +46,7 @@ const Navbar = () => {
               </Button>
             </div>
 
-            {user && !isSuperAdmin && (
+            {user && role !== 'super_admin' && (
               <div className="hidden md:block animate-fade-in animation-delay-500">
                 <Button
                   variant="outline"
@@ -75,9 +64,9 @@ const Navbar = () => {
               <UserMenu />
             </div>
             
-            {/* Mobile Menu */}
+            {/* Smart Mobile Navigation */}
             <div className="lg:hidden">
-              <MobileMenu />
+              <SmartMobileNavigation />
             </div>
           </div>
         </div>
