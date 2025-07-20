@@ -94,8 +94,20 @@ export const PersonalizedHealthChat: React.FC = () => {
         }
       });
 
+      console.log('Supabase function response:', { data, error });
+
       if (error) {
+        console.error('Supabase function error:', error);
         throw new Error(error.message || 'Failed to get AI response');
+      }
+
+      if (!data) {
+        throw new Error('No data received from AI assistant');
+      }
+
+      if (!data.response) {
+        console.error('Invalid response format:', data);
+        throw new Error('Invalid response format from AI assistant');
       }
 
       const aiMessage: Message = {
@@ -103,13 +115,16 @@ export const PersonalizedHealthChat: React.FC = () => {
         role: 'assistant',
         content: data.response,
         timestamp: new Date(),
-        urgent: data.urgent,
-        recommendations: data.recommendations,
-        insights: data.insights
+        urgent: data.urgent || false,
+        recommendations: data.recommendations || [],
+        insights: data.insights || []
       };
 
       setMessages(prev => [...prev, aiMessage]);
-      setPatientSummary(data.patientSummary);
+      
+      if (data.patientSummary) {
+        setPatientSummary(data.patientSummary);
+      }
 
       if (data.urgent) {
         toast({
