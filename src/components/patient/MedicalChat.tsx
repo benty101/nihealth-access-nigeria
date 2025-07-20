@@ -97,7 +97,7 @@ const MedicalChat = () => {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-primary" />
-          Medical AI Assistant
+          Nduka AI Assistant
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0">

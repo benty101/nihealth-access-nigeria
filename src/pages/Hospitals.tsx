@@ -1,18 +1,25 @@
 
 import React from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import HospitalDirectory from '@/components/HospitalDirectory';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Hospitals = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ContextualNavbar />
+    <PageLayout 
+      title="Hospital Directory"
+      subtitle="Find and connect with hospitals and healthcare facilities across Nigeria"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
+      
       <HospitalDirectory />
       
       {/* Floating Emergency Button */}
       <FloatingEmergencyButton />
-    </div>
+    </PageLayout>
   );
 };
 

@@ -1,6 +1,7 @@
 
 import React from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -109,12 +110,15 @@ const Premium = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
-      <ContextualNavbar />
+    <PageLayout 
+      title="MeddyPal Premium"
+      subtitle="Transform your health journey with AI-powered insights and personalized care"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
       
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Hero Section */}
+      <div className="bg-gradient-to-br from-background via-muted/30 to-background">{/* Hero Section */}
           <div className="text-center mb-16 animate-fade-in">
             <div className="inline-flex items-center bg-primary/10 text-primary px-6 py-2 rounded-full text-sm font-medium mb-6">
               <Zap className="h-4 w-4 mr-2" />
@@ -294,8 +298,7 @@ const Premium = () => {
             </Button>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

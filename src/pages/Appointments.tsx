@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -93,36 +94,24 @@ const Appointments = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <ContextualNavbar />
-        <div className="py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
-            </div>
-          </div>
+      <PageLayout title="Loading Appointments...">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
   return (
-    <>
-      <div className="min-h-screen bg-gray-50">
-        <ContextualNavbar />
-        
-        <div className="py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Book Medical Appointments
-              </h1>
-              <p className="text-lg text-gray-600">
-                Schedule appointments with qualified healthcare providers across Nigeria
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <PageLayout 
+      title="Book Medical Appointments"
+      subtitle="Schedule appointments with qualified healthcare providers across Nigeria"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Calendar and Upcoming Appointments */}
               <div className="lg:col-span-1 space-y-6">
                 <Card>
@@ -256,17 +245,14 @@ const Appointments = () => {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
         </div>
-      </div>
-
+      
       <BookAppointmentModal
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
         onSuccess={handleBookingSuccess}
       />
-    </>
+    </PageLayout>
   );
 };
 
