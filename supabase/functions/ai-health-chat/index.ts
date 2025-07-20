@@ -13,8 +13,29 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // Handle GET requests (when someone visits the URL directly)
+  if (req.method === 'GET') {
+    return new Response(JSON.stringify({ 
+      message: 'MeddyPal AI Health Chat API is running',
+      usage: 'Send POST request with { message: "your question", conversationHistory: [] }',
+      status: 'healthy'
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
+  }
+
   try {
-    const { message, conversationHistory = [] } = await req.json()
+    const body = await req.text()
+    if (!body) {
+      return new Response(JSON.stringify({ 
+        error: 'Request body is required. Please send a JSON object with message field.' 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    const { message, conversationHistory = [] } = JSON.parse(body)
     
     // Get Groq API key from Supabase secrets (free tier available)
     const groqApiKey = Deno.env.get('GROQ_API_KEY')
