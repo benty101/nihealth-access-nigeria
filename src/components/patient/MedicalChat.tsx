@@ -94,34 +94,34 @@ const MedicalChat = () => {
 
   return (
     <Card className="h-[600px] flex flex-col">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex-shrink-0">
         <CardTitle className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-primary" />
           Nduka
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 px-4">
-          <div className="space-y-4 pb-4">
+      <CardContent className="flex-1 flex flex-col p-0 min-h-0">
+        <ScrollArea className="flex-1 px-4 py-2">
+          <div className="space-y-4 min-h-full">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex gap-3 ${message.isUser ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`flex gap-2 max-w-[80%] ${message.isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`flex gap-2 max-w-[85%] ${message.isUser ? 'flex-row-reverse' : 'flex-row'}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'
                   }`}>
                     {message.isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                   </div>
-                  <div className={`p-3 rounded-lg ${
+                  <div className={`p-3 rounded-lg shadow-sm ${
                     message.isUser 
                       ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted'
+                      : 'bg-muted border'
                   }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    <p className={`text-xs mt-1 opacity-70`}>
-                      {message.timestamp.toLocaleTimeString()}
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                    <p className={`text-xs mt-2 opacity-70`}>
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
@@ -129,29 +129,29 @@ const MedicalChat = () => {
             ))}
             {isLoading && (
               <div className="flex gap-3 justify-start">
-                <div className="flex gap-2 max-w-[80%]">
+                <div className="flex gap-2 max-w-[85%]">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-muted">
                     <Bot className="w-4 h-4" />
                   </div>
-                  <div className="p-3 rounded-lg bg-muted">
+                  <div className="p-3 rounded-lg bg-muted border shadow-sm">
                     <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <p className="text-sm">Thinking...</p>
+                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <p className="text-sm">Nduka is thinking...</p>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} className="h-1" />
           </div>
         </ScrollArea>
-        <div className="p-4 border-t">
+        <div className="p-4 border-t bg-background flex-shrink-0">
           <div className="flex gap-2">
             <Input
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Describe your symptoms or ask a health question..."
+              placeholder="Ask Nduka about your health..."
               disabled={isLoading}
               className="flex-1"
             />
@@ -159,12 +159,13 @@ const MedicalChat = () => {
               onClick={sendMessage} 
               disabled={!inputMessage.trim() || isLoading}
               size="icon"
+              className="flex-shrink-0"
             >
               <Send className="w-4 h-4" />
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            This AI provides general health information only. Always consult healthcare professionals for medical advice.
+            Nduka provides health insights based on your profile. Always consult healthcare professionals for medical advice.
           </p>
         </div>
       </CardContent>
