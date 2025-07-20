@@ -18,7 +18,7 @@ const MedicalChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm your medical AI assistant. I can help you understand symptoms, provide health information, and offer general medical guidance. Please describe your symptoms or ask any health-related questions.",
+      content: "Hello! I'm your personalized MeddyPal AI assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
       isUser: false,
       timestamp: new Date()
     }
@@ -51,10 +51,13 @@ const MedicalChat = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('medical-ai-assistant', {
+      const { data, error } = await supabase.functions.invoke('personalized-health-ai', {
         body: {
-          prompt: inputMessage,
-          type: 'general'
+          message: inputMessage,
+          conversationHistory: messages.slice(-4).map(msg => ({
+            role: msg.isUser ? 'user' : 'assistant',
+            content: msg.content
+          }))
         }
       });
 
