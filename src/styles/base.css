@@ -28,9 +28,9 @@
     --primary-hover: 134 61% 36%; /* Interactive state */
     --primary-glow: 134 61% 55%; /* Glow effect */
     
-    --secondary: 134 45% 28%; /* Sophisticated secondary green */
+    --secondary: 134 45% 35%; /* Sophisticated secondary green */
     --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 142 25% 30%;
+    --secondary-hover: 134 45% 30%;
     
     /* Health-specific colors */
     --health-success: 134 61% 41%; /* Vibrant health green - matches primary */
