@@ -18,7 +18,10 @@ import {
   Stethoscope,
   Pill,
   TestTube,
-  AlertTriangle
+  AlertTriangle,
+  Bot,
+  MessageCircle,
+  Search
 } from 'lucide-react';
 
 export interface NavigationItem {
@@ -139,6 +142,27 @@ export const useNavigationItems = () => {
       label: 'Premium Features',
       icon: Star,
       description: 'Upgrade to premium services',
+      requiresAuth: true
+    },
+    {
+      path: '/ai-chat',
+      label: 'Nduka AI Chat',
+      icon: MessageCircle,
+      description: 'Chat with Nduka, your AI health assistant',
+      requiresAuth: true
+    },
+    {
+      path: '/ai-assistant',
+      label: 'AI Symptom Checker',
+      icon: Bot,
+      description: 'AI-powered symptom analysis',
+      requiresAuth: true
+    },
+    {
+      path: '/medical-search',
+      label: 'Medical Search',
+      icon: Search,
+      description: 'Search medical knowledge base',
       requiresAuth: true
     }
   ];

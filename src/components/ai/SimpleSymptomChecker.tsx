@@ -160,7 +160,7 @@ export const SimpleSymptomChecker: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-6 w-6 text-primary" />
-            Symptom Checker
+            Nduka Symptom Checker
             <Badge variant="secondary" className="ml-2">
               Free • Rule-Based Analysis
             </Badge>
@@ -193,12 +193,12 @@ export const SimpleSymptomChecker: React.FC = () => {
               {isLoading ? (
                 <>
                   <Activity className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing Symptoms...
+                  Nduka is analyzing...
                 </>
               ) : (
                 <>
                   <Brain className="mr-2 h-4 w-4" />
-                  Analyze Symptoms
+                  Ask Nduka
                 </>
               )}
             </Button>

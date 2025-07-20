@@ -49,7 +49,7 @@ export const PersonalizedHealthChat: React.FC = () => {
     {
       id: '1',
       role: 'assistant',
-      content: "Hello! I'm your personalized MeddyPal AI assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
+      content: "Hello! I'm Nduka, your personalized MeddyPal AI assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
       timestamp: new Date(),
     }
   ]);
@@ -125,7 +125,7 @@ export const PersonalizedHealthChat: React.FC = () => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I apologize, but I'm experiencing technical difficulties accessing your personalized health data. Please try again in a moment, or contact a healthcare provider if you have urgent concerns.",
+        content: "I'm Nduka, and I apologize, but I'm experiencing technical difficulties accessing your personalized health data. Please try again in a moment, or contact a healthcare provider if you have urgent concerns.",
         timestamp: new Date(),
       };
 
@@ -182,7 +182,7 @@ export const PersonalizedHealthChat: React.FC = () => {
                   <Sparkles className="h-4 w-4 text-accent absolute -top-1 -right-1" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground">Personalized AI Health Assistant</h1>
+                  <h1 className="text-2xl font-bold text-foreground">Nduka - AI Health Assistant</h1>
                   <p className="text-sm text-muted-foreground">AI-powered insights tailored to your health profile</p>
                 </div>
               </div>
@@ -238,7 +238,7 @@ export const PersonalizedHealthChat: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/30" />
-              <span className="text-sm font-medium text-foreground">AI Assistant Active</span>
+              <span className="text-sm font-medium text-foreground">Nduka Active</span>
               <Badge variant="outline" className="text-xs">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 Personalized Mode
@@ -355,7 +355,7 @@ export const PersonalizedHealthChat: React.FC = () => {
                   </Avatar>
                   <div className="bg-card border border-border/50 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm">
                     <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    <span className="text-sm text-muted-foreground">Analyzing your health data...</span>
+                    <span className="text-sm text-muted-foreground">Nduka is analyzing your health data...</span>
                   </div>
                 </div>
               )}

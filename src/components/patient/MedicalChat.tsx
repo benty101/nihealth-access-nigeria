@@ -18,7 +18,7 @@ const MedicalChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm your personalized MeddyPal AI assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
+      content: "Hello! I'm Nduka, your personalized MeddyPal AI assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
       isUser: false,
       timestamp: new Date()
     }

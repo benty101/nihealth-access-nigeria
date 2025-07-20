@@ -229,7 +229,7 @@ export const MedicalKnowledgeSearch: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Book className="h-6 w-6 text-primary" />
-            Medical Knowledge Search
+            Nduka Medical Search
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Search medical information from multiple free databases
