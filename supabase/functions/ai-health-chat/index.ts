@@ -87,7 +87,7 @@ Focus on being helpful while maintaining safety and encouraging proper medical c
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-70b-versatile', // Free, fast, and capable model
+        model: 'llama-3.1-8b-instant', // Free, fast, and capable model
         messages: messages,
         temperature: 0.3, // Lower temperature for more consistent medical advice
         max_tokens: 1000,
@@ -115,7 +115,7 @@ Focus on being helpful while maintaining safety and encouraging proper medical c
     const analysisResult = {
       response: aiResponse,
       timestamp: new Date().toISOString(),
-      model: 'llama-3.1-70b-versatile',
+      model: 'llama-3.1-8b-instant',
       urgent: aiResponse.toLowerCase().includes('emergency') || 
               aiResponse.toLowerCase().includes('urgent') ||
               aiResponse.toLowerCase().includes('immediate'),
