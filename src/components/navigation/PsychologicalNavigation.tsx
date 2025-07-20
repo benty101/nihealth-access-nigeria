@@ -26,7 +26,9 @@ import {
   Clock,
   Star,
   FlaskConical,
-  Stethoscope
+  Stethoscope,
+  Brain,
+  MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -94,8 +96,27 @@ export const PsychologicalNavigation: React.FC<{ className?: string }> = ({ clas
     });
   }
 
-  // Service categories
+  // Service categories with AI features
   const serviceCategories = [
+    {
+      title: 'AI Health Assistant',
+      items: [
+        {
+          label: 'Symptom Checker',
+          icon: Brain,
+          path: '/ai-assistant',
+          description: 'AI-powered symptom analysis',
+          badge: 'Free AI'
+        },
+        {
+          label: 'Health Chat',
+          icon: MessageCircle,
+          path: '/ai-chat',
+          description: 'Chat with AI health assistant',
+          badge: 'Smart'
+        }
+      ]
+    },
     {
       title: 'Diagnostics & Tests',
       items: [
@@ -135,8 +156,15 @@ export const PsychologicalNavigation: React.FC<{ className?: string }> = ({ clas
       ]
     },
     {
-      title: 'Records & Insights',
+      title: 'Knowledge & Insights',
       items: [
+        {
+          label: 'Medical Search',
+          icon: Search,
+          path: '/medical-search',
+          description: 'Search medical knowledge',
+          badge: 'Free'
+        },
         {
           label: 'Health Records',
           icon: BookOpen,
