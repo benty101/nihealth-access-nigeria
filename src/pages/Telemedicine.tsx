@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AvailableDoctors from '@/components/telemedicine/AvailableDoctors';
 import ConsultationBooking from '@/components/telemedicine/ConsultationBooking';
@@ -8,19 +9,15 @@ import { Video, Calendar, Clock, Users } from 'lucide-react';
 
 const Telemedicine = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <ContextualNavbar />
+    <PageLayout 
+      title="Telemedicine Services" 
+      subtitle="Connect with qualified healthcare providers through secure video consultations from the comfort of your home"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
       
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Telemedicine Services</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Connect with qualified healthcare providers through secure video consultations from the comfort of your home
-          </p>
-        </div>
-
-        {/* Stats Cards */}
+      <div className="container mx-auto">{/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="flex items-center p-6">
@@ -76,7 +73,7 @@ const Telemedicine = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

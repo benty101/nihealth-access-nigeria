@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -158,52 +159,50 @@ const Labs = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ContextualNavbar />
+    <PageLayout 
+      title="Laboratory Tests & Diagnostics" 
+      subtitle="Book laboratory tests and diagnostic services with certified facilities across Nigeria, or order convenient home test kits"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
       
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Laboratory Tests & Diagnostics
-            </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Book laboratory tests and diagnostic services with certified facilities across Nigeria, or order convenient home test kits
-            </p>
-            {!user && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center justify-center gap-2 text-blue-700">
-                  <UserPlus className="h-5 w-5" />
-                  <span>Create an account to book tests and track your results</span>
-                  <Button 
-                    onClick={() => navigate('/auth')} 
-                    size="sm" 
-                    className="ml-2 bg-blue-600 hover:bg-blue-700"
-                  >
-                    Sign Up
-                  </Button>
-                </div>
-              </div>
-            )}
-            <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
-              <div className="flex items-center">
-                <TestTube className="h-4 w-4 mr-2 text-blue-600" />
-                Certified labs
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2 text-green-600" />
-                Quick results
-              </div>
-              <div className="flex items-center">
-                <Activity className="h-4 w-4 mr-2 text-purple-600" />
-                Digital reports
-              </div>
-              <div className="flex items-center">
-                <Home className="h-4 w-4 mr-2 text-orange-600" />
-                Home test kits
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          {!user && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-center gap-2 text-blue-700">
+                <UserPlus className="h-5 w-5" />
+                <span>Create an account to book tests and track your results</span>
+                <Button 
+                  onClick={() => navigate('/auth')} 
+                  size="sm" 
+                  className="ml-2 bg-blue-600 hover:bg-blue-700"
+                >
+                  Sign Up
+                </Button>
               </div>
             </div>
+          )}
+          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
+            <div className="flex items-center">
+              <TestTube className="h-4 w-4 mr-2 text-blue-600" />
+              Certified labs
+            </div>
+            <div className="flex items-center">
+              <Clock className="h-4 w-4 mr-2 text-green-600" />
+              Quick results
+            </div>
+            <div className="flex items-center">
+              <Activity className="h-4 w-4 mr-2 text-purple-600" />
+              Digital reports
+            </div>
+            <div className="flex items-center">
+              <Home className="h-4 w-4 mr-2 text-orange-600" />
+              Home test kits
+            </div>
           </div>
+        </div>
 
           {/* Tabs for Lab Tests vs Home Test Kits */}
           <Tabs defaultValue="lab-tests" className="w-full">
@@ -375,20 +374,19 @@ const Labs = () => {
             <TabsContent value="home-kits">
               <TestKitCatalog onOrderKit={handleOrderKit} />
             </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+        </Tabs>
 
-      {/* Test Kit Order Modal */}
-      {selectedKit && (
-        <TestKitOrderModal
-          isOpen={showOrderModal}
-          onClose={() => setShowOrderModal(false)}
-          testKit={selectedKit}
-          onOrderComplete={handleOrderComplete}
-        />
-      )}
-    </div>
+        {/* Test Kit Order Modal */}
+        {selectedKit && (
+          <TestKitOrderModal
+            isOpen={showOrderModal}
+            onClose={() => setShowOrderModal(false)}
+            testKit={selectedKit}
+            onOrderComplete={handleOrderComplete}
+          />
+        )}
+      </div>
+    </PageLayout>
   );
 };
 

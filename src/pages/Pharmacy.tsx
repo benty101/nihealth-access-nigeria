@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -375,17 +376,15 @@ const Pharmacy = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ContextualNavbar />
-      <UserGuidance />
+    <PageLayout 
+      title="MeddyPal Pharmacy" 
+      subtitle="Your trusted online pharmacy for quality medications"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">MeddyPal Pharmacy</h1>
-          <p className="text-gray-600">Your trusted online pharmacy for quality medications</p>
-        </div>
-
+      <div className="max-w-7xl mx-auto">
         <Tabs defaultValue="shop" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="shop" className="flex items-center gap-2">
@@ -572,7 +571,7 @@ const Pharmacy = () => {
       />
 
       <FloatingEmergencyButton />
-    </div>
+    </PageLayout>
   );
 };
 

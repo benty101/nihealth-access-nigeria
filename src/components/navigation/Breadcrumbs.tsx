@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronRight, Home } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useNavigationItems } from './SiteNavigation';
+import { useIntelligentNavigation } from '@/hooks/useIntelligentNavigation';
 
 interface BreadcrumbItem {
   path: string;
@@ -13,22 +14,28 @@ interface BreadcrumbItem {
 const Breadcrumbs = () => {
   const location = useLocation();
   const navigationItems = useNavigationItems();
+  const { userHomeRoute, userHomeLabel, userHomeIcon } = useIntelligentNavigation();
   
   const pathSegments = location.pathname.split('/').filter(segment => segment);
   
-  // Don't show breadcrumbs on home page
-  if (location.pathname === '/') {
+  // Don't show breadcrumbs on home/dashboard page
+  if (location.pathname === '/' || location.pathname === '/dashboard') {
     return null;
   }
 
+  // Start with intelligent home breadcrumb
   const breadcrumbs: BreadcrumbItem[] = [
-    { path: '/', label: 'Home', icon: Home }
+    { path: userHomeRoute, label: userHomeLabel, icon: userHomeIcon }
   ];
 
   // Build breadcrumb trail
   let currentPath = '';
   pathSegments.forEach(segment => {
     currentPath += `/${segment}`;
+    
+    // Skip if this is the user's home route (already added)
+    if (currentPath === userHomeRoute) return;
+    
     const navItem = navigationItems.find(item => item.path === currentPath);
     
     if (navItem) {
