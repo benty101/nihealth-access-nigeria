@@ -32,6 +32,11 @@ import Consultations from './pages/Consultations';
 import MyOrders from './pages/MyOrders';
 import NotFound from './pages/NotFound';
 
+// AI Components
+import { HealthAIAssistant } from './components/ai/HealthAIAssistant';
+import { AIHealthChat } from './components/ai/AIHealthChat';
+import { MedicalKnowledgeSearch } from './components/ai/MedicalKnowledgeSearch';
+
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
 import OnboardingProtectedRoute from './components/OnboardingProtectedRoute';
@@ -141,6 +146,57 @@ function App() {
               <Route path="/premium" element={
                 <OnboardingProtectedRoute>
                   <Premium />
+                </OnboardingProtectedRoute>
+              } />
+              
+              {/* AI Features */}
+              <Route path="/ai-assistant" element={
+                <OnboardingProtectedRoute>
+                  <PageLayout title="AI Health Assistant">
+                    <HealthAIAssistant />
+                  </PageLayout>
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/ai-chat" element={
+                <OnboardingProtectedRoute>
+                  <PageLayout title="AI Health Chat">
+                    <AIHealthChat />
+                  </PageLayout>
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/medical-search" element={
+                <OnboardingProtectedRoute>
+                  <PageLayout title="Medical Knowledge Search">
+                    <MedicalKnowledgeSearch />
+                  </PageLayout>
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/checkups" element={
+                <OnboardingProtectedRoute>
+                  <PageLayout title="Health Checkups">
+                    <div className="max-w-4xl mx-auto p-6">
+                      <div className="text-center space-y-4">
+                        <h1 className="text-3xl font-bold">Health Checkups</h1>
+                        <p className="text-muted-foreground">Comprehensive health screening services coming soon.</p>
+                      </div>
+                    </div>
+                  </PageLayout>
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/insights" element={
+                <OnboardingProtectedRoute>
+                  <PageLayout title="Health Insights">
+                    <div className="max-w-4xl mx-auto p-6">
+                      <div className="text-center space-y-4">
+                        <h1 className="text-3xl font-bold">Health Insights</h1>
+                        <p className="text-muted-foreground">AI-powered health analytics coming soon.</p>
+                      </div>
+                    </div>
+                  </PageLayout>
                 </OnboardingProtectedRoute>
               } />
               

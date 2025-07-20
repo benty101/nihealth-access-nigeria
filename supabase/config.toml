@@ -40,3 +40,9 @@ name = "sync-insurance-data"
 
 [[edge_functions.function]]
 name = "medical-ai-assistant"
+
+[[edge_functions.function]]
+name = "ai-health-chat"
+
+[functions.ai-health-chat]
+verify_jwt = false
