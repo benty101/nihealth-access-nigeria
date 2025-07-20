@@ -34,7 +34,7 @@ import NotFound from './pages/NotFound';
 
 // AI Components
 import { SimpleSymptomChecker } from './components/ai/SimpleSymptomChecker';
-import { AIHealthChat } from './components/ai/AIHealthChat';
+import { PersonalizedHealthChat } from './components/ai/PersonalizedHealthChat';
 import { MedicalKnowledgeSearch } from './components/ai/MedicalKnowledgeSearch';
 
 // Components
@@ -160,8 +160,8 @@ function App() {
               
               <Route path="/ai-chat" element={
                 <OnboardingProtectedRoute>
-                  <PageLayout title="AI Health Chat">
-                    <AIHealthChat />
+                  <PageLayout title="Personalized AI Health Chat">
+                    <PersonalizedHealthChat />
                   </PageLayout>
                 </OnboardingProtectedRoute>
               } />
