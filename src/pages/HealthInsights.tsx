@@ -124,22 +124,23 @@ const HealthInsights = () => {
 
     setGenomicTests(formattedGenomicTests);
 
-    // Generate sample genomic insights (would come from actual genomic analysis)
+    // Generate comprehensive genomic insights focused on maternal and child health
     const sampleGenomicInsights: GenomicInsight[] = [
       {
         id: '1',
         type: 'risk_assessment',
-        gene: 'BRCA1',
-        variant: 'c.68_69delAG',
+        gene: 'MTHFR',
+        variant: 'c.677C>T (A222V)',
         significance: 'pathogenic',
-        condition: 'Hereditary Breast and Ovarian Cancer',
+        condition: 'Neural Tube Defect Risk & Pregnancy Complications',
         risk_level: 'high',
-        description: 'Pathogenic variant in BRCA1 significantly increases breast and ovarian cancer risk',
+        description: 'Reduced folate metabolism increases risk of neural tube defects and pregnancy complications including preeclampsia and recurrent miscarriage',
         recommendations: [
-          'Enhanced screening starting at age 25',
-          'Consider prophylactic measures',
-          'Genetic counseling for family members',
-          'Regular follow-up with oncology'
+          'High-dose folic acid supplementation (5mg daily) before conception',
+          'Enhanced prenatal monitoring for neural tube defects',
+          'Regular homocysteine level monitoring during pregnancy',
+          'Genetic counseling for future pregnancies',
+          'Consider methylfolate supplementation instead of folic acid'
         ],
         clinical_actionable: true
       },
@@ -147,16 +148,17 @@ const HealthInsights = () => {
         id: '2',
         type: 'pharmacogenomics',
         gene: 'CYP2D6',
-        variant: '*4/*4',
-        significance: 'pathogenic',
-        condition: 'Poor Metabolizer Status',
+        variant: '*1/*4 (Intermediate Metabolizer)',
+        significance: 'likely_pathogenic',
+        condition: 'Postpartum Depression & Pain Management',
         risk_level: 'moderate',
-        description: 'Reduced metabolism of medications processed by CYP2D6',
+        description: 'Intermediate metabolizer status affects antidepressant efficacy and pain medication during childbirth and postpartum period',
         recommendations: [
-          'Avoid standard doses of codeine, tramadol',
-          'Consider alternative pain medications',
-          'Inform all healthcare providers',
-          'Pharmacist consultation for new medications'
+          'Alternative antidepressants for postpartum depression (avoid sertraline standard doses)',
+          'Modified pain management protocol during labor',
+          'Monitor for inadequate analgesia with codeine-based medications',
+          'Consider non-CYP2D6 metabolized alternatives',
+          'Inform anesthesiologist before delivery'
         ],
         clinical_actionable: true
       },
@@ -164,66 +166,178 @@ const HealthInsights = () => {
         id: '3',
         type: 'carrier_status',
         gene: 'HBB',
-        variant: 'HbS',
+        variant: 'HbS Carrier (Sickle Cell Trait)',
         significance: 'pathogenic',
-        condition: 'Sickle Cell Carrier',
-        risk_level: 'low',
-        description: 'Carrier for sickle cell disease (sickle cell trait)',
+        condition: 'Sickle Cell Disease Risk for Offspring',
+        risk_level: 'moderate',
+        description: 'Carrier status for sickle cell disease with implications for child health if partner is also a carrier',
         recommendations: [
-          'Genetic counseling before having children',
-          'Partner screening recommended',
-          'Stay hydrated during intense exercise',
-          'Inform healthcare providers'
+          'Mandatory partner screening before conception',
+          'Genetic counseling for family planning decisions',
+          'Prenatal diagnosis options if partner is carrier/affected',
+          'Newborn screening interpretation guidance',
+          'Extended family screening recommendations'
+        ],
+        clinical_actionable: true
+      },
+      {
+        id: '4',
+        type: 'risk_assessment',
+        gene: 'GJB2',
+        variant: 'c.35delG',
+        significance: 'pathogenic',
+        condition: 'Congenital Hearing Loss Risk',
+        risk_level: 'high',
+        description: 'High risk for congenital hearing loss in offspring, especially with consanguineous marriage patterns common in Nigeria',
+        recommendations: [
+          'Partner genetic screening mandatory',
+          'Enhanced newborn hearing screening protocol',
+          'Early intervention planning if child affected',
+          'Genetic counseling for extended family',
+          'Consider assisted reproductive options if both parents carriers'
+        ],
+        clinical_actionable: true
+      },
+      {
+        id: '5',
+        type: 'risk_assessment',
+        gene: 'G6PD',
+        variant: 'c.563C>T (Mediterranean variant)',
+        significance: 'pathogenic',
+        condition: 'G6PD Deficiency & Medication Safety',
+        risk_level: 'high',
+        description: 'X-linked G6PD deficiency common in Nigerian populations, affects medication safety and malaria treatment options',
+        recommendations: [
+          'Avoid oxidative stress-inducing medications (primaquine, sulfonamides)',
+          'Alternative antimalarial protocols during pregnancy',
+          'Newborn screening and monitoring for hemolytic anemia',
+          'Dietary restrictions (avoid fava beans)',
+          'Medical alert identification for child if affected'
+        ],
+        clinical_actionable: true
+      },
+      {
+        id: '6',
+        type: 'pharmacogenomics',
+        gene: 'DPYD',
+        variant: 'c.1905+1G>A',
+        significance: 'pathogenic',
+        condition: '5-Fluorouracil Toxicity Risk',
+        risk_level: 'high',
+        description: 'Complete DPD deficiency leading to severe, potentially fatal toxicity with 5-fluorouracil-based cancer treatments',
+        recommendations: [
+          'Absolute contraindication to 5-fluorouracil and capecitabine',
+          'Alternative cancer treatment protocols if needed',
+          'Inform all healthcare providers and maintain medical alert',
+          'Family screening for DPD deficiency',
+          'Consider pharmacogenomic testing before any cancer treatment'
         ],
         clinical_actionable: true
       }
     ];
 
-    // Generate health insights from timeline and genomic data
+    // Generate comprehensive health insights focused on maternal and child health
     const sampleHealthInsights: HealthInsight[] = [
       {
         id: '1',
         category: 'genomic',
-        title: 'High Cancer Risk Detected',
-        description: 'Your genomic analysis shows increased breast cancer risk. Early screening is recommended.',
+        title: 'Critical Pregnancy Planning Alert',
+        description: 'Your MTHFR variant significantly increases neural tube defect risk. Immediate folic acid supplementation recommended before conception.',
         priority: 'high',
         actionable: true,
-        data_source: 'NABDA Genomics Processing',
+        data_source: 'NABDA-Powered Genomic Analysis',
         generated_at: new Date().toISOString(),
         recommendations: [
-          'Schedule mammography screening',
-          'Consult with genetic counselor',
-          'Consider preventive measures'
+          'Start high-dose folic acid (5mg) immediately',
+          'Schedule preconception counseling within 2 weeks',
+          'Partner screening for folate metabolism variants',
+          'Nutritional assessment and diet optimization',
+          'Consider methylfolate vs standard folic acid supplementation'
         ]
       },
       {
         id: '2',
         category: 'medication',
-        title: 'Medication Sensitivity Alert',
-        description: 'Your genetic profile shows sensitivity to certain pain medications.',
+        title: 'Personalized Pain Management Protocol',
+        description: 'Your CYP2D6 status requires modified pain management during labor and postpartum depression treatment protocols.',
         priority: 'high',
         actionable: true,
-        data_source: 'Pharmacogenomics Analysis',
+        data_source: 'NABDA Pharmacogenomics Pipeline',
         generated_at: new Date().toISOString(),
         recommendations: [
-          'Update medical alert card',
-          'Inform all prescribing physicians',
-          'Consider medication alternatives'
+          'Create personalized birth plan with anesthesiologist',
+          'Avoid codeine-based postpartum pain medications',
+          'Modified antidepressant dosing if postpartum depression develops',
+          'Share pharmacogenomic card with delivery team',
+          'Consider non-pharmacological pain management techniques'
         ]
       },
       {
         id: '3',
-        category: 'preventive',
-        title: 'Personalized Prevention Plan',
-        description: 'Based on your genetic and lifestyle data, here\'s your tailored prevention strategy.',
-        priority: 'medium',
+        category: 'risk',
+        title: 'Child Health Risk Assessment',
+        description: 'Combined carrier status for multiple conditions requires comprehensive partner screening and enhanced newborn monitoring.',
+        priority: 'high',
         actionable: true,
-        data_source: 'AI Analysis Engine',
+        data_source: 'NABDA Population Genomics Database',
         generated_at: new Date().toISOString(),
         recommendations: [
-          'Increase cardiovascular exercise',
-          'Mediterranean diet recommended',
-          'Annual comprehensive screening'
+          'Mandatory partner genetic screening panel',
+          'Enhanced newborn screening protocol',
+          'Genetic counseling for family planning',
+          'Consider preimplantation genetic diagnosis options',
+          'Extended family cascade screening'
+        ]
+      },
+      {
+        id: '4',
+        category: 'preventive',
+        title: 'Malaria Prevention Strategy',
+        description: 'G6PD deficiency requires modified antimalarial protocols and medication avoidance strategies for you and potential children.',
+        priority: 'high',
+        actionable: true,
+        data_source: 'NABDA Tropical Disease Genomics',
+        generated_at: new Date().toISOString(),
+        recommendations: [
+          'Use alternative antimalarials (avoid primaquine)',
+          'Enhanced mosquito prevention measures',
+          'Medical alert bracelet for emergency situations',
+          'Child screening protocol if pregnancy occurs',
+          'Coordination with infectious disease specialists'
+        ]
+      },
+      {
+        id: '5',
+        category: 'lifestyle',
+        title: 'Optimized Maternal Nutrition Plan',
+        description: 'Your genetic variants affect nutrient metabolism. Personalized supplementation protocol designed for optimal pregnancy outcomes.',
+        priority: 'medium',
+        actionable: true,
+        data_source: 'AI-Powered Nutrigenomics Analysis',
+        generated_at: new Date().toISOString(),
+        recommendations: [
+          'Methylfolate 5mg daily (vs standard folic acid)',
+          'Enhanced B-vitamin complex supplementation',
+          'Iron absorption optimization strategies',
+          'Personalized dietary guidelines based on genetic markers',
+          'Regular nutrient level monitoring during pregnancy'
+        ]
+      },
+      {
+        id: '6',
+        category: 'genomic',
+        title: 'Future Cancer Risk Management',
+        description: 'Early detection protocol established based on genetic risk factors, optimized for post-reproductive life stage.',
+        priority: 'medium',
+        actionable: true,
+        data_source: 'NABDA Oncogenomics Pipeline',
+        generated_at: new Date().toISOString(),
+        recommendations: [
+          'Enhanced breast/ovarian screening starting age 30',
+          'Annual risk assessment updates',
+          'Family history documentation for children',
+          'Preventive surgery consultation at appropriate age',
+          'Lifestyle modifications to reduce penetrance'
         ]
       }
     ];
@@ -245,9 +359,9 @@ const HealthInsights = () => {
         .insert({
           user_id: user.user.id,
           kit_type: 'genomics',
-          kit_name: 'MeddyPal Comprehensive Genomic Analysis',
+          kit_name: 'NABDA-Powered Maternal & Child Health Genomic Panel',
           order_number: orderNumber,
-          price: 45000, // ₦45,000 subsidized by NABDA
+          price: 25000, // ₦25,000 heavily subsidized by NABDA for maternal health initiative
           shipping_address: 'To be updated', // Would get from user profile
           collection_instructions: 'Saliva collection kit with detailed instructions',
           status: 'ordered'
@@ -256,8 +370,8 @@ const HealthInsights = () => {
       if (error) throw error;
 
       toast({
-        title: "Genomic Kit Ordered",
-        description: "Your genomic testing kit will be shipped within 2-3 business days. Results processed through NABDA partnership.",
+        title: "NABDA Genomic Kit Ordered",
+        description: "Your maternal & child health genomic panel will be shipped within 24 hours. Results processed through NABDA's national genomics infrastructure.",
       });
 
       // Reload data
@@ -306,12 +420,16 @@ const HealthInsights = () => {
         {/* Header */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Health Insights</h1>
-              <p className="text-muted-foreground">
-                AI-powered analysis combining genomic data, health records, and lifestyle factors
-              </p>
-            </div>
+                <div>
+                  <h1 className="text-3xl font-bold">Health Insights</h1>
+                  <p className="text-muted-foreground">
+                    NABDA-powered genomic analysis for maternal and child health optimization
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Shield className="w-4 h-4 text-green-600" />
+                    <span className="text-sm text-green-600 font-medium">Powered by NABDA • National Genomics Infrastructure</span>
+                  </div>
+                </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Share className="w-4 h-4 mr-2" />
@@ -447,18 +565,26 @@ const HealthInsights = () => {
                   <div className="text-center space-y-4 py-8">
                     <Microscope className="w-12 h-12 mx-auto text-muted-foreground" />
                     <div>
-                      <h3 className="font-medium">No Genomic Data Available</h3>
+                      <h3 className="font-medium">Unlock Your Maternal & Child Health Insights</h3>
                       <p className="text-sm text-muted-foreground">
-                        Order a genomic testing kit to unlock personalized insights
+                        Get personalized genomic insights for pregnancy planning, medication safety, and child health optimization
                       </p>
                     </div>
-                    <Button onClick={orderGenomicKit} className="mt-4">
+                    <Button onClick={orderGenomicKit} className="mt-4 bg-green-600 hover:bg-green-700">
                       <Dna className="w-4 h-4 mr-2" />
-                      Order Genomic Kit (₦45,000)
+                      Order NABDA Genomic Kit (₦25,000)
                     </Button>
-                    <p className="text-xs text-muted-foreground">
-                      Subsidized through NABDA partnership • Results in 2-3 weeks
-                    </p>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">
+                        🇳🇬 Powered by NABDA • National Biotechnology Development Agency
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        ✓ 85% subsidized for maternal health initiative • Results in 10-14 days
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        ✓ Covers 150+ maternal & child health genetic markers
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
