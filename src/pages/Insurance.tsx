@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import PageLayout from '@/components/layout/PageLayout';
+import BackButton from '@/components/navigation/BackButton';
 import { enhancedInsurancePlans } from '@/data/enhancedInsurancePlans';
 import { insuranceService } from '@/services/InsuranceService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -129,85 +130,92 @@ const Insurance = () => {
   };
 
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-background">
-        <ContextualNavbar />
-        
+    <PageLayout 
+      title="Health Insurance Plans"
+      subtitle="Find and compare health insurance plans that fit your needs and budget"
+    >
+      <div className="mb-6">
+        <BackButton />
+      </div>
+      
+      <TooltipProvider>
         {/* Hero Section */}
-        <section className="border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                {/* Trust Badge */}
-                <div className="inline-flex items-center gap-2 bg-muted rounded-md px-3 py-1.5 text-sm text-muted-foreground">
-                  <Shield className="h-4 w-4" />
-                  Trusted by 50,000+ Nigerians
-                </div>
+        <section className="mb-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-gradient-primary rounded-2xl p-8 text-white mb-8">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="space-y-6">
+                  {/* Trust Badge */}
+                  <div className="inline-flex items-center gap-2 bg-white/20 rounded-lg px-3 py-1.5 text-sm text-white/90">
+                    <Shield className="h-4 w-4" />
+                    Trusted by 50,000+ Nigerians
+                  </div>
                 
-                {/* Headline */}
-                <div className="space-y-4">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-                    Health Insurance
-                    <span className="text-primary"> Made Simple</span>
-                  </h1>
-                  <p className="text-lg text-muted-foreground leading-relaxed">
-                    Compare plans, get instant quotes, and protect your family with 
-                    Nigeria's most trusted health insurance platform.
-                  </p>
-                </div>
+                  {/* Headline */}
+                  <div className="space-y-4">
+                    <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
+                      Health Insurance
+                      <span className="text-white/90"> Made Simple</span>
+                    </h1>
+                    <p className="text-lg text-white/80 leading-relaxed">
+                      Compare plans, get instant quotes, and protect your family with 
+                      Nigeria's most trusted health insurance platform.
+                    </p>
+                  </div>
 
-                {/* Benefits */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span>No paperwork</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span>Instant coverage</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span>24/7 support</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span>Best rates</span>
-                  </div>
-                </div>
-
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button size="lg">
-                    Compare Plans Now
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="lg">
-                    <Phone className="mr-2 h-4 w-4" />
-                    Call Expert
-                  </Button>
-                </div>
-              </div>
-
-              {/* Info Card */}
-              <div className="bg-muted/50 rounded-xl p-8">
-                <div className="space-y-4">
-                  <div className="text-center space-y-2">
-                    <div className="text-2xl font-bold text-foreground">₦12,500/month</div>
-                    <div className="text-sm text-muted-foreground">Family of 4 coverage</div>
-                  </div>
-                  <div className="bg-card rounded-lg p-4 shadow-sm">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm">Hospital visits</span>
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                  {/* Benefits */}
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-white" />
+                      <span className="text-white/90">No paperwork</span>
                     </div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm">Emergency care</span>
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-white" />
+                      <span className="text-white/90">Instant coverage</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Prescription drugs</span>
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-white" />
+                      <span className="text-white/90">24/7 support</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-white" />
+                      <span className="text-white/90">Best rates</span>
+                    </div>
+                  </div>
+
+                  {/* CTA Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button size="lg" className="bg-white text-primary hover:bg-white/90">
+                      Compare Plans Now
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
+                      <Phone className="mr-2 h-4 w-4" />
+                      Call Expert
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Info Card */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20">
+                  <div className="space-y-4">
+                    <div className="text-center space-y-2">
+                      <div className="text-2xl font-bold text-white">₦12,500/month</div>
+                      <div className="text-sm text-white/70">Family of 4 coverage</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-4 border border-white/10">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-white/90">Hospital visits</span>
+                        <CheckCircle className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-white/90">Emergency care</span>
+                        <CheckCircle className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-white/90">Prescription drugs</span>
+                        <CheckCircle className="h-4 w-4 text-white" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -216,7 +224,7 @@ const Insurance = () => {
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto">
           {/* Search and Filters */}
           <div className="bg-card rounded-lg border p-6 mb-8">
             <div className="flex flex-col lg:flex-row gap-4 items-center">
@@ -495,8 +503,8 @@ const Insurance = () => {
             </div>
           </div>
         </div>
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </PageLayout>
   );
 };
 

@@ -170,8 +170,8 @@ const ModernSidebar = () => {
                 <Heart className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="font-semibold text-lg">MeddyPal</h1>
-                <p className="text-xs text-muted-foreground">Your Health Partner</p>
+                <h1 className="font-semibold text-lg text-primary">MeddyPal</h1>
+                <p className="text-xs text-muted-foreground">Your Health Companion</p>
               </div>
             </div>
           )}
