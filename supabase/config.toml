@@ -44,5 +44,11 @@ name = "medical-ai-assistant"
 [[edge_functions.function]]
 name = "ai-health-chat"
 
+[[edge_functions.function]]
+name = "personalized-health-ai"
+
 [functions.ai-health-chat]
 verify_jwt = false
+
+[functions.personalized-health-ai]
+verify_jwt = true
