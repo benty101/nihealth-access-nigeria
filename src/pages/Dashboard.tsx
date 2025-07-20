@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import AppLayout from '@/components/layout/AppLayout';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import RealTimeHealthMetrics from '@/components/dashboard/RealTimeHealthMetrics';
 import RealTimeUpcomingAppointments, { AppointmentsRef } from '@/components/dashboard/RealTimeUpcomingAppointments';
@@ -22,6 +22,7 @@ import { HealthTimeline } from '@/components/health-timeline/HealthTimeline';
 import { PersonalizationService } from '@/services/PersonalizationService';
 import MedicalChat from '@/components/patient/MedicalChat';
 import OnboardingPrompt from '@/components/dashboard/OnboardingPrompt';
+import { ModernCard } from '@/components/ui/modern-card';
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
@@ -42,69 +43,107 @@ const Dashboard = () => {
   // If no onboarding data, show the prompt prominently
   if (!onboardingData) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <ContextualNavbar />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <AppLayout>
+        <div className="max-w-4xl mx-auto py-12">
           <OnboardingPrompt />
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ContextualNavbar />
+    <AppLayout>
       <UserGuidance />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="space-y-8">
         <DashboardHeader onboardingData={onboardingData} greeting={greeting} />
         
-        {/* Profile Completion Banner */}
-        <div className="mb-6">
-          <ProfileCompletion />
-        </div>
-        
-        {/* Premium Upgrade Card */}
-        <div className="mb-6">
-          <PremiumUpgradeCard />
+        {/* Quick Status Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ModernCard variant="glass" hover={false}>
+            <ProfileCompletion />
+          </ModernCard>
+          <ModernCard variant="gradient" hover={false}>
+            <PremiumUpgradeCard />
+          </ModernCard>
         </div>
         
         {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mt-6">
-          {/* Left Column - Main Content */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          {/* Primary Content - Health Overview */}
           <div className="xl:col-span-8 space-y-6">
-            <PersonalizedInsights onboardingData={onboardingData} />
-            <ProgressTracker onboardingData={onboardingData} />
+            <ModernCard variant="elevated" className="p-0 overflow-hidden">
+              <PersonalizedInsights onboardingData={onboardingData} />
+            </ModernCard>
             
-            {/* Health Timeline - New Social Health Experience */}
-            <HealthTimeline />
+            <ModernCard variant="default">
+              <ProgressTracker onboardingData={onboardingData} />
+            </ModernCard>
             
-            <RealTimeHealthMetrics />
-            <SmartRecommendations onboardingData={onboardingData} />
-            <PersonalizedRecommendations 
-              recommendations={recommendations} 
-              onAppointmentBooked={handleAppointmentBooked}
-            />
-            <RealTimeUpcomingAppointments ref={appointmentsRef} />
-            <RecentActivity />
+            <ModernCard variant="glass">
+              <HealthTimeline />
+            </ModernCard>
+            
+            <ModernCard variant="elevated" className="p-0">
+              <RealTimeHealthMetrics />
+            </ModernCard>
+            
+            <ModernCard variant="default">
+              <SmartRecommendations onboardingData={onboardingData} />
+            </ModernCard>
+            
+            <ModernCard variant="glass">
+              <PersonalizedRecommendations 
+                recommendations={recommendations} 
+                onAppointmentBooked={handleAppointmentBooked}
+              />
+            </ModernCard>
+            
+            <ModernCard variant="default">
+              <RealTimeUpcomingAppointments ref={appointmentsRef} />
+            </ModernCard>
+            
+            <ModernCard variant="default">
+              <RecentActivity />
+            </ModernCard>
           </div>
           
-          {/* Right Column - Sidebar */}
+          {/* Secondary Content - Interactive Tools & Quick Access */}
           <div className="xl:col-span-4 space-y-6">
-            <MedicalChat />
-            <AIHealthInsights />
-            <FamilyHealthHub />
-            <InsuranceStatusCard />
-            <EmergencyContactCard />
-            <RealTimeHealthReminders />
-            <EnhancedQuickLinks />
+            <ModernCard variant="gradient" className="sticky top-6">
+              <MedicalChat />
+            </ModernCard>
+            
+            <ModernCard variant="elevated">
+              <AIHealthInsights />
+            </ModernCard>
+            
+            <ModernCard variant="default">
+              <FamilyHealthHub />
+            </ModernCard>
+            
+            <ModernCard variant="glass">
+              <InsuranceStatusCard />
+            </ModernCard>
+            
+            <ModernCard variant="default">
+              <EmergencyContactCard />
+            </ModernCard>
+            
+            <ModernCard variant="glass">
+              <RealTimeHealthReminders />
+            </ModernCard>
+            
+            <ModernCard variant="default">
+              <EnhancedQuickLinks />
+            </ModernCard>
           </div>
         </div>
       </div>
       
       {/* Floating Emergency Button */}
       <FloatingEmergencyButton />
-    </div>
+    </AppLayout>
   );
 };
 
