@@ -93,26 +93,13 @@ const Insurance = () => {
     gradient: 'from-blue-500 to-cyan-500'
   }));
 
-  // Add enhanced styling and psychology to plans
+  // Simplified plans without flashy elements
   const enhancedPlans = primaryPlans.map((plan, index) => {
-    const gradients = [
-      'from-emerald-500 to-teal-500',
-      'from-blue-500 to-indigo-500', 
-      'from-purple-500 to-pink-500',
-      'from-orange-500 to-red-500',
-      'from-cyan-500 to-blue-500'
-    ];
-
-    const badges = ['Most Popular', 'Best Value', 'Premium Choice', 'Family Favorite', 'Quick Start'];
-    const urgencyLevels = ['high', 'medium', 'low'];
-
+    const badges = ['Popular', 'Best Value', 'Recommended'];
+    
     return {
       ...plan,
-      gradient: gradients[index % gradients.length],
-      badge: index < 3 ? badges[index] : null,
-      urgency: urgencyLevels[index % urgencyLevels.length],
-      savings: index === 1 ? 30 : index === 2 ? 15 : null,
-      testimonial: index === 0 ? "Saved my family ₦200,000 last year!" : null
+      badge: index < 3 ? badges[index] : null
     };
   });
 
@@ -362,90 +349,66 @@ const Insurance = () => {
           )}
 
           {/* Insurance Plans Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredPlans.map((plan, index) => (
               <Card 
                 key={plan.id} 
-                className={`
-                  relative overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl border-0
-                  ${plan.urgency === 'high' ? 'ring-2 ring-orange-400 ring-opacity-50 animate-pulse' : ''}
-                `}
+                className="relative overflow-hidden transition-all duration-200 hover:shadow-lg border"
               >
-                {/* Gradient Background */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-5`}></div>
-                
                 {/* Badge */}
                 {plan.badge && (
                   <div className="absolute top-4 right-4 z-10">
-                    <Badge className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
+                    <Badge variant="secondary" className="text-xs">
                       {plan.badge}
-                    </Badge>
-                  </div>
-                )}
-
-                {/* Savings Badge */}
-                {plan.savings && (
-                  <div className="absolute top-4 left-4 z-10">
-                    <Badge className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
-                      Save {plan.savings}%
                     </Badge>
                   </div>
                 )}
 
                 <CardHeader className="relative">
                   <div className="flex items-center justify-between">
-                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${plan.gradient}`}>
-                      <Shield className="h-8 w-8 text-white" />
+                    <div className="p-3 rounded-lg bg-muted">
+                      <Shield className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="font-semibold text-sm">{plan.rating}</span>
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="font-medium text-sm">{plan.rating}</span>
                     </div>
                   </div>
                   
-                  <CardTitle className="text-xl font-bold mt-4">{plan.name}</CardTitle>
-                  <p className="text-gray-600">{plan.provider}</p>
-                  
-                  {/* Testimonial */}
-                  {plan.testimonial && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-4">
-                      <p className="text-sm text-green-800 italic">"{plan.testimonial}"</p>
-                    </div>
-                  )}
+                  <CardTitle className="text-lg font-semibold mt-4">{plan.name}</CardTitle>
+                  <p className="text-muted-foreground text-sm">{plan.provider}</p>
                 </CardHeader>
 
-                <CardContent className="relative space-y-6">
+                <CardContent className="relative space-y-4">
                   {/* Pricing */}
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">
+                    <div className="text-2xl font-bold text-foreground">
                       ₦{plan.monthlyPremium.toLocaleString()}
-                      <span className="text-base font-normal text-gray-600">/month</span>
+                      <span className="text-base font-normal text-muted-foreground">/month</span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Up to ₦{plan.coverage.toLocaleString()} coverage
                     </p>
                   </div>
 
                   {/* Features */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {plan.features.slice(0, 4).map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">{feature}</span>
+                      <div key={idx} className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        <span className="text-sm text-foreground">{feature}</span>
                       </div>
                     ))}
                     {plan.features.length > 4 && (
-                      <p className="text-sm text-gray-500 italic">
+                      <p className="text-sm text-muted-foreground">
                         +{plan.features.length - 4} more features
                       </p>
                     )}
                   </div>
 
                   {/* Actions */}
-                  <div className="space-y-3 pt-4">
-                    <Button 
-                      className={`w-full bg-gradient-to-r ${plan.gradient} hover:shadow-lg text-white font-semibold py-3 rounded-2xl transition-all duration-300`}
-                    >
+                  <div className="space-y-2 pt-4">
+                    <Button className="w-full">
                       Get This Plan
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>
@@ -453,14 +416,14 @@ const Insurance = () => {
                     <div className="flex gap-2">
                       <Button 
                         variant="outline" 
-                        className="flex-1 border-gray-200 rounded-xl"
+                        className="flex-1"
                         onClick={() => handleAddToComparison(plan)}
                         disabled={selectedPlans.length >= 3 || selectedPlans.find(p => p.id === plan.id)}
                       >
                         <PlusCircle className="h-4 w-4 mr-2" />
                         Compare
                       </Button>
-                      <Button variant="outline" className="flex-1 border-gray-200 rounded-xl">
+                      <Button variant="outline" className="flex-1">
                         <Eye className="h-4 w-4 mr-2" />
                         Details
                       </Button>
@@ -474,11 +437,11 @@ const Insurance = () => {
           {/* No Results */}
           {filteredPlans.length === 0 && !loadingPlans && (
             <div className="text-center py-16">
-              <div className="bg-gray-100 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                <Search className="h-12 w-12 text-gray-400" />
+              <div className="bg-muted rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                <Search className="h-12 w-12 text-muted-foreground" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">No plans found</h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <h3 className="text-2xl font-semibold text-foreground mb-4">No plans found</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                 We couldn't find any insurance plans matching your criteria. Try adjusting your search or category.
               </p>
               <Button 
@@ -486,7 +449,6 @@ const Insurance = () => {
                   setSearchTerm('');
                   setSelectedCategory('all');
                 }}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
               >
                 Reset Filters
               </Button>
@@ -494,20 +456,20 @@ const Insurance = () => {
           )}
 
           {/* Help Section */}
-          <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 text-white">
+          <div className="mt-16 bg-card border rounded-lg p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-4">Need Help Choosing?</h3>
-                <p className="text-blue-100 mb-6 text-lg">
+                <h3 className="text-2xl font-semibold text-foreground mb-4">Need Help Choosing?</h3>
+                <p className="text-muted-foreground mb-6">
                   Our insurance experts are here to help you find the perfect plan for your needs and budget.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-3 px-6 rounded-2xl">
-                    <Phone className="h-5 w-5 mr-2" />
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button>
+                    <Phone className="h-4 w-4 mr-2" />
                     Call Expert
                   </Button>
-                  <Button variant="outline" className="border-white text-white hover:bg-white/10 font-semibold py-3 px-6 rounded-2xl">
-                    <MessageCircle className="h-5 w-5 mr-2" />
+                  <Button variant="outline">
+                    <MessageCircle className="h-4 w-4 mr-2" />
                     Live Chat
                   </Button>
                 </div>
@@ -522,10 +484,10 @@ const Insurance = () => {
                 ].map((item, index) => {
                   const Icon = item.icon;
                   return (
-                    <div key={index} className="bg-white/10 rounded-2xl p-4 text-center">
-                      <Icon className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
-                      <p className="font-semibold text-sm">{item.label}</p>
-                      <p className="text-xs text-blue-200">{item.desc}</p>
+                    <div key={index} className="bg-muted rounded-lg p-4 text-center">
+                      <Icon className="h-6 w-6 mx-auto mb-2 text-primary" />
+                      <p className="font-medium text-sm text-foreground">{item.label}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
                     </div>
                   );
                 })}
