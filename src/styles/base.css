@@ -23,17 +23,17 @@
     --overlay: 220 15% 3% / 0.6; /* Premium overlay */
     
     /* Brand Color System - Medical Green Theme */
-    --primary: 139 69% 35%; /* Darker medical green - professional healthcare */
+    --primary: 134 61% 41%; /* Original medical green from dashboard */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 139 69% 30%; /* Interactive state */
-    --primary-glow: 139 69% 50%; /* Glow effect */
+    --primary-hover: 134 61% 36%; /* Interactive state */
+    --primary-glow: 134 61% 55%; /* Glow effect */
     
-    --secondary: 139 45% 25%; /* Sophisticated secondary green */
+    --secondary: 134 45% 28%; /* Sophisticated secondary green */
     --secondary-foreground: 0 0% 100%;
     --secondary-hover: 142 25% 30%;
     
     /* Health-specific colors */
-    --health-success: 139 69% 35%; /* Vibrant health green - matches primary */
+    --health-success: 134 61% 41%; /* Vibrant health green - matches primary */
     --health-warning: 38 92% 50%; /* Attention amber */
     --health-danger: 0 84% 60%; /* Medical red */
     --health-info: 221 83% 53%; /* Information blue */
@@ -68,12 +68,12 @@
     /* Sidebar System */
     --sidebar-background: 220 24% 98%;
     --sidebar-foreground: 220 13% 9%;
-    --sidebar-primary: 139 69% 35%;
+    --sidebar-primary: 134 61% 41%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 14% 96%;
     --sidebar-accent-foreground: 220 13% 9%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 139 69% 50%;
+    --sidebar-ring: 134 61% 55%;
     
     /* Shadow System - Apple-like depth */
     --shadow-sm: 0 1px 2px 0 hsl(220 43% 11% / 0.03);
@@ -84,8 +84,8 @@
     --shadow-2xl: 0 25px 50px -12px hsl(220 43% 11% / 0.25);
     
     /* Gradient System */
-    --gradient-primary: linear-gradient(135deg, hsl(139 69% 35%), hsl(145 64% 40%));
-    --gradient-health: linear-gradient(135deg, hsl(139 69% 35%), hsl(145 64% 40%));
+    --gradient-primary: linear-gradient(135deg, hsl(134 61% 41%), hsl(140 58% 45%));
+    --gradient-health: linear-gradient(135deg, hsl(134 61% 41%), hsl(140 58% 45%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(142 20% 98%));
     
     /* Typography Scale */
@@ -119,10 +119,10 @@
     --popover-foreground: 220 14% 98%;
     --overlay: 220 15% 2% / 0.8;
     
-    --primary: 139 69% 35%;
+    --primary: 134 61% 41%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 139 69% 40%;
-    --primary-glow: 139 69% 35%;
+    --primary-hover: 134 61% 45%;
+    --primary-glow: 134 61% 41%;
     
     --secondary: 220 27% 15%;
     --secondary-foreground: 220 14% 98%;
@@ -147,12 +147,12 @@
     
     --sidebar-background: 220 27% 7%;
     --sidebar-foreground: 220 14% 98%;
-    --sidebar-primary: 139 69% 35%;
+    --sidebar-primary: 134 61% 41%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 27% 11%;
     --sidebar-accent-foreground: 220 14% 98%;
     --sidebar-border: 220 27% 15%;
-    --sidebar-ring: 139 69% 50%;
+    --sidebar-ring: 134 61% 55%;
     
     /* Dark mode shadows */
     --shadow-sm: 0 1px 2px 0 hsl(220 27% 0% / 0.3);

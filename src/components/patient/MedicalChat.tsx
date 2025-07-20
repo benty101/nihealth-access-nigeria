@@ -18,7 +18,7 @@ const MedicalChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm Nduka, your personalized MeddyPal AI assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
+      content: "Hello! I'm Nduka, your personalized health assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
       isUser: false,
       timestamp: new Date()
     }
@@ -97,7 +97,7 @@ const MedicalChat = () => {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-primary" />
-          Nduka AI Assistant
+          Nduka
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0">

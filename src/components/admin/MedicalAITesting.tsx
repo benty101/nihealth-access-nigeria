@@ -97,7 +97,7 @@ const MedicalAITesting = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
-            Nduka AI Assistant Testing
+            Nduka Testing
           </CardTitle>
           <CardDescription>
             Test the MedGemma-4B medical AI integration with different types of medical queries
