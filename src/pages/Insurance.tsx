@@ -63,13 +63,13 @@ const Insurance = () => {
     }
   };
 
-  // Enhanced plan categories with psychological grouping
+  // Plan categories
   const planCategories = [
-    { id: 'all', label: 'All Plans', icon: Globe, color: 'bg-blue-500', count: 12 },
-    { id: 'family', label: 'Family Care', icon: Users, color: 'bg-green-500', count: 4 },
-    { id: 'individual', label: 'Individual', icon: Heart, color: 'bg-red-500', count: 3 },
-    { id: 'premium', label: 'Premium', icon: Award, color: 'bg-purple-500', count: 3 },
-    { id: 'emergency', label: 'Emergency', icon: Zap, color: 'bg-orange-500', count: 2 }
+    { id: 'all', label: 'All Plans', icon: Globe, count: 12 },
+    { id: 'family', label: 'Family Care', icon: Users, count: 4 },
+    { id: 'individual', label: 'Individual', icon: Heart, count: 3 },
+    { id: 'premium', label: 'Premium', icon: Award, count: 3 },
+    { id: 'emergency', label: 'Emergency', icon: Zap, count: 2 }
   ];
 
   // Transform and enhance plans data
@@ -143,24 +143,24 @@ const Insurance = () => {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20">
+      <div className="min-h-screen bg-background">
         <ContextualNavbar />
         
-        {/* Clean Hero Section */}
-        <section className="bg-card border-b">
+        {/* Hero Section */}
+        <section className="border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
-                {/* Trust Indicator */}
-                <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2 text-sm font-medium text-primary">
+                {/* Trust Badge */}
+                <div className="inline-flex items-center gap-2 bg-muted rounded-md px-3 py-1.5 text-sm text-muted-foreground">
                   <Shield className="h-4 w-4" />
                   Trusted by 50,000+ Nigerians
                 </div>
                 
-                {/* Clear Value Proposition */}
+                {/* Headline */}
                 <div className="space-y-4">
                   <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-                    Health Insurance 
+                    Health Insurance
                     <span className="text-primary"> Made Simple</span>
                   </h1>
                   <p className="text-lg text-muted-foreground leading-relaxed">
@@ -169,7 +169,7 @@ const Insurance = () => {
                   </p>
                 </div>
 
-                {/* Key Benefits */}
+                {/* Benefits */}
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-600" />
@@ -189,9 +189,9 @@ const Insurance = () => {
                   </div>
                 </div>
 
-                {/* Simple CTA */}
+                {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Button size="lg" className="font-semibold">
+                  <Button size="lg">
                     Compare Plans Now
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -202,8 +202,8 @@ const Insurance = () => {
                 </div>
               </div>
 
-              {/* Clean Illustration */}
-              <div className="bg-muted/30 rounded-2xl p-8">
+              {/* Info Card */}
+              <div className="bg-muted/50 rounded-xl p-8">
                 <div className="space-y-4">
                   <div className="text-center space-y-2">
                     <div className="text-2xl font-bold text-foreground">₦12,500/month</div>
@@ -230,26 +230,26 @@ const Insurance = () => {
         </section>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Search and Category Selection */}
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 mb-12">
-            <div className="flex flex-col lg:flex-row gap-6 items-center">
-              {/* Search Bar */}
+          {/* Search and Filters */}
+          <div className="bg-card rounded-lg border p-6 mb-8">
+            <div className="flex flex-col lg:flex-row gap-4 items-center">
+              {/* Search */}
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search plans, providers, or coverage types..."
-                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:border-blue-500 transition-all duration-300"
+                  placeholder="Search plans, providers..."
+                  className="pl-10"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
 
-              {/* Quick Actions */}
-              <div className="flex gap-3">
+              {/* Actions */}
+              <div className="flex gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-                      <Calculator className="h-5 w-5 mr-2" />
+                    <Button variant="outline">
+                      <Calculator className="h-4 w-4 mr-2" />
                       Calculate
                     </Button>
                   </TooltipTrigger>
@@ -261,11 +261,10 @@ const Insurance = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
-                      variant="outline" 
-                      className="border-2 border-purple-200 text-purple-600 hover:bg-purple-50 px-6 py-4 rounded-2xl"
+                      variant="outline"
                       onClick={() => setShowComparison(!showComparison)}
                     >
-                      <Compare className="h-5 w-5 mr-2" />
+                      <Compare className="h-4 w-4 mr-2" />
                       Compare ({selectedPlans.length})
                     </Button>
                   </TooltipTrigger>
@@ -276,8 +275,8 @@ const Insurance = () => {
               </div>
             </div>
 
-            {/* Category Pills */}
-            <div className="flex flex-wrap gap-3 mt-8">
+            {/* Categories */}
+            <div className="flex flex-wrap gap-2 mt-4">
               {planCategories.map((category) => {
                 const Icon = category.icon;
                 const isActive = selectedCategory === category.id;
@@ -287,16 +286,16 @@ const Insurance = () => {
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
                     className={`
-                      flex items-center gap-3 px-6 py-3 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105
+                      flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                       ${isActive 
-                        ? `${category.color} text-white shadow-lg` 
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
                       }
                     `}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-4 w-4" />
                     <span>{category.label}</span>
-                    <Badge className={`${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'} ml-1`}>
+                    <Badge variant={isActive ? "secondary" : "outline"} className="ml-1 text-xs">
                       {category.count}
                     </Badge>
                   </button>
