@@ -33,7 +33,7 @@ import MyOrders from './pages/MyOrders';
 import NotFound from './pages/NotFound';
 
 // AI Components
-import { HealthAIAssistant } from './components/ai/HealthAIAssistant';
+import { SimpleSymptomChecker } from './components/ai/SimpleSymptomChecker';
 import { AIHealthChat } from './components/ai/AIHealthChat';
 import { MedicalKnowledgeSearch } from './components/ai/MedicalKnowledgeSearch';
 
@@ -153,7 +153,7 @@ function App() {
               <Route path="/ai-assistant" element={
                 <OnboardingProtectedRoute>
                   <PageLayout title="AI Health Assistant">
-                    <HealthAIAssistant />
+                    <SimpleSymptomChecker />
                   </PageLayout>
                 </OnboardingProtectedRoute>
               } />

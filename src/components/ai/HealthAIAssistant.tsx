@@ -22,18 +22,29 @@ export const HealthAIAssistant: React.FC = () => {
       // Dynamic import to avoid SSR issues
       const { pipeline } = await import('@huggingface/transformers');
       
-      // Initialize medical text classification pipeline
+      // Initialize medical text classification pipeline using a proper medical model
       const medicalPipeline = await pipeline(
         'text-classification',
-        'microsoft/DialoGPT-medium',
+        'emilyalsentzer/Bio_ClinicalBERT',
         { device: 'webgpu' } // Use WebGPU for faster processing
       );
       
       setPipeline(medicalPipeline);
-      console.log('AI Assistant initialized successfully');
+      console.log('Medical AI pipeline initialized successfully');
     } catch (error) {
-      console.error('Error initializing AI:', error);
-      // Fallback to regular processing
+      console.error('Failed to initialize AI pipeline:', error);
+      // Fallback to a simpler approach without WebGPU
+      try {
+        const { pipeline } = await import('@huggingface/transformers');
+        const simplePipeline = await pipeline(
+          'text-classification',
+          'cardiffnlp/twitter-roberta-base-sentiment-latest'
+        );
+        setPipeline(simplePipeline);
+        console.log('Fallback AI pipeline initialized');
+      } catch (fallbackError) {
+        console.error('Failed to initialize fallback pipeline:', fallbackError);
+      }
     }
   };
 

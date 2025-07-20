@@ -103,10 +103,16 @@ export const AIHealthChat: React.FC = () => {
     } catch (error) {
       console.error('Chat error:', error);
       
+      // Check if this is a configuration error
+      const isConfigError = error instanceof Error && 
+        (error.message.includes('GROQ_API_KEY') || error.message.includes('not configured'));
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or contact a healthcare provider if you have urgent concerns.",
+        content: isConfigError 
+          ? "I'm currently unavailable due to a configuration issue. Please contact support or try again later. For urgent health concerns, please consult a healthcare provider immediately."
+          : "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or contact a healthcare provider if you have urgent concerns.",
         timestamp: new Date(),
       };
 
@@ -114,7 +120,9 @@ export const AIHealthChat: React.FC = () => {
       
       toast({
         title: "Connection Error",
-        description: "Failed to connect to AI assistant. Please try again.",
+        description: isConfigError 
+          ? "AI service needs configuration. Please contact support."
+          : "Failed to connect to AI assistant. Please try again.",
         variant: "destructive"
       });
     } finally {
