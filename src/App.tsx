@@ -30,6 +30,7 @@ import BookAppointment from './pages/BookAppointment';
 import BookLabTest from './pages/BookLabTest';
 import Consultations from './pages/Consultations';
 import MyOrders from './pages/MyOrders';
+import HealthInsights from './pages/HealthInsights';
 import NotFound from './pages/NotFound';
 
 // AI Components
@@ -189,14 +190,7 @@ function App() {
               
               <Route path="/insights" element={
                 <OnboardingProtectedRoute>
-                  <PageLayout title="Health Insights">
-                    <div className="max-w-4xl mx-auto p-6">
-                      <div className="text-center space-y-4">
-                        <h1 className="text-3xl font-bold">Health Insights</h1>
-                        <p className="text-muted-foreground">AI-powered health analytics coming soon.</p>
-                      </div>
-                    </div>
-                  </PageLayout>
+                  <HealthInsights />
                 </OnboardingProtectedRoute>
               } />
               
