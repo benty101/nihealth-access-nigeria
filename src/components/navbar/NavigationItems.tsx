@@ -9,7 +9,9 @@ export const useNavigationItems = () => {
 
   const getNavigationItems = () => {
     const baseItems = [
-      { path: '/dashboard', label: 'Dashboard' },
+      { path: '/dashboard', label: 'Health Timeline' },
+      { path: '/overview', label: 'Overview' },
+      { path: '/marketplace', label: 'Marketplace' },
       { path: '/appointments', label: 'Appointments' },
       { path: '/records', label: 'Records' },
       { path: '/hospitals', label: 'Hospitals' },

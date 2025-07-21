@@ -8,6 +8,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import Index from './pages/Index';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import HealthTimeline from './pages/HealthTimeline';
+import CommercePlatform from './pages/CommercePlatform';
 import Onboarding from './pages/Onboarding';
 import Appointments from './pages/Appointments';
 import Insurance from './pages/Insurance';
@@ -73,7 +75,19 @@ function App() {
               {/* Main Dashboard Routes */}
               <Route path="/dashboard" element={
                 <OnboardingProtectedRoute>
+                  <HealthTimeline />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/overview" element={
+                <OnboardingProtectedRoute>
                   <Dashboard />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/marketplace" element={
+                <OnboardingProtectedRoute>
+                  <CommercePlatform />
                 </OnboardingProtectedRoute>
               } />
               
