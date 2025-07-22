@@ -9,6 +9,7 @@ import Index from './pages/Index';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import HealthTimeline from './pages/HealthTimeline';
+import HealthIntelligenceHub from './pages/HealthIntelligenceHub';
 import CommercePlatform from './pages/CommercePlatform';
 import Onboarding from './pages/Onboarding';
 import Appointments from './pages/Appointments';
@@ -72,8 +73,21 @@ function App() {
                 </ProtectedRoute>
               } />
               
-              {/* Main Dashboard Routes */}
+              {/* Main Health Intelligence Hub - Primary Experience */}
+              <Route path="/health-hub" element={
+                <OnboardingProtectedRoute>
+                  <HealthIntelligenceHub />
+                </OnboardingProtectedRoute>
+              } />
+              
+              {/* Legacy/Secondary Routes */}
               <Route path="/dashboard" element={
+                <OnboardingProtectedRoute>
+                  <HealthIntelligenceHub />
+                </OnboardingProtectedRoute>
+              } />
+              
+              <Route path="/timeline" element={
                 <OnboardingProtectedRoute>
                   <HealthTimeline />
                 </OnboardingProtectedRoute>

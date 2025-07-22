@@ -29,7 +29,8 @@ export const useIntelligentNavigation = (): NavigationContext => {
       return { route: '/onboarding', label: 'Setup', icon: Activity };
     }
     
-    return { route: '/dashboard', label: 'Dashboard', icon: Activity };
+    // NEW: Primary experience is the Health Intelligence Hub (timeline-first)
+    return { route: '/health-hub', label: 'Health Hub', icon: Activity };
   };
 
   const userHome = getUserHome();

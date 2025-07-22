@@ -8,15 +8,13 @@ export const useNavigationItems = () => {
   const { role } = useUserRole();
 
   const getNavigationItems = () => {
+    // NEW: Simplified, intelligent navigation focused on core experiences
     const baseItems = [
-      { path: '/dashboard', label: 'Health Timeline' },
-      { path: '/overview', label: 'Overview' },
-      { path: '/marketplace', label: 'Marketplace' },
-      { path: '/appointments', label: 'Appointments' },
-      { path: '/records', label: 'Records' },
-      { path: '/hospitals', label: 'Hospitals' },
-      { path: '/insurance', label: 'Insurance' },
-      { path: '/resources', label: 'Resources' }
+      { path: '/health-hub', label: 'Health Intelligence' },
+      { path: '/marketplace', label: 'Services & Commerce' },
+      { path: '/timeline', label: 'Health Timeline' },
+      { path: '/overview', label: 'Traditional View' },
+      { path: '/resources', label: 'Resources & Support' }
     ];
 
     const roleSpecificItems = [];
