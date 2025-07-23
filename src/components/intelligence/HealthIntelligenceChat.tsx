@@ -41,6 +41,7 @@ export const HealthIntelligenceChat: React.FC<HealthIntelligenceChatProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [healthEngine] = useState(() => HealthIntelligenceEngine.getInstance());
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
