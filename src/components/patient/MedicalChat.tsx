@@ -18,7 +18,7 @@ const MedicalChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm Nduka, your personalized health assistant. I have access to your health profile and can provide tailored insights based on your medical history. How can I help you today?",
+      content: "🌟 Hey! I'm your AI Health Intelligence Assistant powered by advanced Nigerian health data and NABDA genomics. I can help you:\n\n💡 Get personalized health insights\n🩺 Book smart appointments based on your profile\n🏥 Find the perfect insurance plan for your needs\n🧬 Understand your health risks\n📊 Track your health journey\n\nWhat's on your mind about your health today?",
       isUser: false,
       timestamp: new Date()
     }
@@ -151,7 +151,7 @@ const MedicalChat = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask Nduka about your health..."
+              placeholder="Ask about health insights, insurance plans, appointments..."
               disabled={isLoading}
               className="flex-1"
             />
@@ -165,7 +165,7 @@ const MedicalChat = () => {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Nduka provides health insights based on your profile. Always consult healthcare professionals for medical advice.
+            🇳🇬 Powered by NABDA • Nigerian Health Intelligence • Insurance Recommendations
           </p>
         </div>
       </CardContent>

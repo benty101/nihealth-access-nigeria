@@ -12,6 +12,7 @@ import SmartRecommendations from '@/components/dashboard/SmartRecommendations';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 import EmergencyContactCard from '@/components/dashboard/EmergencyContactCard';
 import InsuranceStatusCard from '@/components/dashboard/InsuranceStatusCard';
+import NABDAPartnershipCard from '@/components/dashboard/NABDAPartnershipCard';
 import UserGuidance from '@/components/onboarding/UserGuidance';
 import EnhancedQuickLinks from '@/components/dashboard/EnhancedQuickLinks';
 import ProfileCompletion from '@/components/dashboard/ProfileCompletion';
@@ -122,8 +123,12 @@ const Dashboard = () => {
               <FamilyHealthHub />
             </ModernCard>
             
-            <ModernCard variant="glass">
+            <ModernCard variant="glass" className="border-0 bg-transparent">
               <InsuranceStatusCard />
+            </ModernCard>
+            
+            <ModernCard variant="glass" className="border-0 bg-transparent">
+              <NABDAPartnershipCard />
             </ModernCard>
             
             <ModernCard variant="default">

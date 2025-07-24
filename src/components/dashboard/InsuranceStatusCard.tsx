@@ -95,13 +95,22 @@ const InsuranceStatusCard = () => {
       <CardContent className="space-y-4">
         {activePurchases.length === 0 ? (
           <div className="text-center py-4">
-            <div className="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Shield className="h-6 w-6 text-teal-600" />
+            <div className="w-16 h-16 bg-gradient-to-br from-red-50 to-orange-50 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-red-200">
+              <AlertCircle className="h-8 w-8 text-red-500" />
             </div>
-            <p className="text-sm text-gray-600 mb-3">No active insurance coverage</p>
+            <h3 className="font-semibold text-red-700 mb-1">⚠️ You're Unprotected!</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Medical emergencies can cost ₦500k-₦2M+. 
+              <br />
+              <span className="font-medium text-red-600">Don't risk your family's future!</span>
+            </p>
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg mb-3 border border-green-200">
+              <p className="text-xs text-green-700 font-medium">💡 Smart Recommendation</p>
+              <p className="text-xs text-green-600">Start with basic coverage for as low as ₦8,000/year</p>
+            </div>
             <Link to="/insurance">
-              <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
-                Get Protected Today
+              <Button className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-lg">
+                🛡️ Get Protected Now
               </Button>
             </Link>
           </div>
