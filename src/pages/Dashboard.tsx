@@ -24,6 +24,7 @@ import { PersonalizationService } from '@/services/PersonalizationService';
 import MedicalChat from '@/components/patient/MedicalChat';
 import OnboardingPrompt from '@/components/dashboard/OnboardingPrompt';
 import { ModernCard } from '@/components/ui/modern-card';
+import ContextualServiceRecommendations from '@/components/intelligent-services/ContextualServiceRecommendations';
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
@@ -113,6 +114,10 @@ const Dashboard = () => {
           <div className="xl:col-span-4 space-y-6">
             <ModernCard variant="gradient" className="sticky top-6">
               <MedicalChat />
+            </ModernCard>
+            
+            <ModernCard variant="elevated">
+              <ContextualServiceRecommendations />
             </ModernCard>
             
             <ModernCard variant="elevated">
