@@ -17,7 +17,15 @@ export type {
 export class PersonalizationService {
   static getOnboardingData() {
     const storedData = localStorage.getItem('userOnboardingData');
-    return storedData ? JSON.parse(storedData) : null;
+    if (storedData) {
+      const data = JSON.parse(storedData);
+      // Ensure insurance status is properly tracked
+      return {
+        ...data,
+        hasInsurance: data.hasInsurance || data.insurance_provider || false
+      };
+    }
+    return null;
   }
 
   static getPersonalizedQuickActions(onboardingData: any) {

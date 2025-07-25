@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import RealTimeHealthMetrics from '@/components/dashboard/RealTimeHealthMetrics';
@@ -21,6 +21,8 @@ import FamilyHealthHub from '@/components/dashboard/FamilyHealthHub';
 import AIHealthInsights from '@/components/dashboard/AIHealthInsights';
 import { HealthTimeline } from '@/components/health-timeline/HealthTimeline';
 import { PersonalizationService } from '@/services/PersonalizationService';
+import { ProfileDataService } from '@/services/ProfileDataService';
+import { useAuth } from '@/contexts/AuthContext';
 import MedicalChat from '@/components/patient/MedicalChat';
 import OnboardingPrompt from '@/components/dashboard/OnboardingPrompt';
 import { ModernCard } from '@/components/ui/modern-card';
@@ -28,19 +30,78 @@ import ContextualServiceRecommendations from '@/components/intelligent-services/
 
 const Dashboard = () => {
   console.log('Dashboard: Component rendered');
+  const { user } = useAuth();
   const appointmentsRef = useRef<AppointmentsRef>(null);
+  const [onboardingData, setOnboardingData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
-  const onboardingData = PersonalizationService.getOnboardingData();
+  useEffect(() => {
+    if (user) {
+      initializeUserProfile();
+    }
+  }, [user]);
+
+  const initializeUserProfile = async () => {
+    setIsLoadingProfile(true);
+    try {
+      // Generate unique profile data
+      const uniqueProfile = await ProfileDataService.generateUniqueProfileData(user.id);
+      if (uniqueProfile) {
+        setProfileData(uniqueProfile);
+        
+        // Update local storage with insurance status from profile
+        const currentOnboarding = PersonalizationService.getOnboardingData() || {};
+        const hasInsurance = !!(uniqueProfile.insurance_provider && uniqueProfile.insurance_number);
+        
+        const updatedOnboarding = {
+          ...currentOnboarding,
+          hasInsurance,
+          insurance_provider: uniqueProfile.insurance_provider,
+          full_name: uniqueProfile.full_name,
+          phone_number: uniqueProfile.phone_number,
+          state_of_residence: uniqueProfile.state_of_residence
+        };
+        
+        localStorage.setItem('userOnboardingData', JSON.stringify(updatedOnboarding));
+        setOnboardingData(updatedOnboarding);
+      } else {
+        // Fallback to existing onboarding data
+        const data = PersonalizationService.getOnboardingData();
+        setOnboardingData(data);
+      }
+    } catch (error) {
+      console.error('Error initializing unique profile:', error);
+      const data = PersonalizationService.getOnboardingData();
+      setOnboardingData(data);
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
+
   const recommendations = PersonalizationService.getPersonalizedRecommendations(onboardingData);
   const greeting = PersonalizationService.getPersonalizedGreeting(onboardingData);
 
-  console.log('Dashboard: Onboarding data', { onboardingData });
+  console.log('Dashboard: Onboarding data', { onboardingData, profileData });
 
   const handleAppointmentBooked = () => {
     if (appointmentsRef.current) {
       appointmentsRef.current.loadAppointments();
     }
   };
+
+  if (isLoadingProfile) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Setting up your personalized experience...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   // If no onboarding data, show the prompt prominently
   if (!onboardingData) {

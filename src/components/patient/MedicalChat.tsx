@@ -123,10 +123,16 @@ const MedicalChat = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleIntelligentAction = async (action: string) => {
+  const handleIntelligentAction = async (actionValue: string) => {
+    // Handle routing actions
+    if (actionValue.startsWith('/')) {
+      window.location.href = actionValue;
+      return;
+    }
+
     const actionMessage: Message = {
       id: `action_${Date.now()}`,
-      content: `🔄 Processing: ${action.replace('_', ' ')}...`,
+      content: `🔄 Processing: ${actionValue.replace('_', ' ')}...`,
       isUser: false,
       timestamp: new Date()
     };
@@ -135,19 +141,50 @@ const MedicalChat = () => {
     setIsLoading(true);
 
     try {
-      // Use the health intelligence engine for contextual responses
-      const response = await healthEngine.processUserInput(`action:${action}`);
-      
+      const onboardingData = PersonalizationService.getOnboardingData();
+      let responseContent = '';
+      let responseActions = [];
+
+      switch (actionValue) {
+        case 'urgent_insurance':
+        case 'show_insurance_plans':
+        case 'calculate_insurance':
+          responseContent = `🛡️ **SMART CHOICE!** Let me show you our top insurance plans:\n\n💰 **Basic Plan** - ₦8,000/year\n✅ Emergency coverage up to ₦500k\n✅ Basic consultations covered\n\n💎 **Premium Plan** - ₦25,000/year\n✅ Coverage up to ₦2M\n✅ Full specialist consultations\n✅ Surgery coverage\n\n🎯 **Recommendation**: Start with Basic, upgrade later!`;
+          responseActions = [
+            { label: '🛡️ Buy Basic Plan', action: '/insurance', type: 'urgent' },
+            { label: '💎 View Premium', action: '/insurance', type: 'insurance' },
+            { label: '📞 Call Expert', action: 'insurance_expert', type: 'secondary' }
+          ];
+          break;
+        case 'insurance_expert':
+          responseContent = `📞 **Great choice!** Our insurance experts are available:\n\n🕒 **Hours**: 8AM - 6PM (Mon-Fri)\n📱 **WhatsApp**: +234 800 MEDDYPAL\n📧 **Email**: insurance@meddypal.ng\n\n💡 **Tip**: Mention this chat for priority service!`;
+          responseActions = [
+            { label: '🛡️ Get Plan Now', action: '/insurance', type: 'urgent' },
+            { label: '📅 Schedule Call', action: 'schedule_call', type: 'secondary' }
+          ];
+          break;
+        case 'complete_profile':
+        case 'health_assessment':
+          responseContent = `📋 **Excellent!** Completing your health profile unlocks:\n\n🎯 Personalized recommendations\n🧠 AI health insights\n⚠️ Risk assessments\n💊 Medication tracking\n\n⏱️ **Takes 3 minutes** - but saves years of health problems!`;
+          responseActions = [
+            { label: '📋 Complete Profile', action: '/profile', type: 'primary' },
+            { label: '🛡️ Get Insurance First', action: '/insurance', type: 'urgent' }
+          ];
+          break;
+        default:
+          responseContent = `I'm working on that feature! Meanwhile, let me help you with something that can save you thousands:\n\n🛡️ **Get health insurance** - Medical emergencies cost ₦500k-₦2M+ in Nigeria!`;
+          responseActions = [
+            { label: '🛡️ Get Protected Now', action: '/insurance', type: 'urgent' },
+            { label: '📅 Book Appointment', action: '/appointments', type: 'secondary' }
+          ];
+      }
+
       const aiResponse: Message = {
         id: `ai_${Date.now()}`,
-        content: response.content,
+        content: responseContent,
         isUser: false,
         timestamp: new Date(),
-        actions: response.suggested_actions?.map(actionItem => ({
-          label: actionItem.label,
-          action: actionItem.id,
-          type: actionItem.priority > 3 ? 'urgent' : actionItem.service_type === 'insurance' ? 'insurance' : 'primary'
-        }))
+        actions: responseActions
       };
 
       setMessages(prev => [...prev.slice(0, -1), aiResponse]);
@@ -155,12 +192,12 @@ const MedicalChat = () => {
       console.error('Error processing action:', error);
       const errorResponse: Message = {
         id: `error_${Date.now()}`,
-        content: "I'm having trouble processing that right now. Let me help you with something else!",
+        content: "I'm having trouble processing that right now. Let me help you with our most important service:\n\n🛡️ **Get health insurance** - Don't wait until it's too late!",
         isUser: false,
         timestamp: new Date(),
         actions: [
-          { label: '🛡️ Get Insurance', action: 'recommend_insurance', type: 'insurance' },
-          { label: '📅 Book Appointment', action: 'book_appointment', type: 'primary' }
+          { label: '🛡️ Get Insurance NOW', action: '/insurance', type: 'urgent' },
+          { label: '📅 Book Appointment', action: '/appointments', type: 'secondary' }
         ]
       };
       setMessages(prev => [...prev.slice(0, -1), errorResponse]);
@@ -184,19 +221,71 @@ const MedicalChat = () => {
     setIsLoading(true);
 
     try {
-      // Use health intelligence engine for smart responses
-      const intelligentResponse = await healthEngine.processUserInput(inputMessage);
+      // Check insurance status for targeted nudging
+      const onboardingData = PersonalizationService.getOnboardingData();
+      const hasInsurance = onboardingData?.hasInsurance || false;
       
+      // Enhanced AI response with proper insurance nudging
+      let aiResponse = '';
+      let actions = [];
+
+      // Insurance-first logic
+      if (!hasInsurance) {
+        if (inputMessage.toLowerCase().includes('insurance') || inputMessage.toLowerCase().includes('cover')) {
+          aiResponse = `🛡️ **Excellent question!** You're asking about insurance - that's SMART thinking!\n\n**Here's the reality**: Medical emergencies in Nigeria cost ₦500k-₦2M+. Without insurance, one emergency could devastate your finances.\n\n✅ **Good news**: We have plans starting from just ₦8,000/year - that's less than ₦700/month!\n\n🎯 **My recommendation**: Get basic coverage TODAY, then upgrade as needed.`;
+          actions = [
+            { label: '🛡️ Show Me Plans Now', action: '/insurance', type: 'urgent' },
+            { label: '💰 Calculate Costs', action: 'calculate_insurance', type: 'insurance' },
+            { label: '📞 Speak to Expert', action: 'insurance_expert', type: 'secondary' }
+          ];
+        } else if (inputMessage.toLowerCase().includes('appointment') || inputMessage.toLowerCase().includes('doctor')) {
+          aiResponse = `📅 I can help you book an appointment!\n\n⚠️ **But first - IMPORTANT**: Do you have health insurance? Doctor visits cost ₦3k-₦15k, and if they find something serious, treatments can cost ₦100k+.\n\n💡 **Smart move**: Get insurance first (₦8k/year), then book appointments worry-free!`;
+          actions = [
+            { label: '🛡️ Get Insurance First', action: '/insurance', type: 'urgent' },
+            { label: '📅 Book Anyway', action: '/appointments', type: 'secondary' },
+            { label: '💰 Check Costs', action: 'cost_calculator', type: 'secondary' }
+          ];
+        } else {
+          aiResponse = `I understand you're asking about "${inputMessage}". I'm here to help!\n\n🚨 **URGENT REMINDER**: You don't have health insurance! Medical emergencies can cost ₦500k-₦2M+. One serious illness could bankrupt you.\n\n🛡️ **Solution**: Get covered for just ₦8,000/year - less than a daily meal!`;
+          actions = [
+            { label: '🛡️ Get Protected NOW', action: '/insurance', type: 'urgent' },
+            { label: '📋 Health Check', action: '/health-insights', type: 'primary' },
+            { label: '📅 Book Appointment', action: '/appointments', type: 'secondary' }
+          ];
+        }
+      } else {
+        // User has insurance - provide helpful responses
+        if (inputMessage.toLowerCase().includes('appointment')) {
+          aiResponse = `📅 Great! Since you have insurance, let's book that appointment.\n\n✅ Your coverage should help with costs. I can help you find doctors that accept your plan.`;
+          actions = [
+            { label: '📅 Book Appointment', action: '/appointments', type: 'primary' },
+            { label: '🏥 Find Hospitals', action: '/hospitals', type: 'secondary' }
+          ];
+        } else if (inputMessage.toLowerCase().includes('health') || inputMessage.toLowerCase().includes('insight')) {
+          aiResponse = `🧠 Perfect! With your insurance coverage, you can access health insights worry-free.\n\n🎯 I can provide personalized recommendations based on your profile.`;
+          actions = [
+            { label: '🔍 Health Insights', action: '/health-insights', type: 'primary' },
+            { label: '📊 Health Timeline', action: '/health-timeline', type: 'secondary' }
+          ];
+        } else {
+          aiResponse = `Great question about "${inputMessage}"! Since you have insurance coverage, you're well-protected.\n\n🎯 How can I help you make the most of your health coverage today?`;
+          actions = [
+            { label: '📅 Book Check-up', action: '/appointments', type: 'primary' },
+            { label: '🧪 Lab Tests', action: '/labs', type: 'secondary' },
+            { label: '💊 Pharmacy', action: '/pharmacy', type: 'secondary' }
+          ];
+        }
+      }
+
       const aiMessage: Message = {
         id: `ai_${Date.now()}`,
-        content: intelligentResponse.content,
+        content: aiResponse,
         isUser: false,
         timestamp: new Date(),
-        actions: intelligentResponse.suggested_actions?.map(action => ({
+        actions: actions.map(action => ({
           label: action.label,
-          action: action.id,
-          type: action.priority > 3 ? 'urgent' : 
-                action.service_type === 'insurance' ? 'insurance' : 'primary'
+          action: action.action,
+          type: action.type
         }))
       };
 
@@ -204,18 +293,16 @@ const MedicalChat = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       
-      // Fallback to basic AI response with insurance focus
+      // Enhanced fallback with insurance focus
       const fallbackResponse: Message = {
         id: `fallback_${Date.now()}`,
-        content: `I understand you're asking about "${inputMessage}". Let me help you with that! 
-        
-💡 **Quick tip**: If you don't have insurance yet, that should be your #1 priority. Medical costs can be devastating without coverage.`,
+        content: `I'm having a small technical hiccup, but I'm here to help!\n\n🛡️ **While I'm processing**: Do you have health insurance? If not, that should be your #1 priority. Medical costs can be devastating without coverage.\n\n💡 **Get protected**: Plans start from just ₦8,000/year!`,
         isUser: false,
         timestamp: new Date(),
         actions: [
-          { label: '🛡️ Get Insurance First', action: 'urgent_insurance', type: 'urgent' },
-          { label: '📅 Book Appointment', action: 'book_appointment', type: 'primary' },
-          { label: '🧬 Health Insights', action: 'health_insights', type: 'secondary' }
+          { label: '🛡️ Get Insurance NOW', action: '/insurance', type: 'urgent' },
+          { label: '📅 Book Appointment', action: '/appointments', type: 'secondary' },
+          { label: '🔄 Try Again', action: 'retry_chat', type: 'secondary' }
         ]
       };
 
@@ -266,8 +353,8 @@ const MedicalChat = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 min-h-0">
-        <ScrollArea className="flex-1 px-4 py-2">
-          <div className="space-y-4 min-h-full">
+        <ScrollArea className="flex-1 px-4 py-2" style={{ maxHeight: '450px' }}>
+          <div className="space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -326,7 +413,7 @@ const MedicalChat = () => {
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} className="h-1" />
+            <div ref={messagesEndRef} className="h-4" />
           </div>
         </ScrollArea>
         <div className="p-4 border-t bg-background flex-shrink-0">
