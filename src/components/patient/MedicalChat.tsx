@@ -55,7 +55,7 @@ const MedicalChat = () => {
         // Fallback welcome message
         setMessages([{
           id: '1',
-          content: "🌟 Hey! I'm your AI Health Intelligence Assistant. I can help you with insurance recommendations, health insights, and booking services. What's on your mind?",
+          content: "🌟 Hey! I'm your AI Health Assistant. I can help you with insurance recommendations, health insights, and booking services. What's on your mind?",
           isUser: false,
           timestamp: new Date(),
           actions: [
@@ -75,7 +75,7 @@ const MedicalChat = () => {
 
   const generateIntelligentWelcome = (context: any): Message => {
     const onboardingData = PersonalizationService.getOnboardingData();
-    let content = "🌟 Hey! I'm your AI Health Intelligence Assistant powered by NABDA genomics.";
+    let content = "🌟 Hey! I'm your AI Health Assistant. I can help with insurance, appointments, and health insights.";
     let actions = [];
 
     // Check insurance status first - this is key for monetization
@@ -262,7 +262,7 @@ const MedicalChat = () => {
               )}
             </div>
           </div>
-          <div className="text-xs text-emerald-600 font-medium">🇳🇬 NABDA Powered</div>
+          <div className="text-xs text-emerald-600 font-medium">AI Powered</div>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 min-h-0">
@@ -349,7 +349,7 @@ const MedicalChat = () => {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            🇳🇬 Powered by NABDA • Nigerian Health Intelligence • Insurance Recommendations
+            🚀 AI-Powered Health Assistant • Smart Recommendations • Nigerian Healthcare
           </p>
         </div>
       </CardContent>

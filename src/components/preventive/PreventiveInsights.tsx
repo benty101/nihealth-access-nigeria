@@ -25,7 +25,7 @@ export const PreventiveInsights: React.FC<PreventiveInsightsProps> = ({ onboardi
 
   useEffect(() => {
     // Mock preventive care data
-    setPreventiveActions([
+    const actions = [
       {
         id: '1',
         title: 'Annual Physical Exam',
@@ -66,7 +66,9 @@ export const PreventiveInsights: React.FC<PreventiveInsightsProps> = ({ onboardi
         description: 'Annual influenza vaccine',
         completed: false
       }
-    ]);
+    ];
+    
+    setPreventiveActions(actions);
 
     setUpcomingCare([
       {
@@ -82,10 +84,10 @@ export const PreventiveInsights: React.FC<PreventiveInsightsProps> = ({ onboardi
     ]);
 
     // Calculate health score based on completed preventive actions
-    const completed = preventiveActions.filter(action => action.completed).length;
-    const total = preventiveActions.length;
+    const completed = actions.filter(action => action.completed).length;
+    const total = actions.length;
     setHealthScore(total > 0 ? Math.round((completed / total) * 100) : 75);
-  }, [preventiveActions]);
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {

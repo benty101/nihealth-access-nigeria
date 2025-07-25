@@ -82,11 +82,11 @@ const ContextualServiceRecommendations: React.FC<ContextualServiceProps> = ({
         contextual.unshift({
           id: 'ai_health_insights',
           title: '🧠 AI-Powered Health Insights',
-          description: 'Get personalized health predictions and risk assessments powered by NABDA genomics.',
+          description: 'Get personalized health predictions and risk assessments powered by advanced AI.',
           action: '/health-insights',
           actionLabel: 'View Insights',
           priority: 'high',
-          estimatedCost: 'Free with NABDA',
+          estimatedCost: 'Free Premium Feature',
           estimatedTime: 'Immediate access',
           icon: Brain,
           bgClass: 'bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200',
@@ -106,7 +106,7 @@ const ContextualServiceRecommendations: React.FC<ContextualServiceProps> = ({
   const getServiceRoute = (serviceType: string) => {
     switch (serviceType) {
       case 'appointment': return '/appointments';
-      case 'lab_test': return '/lab-tests';
+      case 'lab_test': return '/labs';
       case 'pharmacy': return '/pharmacy';
       case 'insurance': return '/insurance';
       case 'emergency': return '/emergency';

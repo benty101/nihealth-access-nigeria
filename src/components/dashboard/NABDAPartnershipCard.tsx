@@ -25,13 +25,13 @@ const NABDAPartnershipCard = () => {
               <Building2 className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-emerald-800">🇳🇬 NABDA Partnership</h3>
-              <p className="text-xs text-emerald-600">Government-Backed Health Intelligence</p>
+              <h3 className="text-sm font-bold text-emerald-800">Health Partnership</h3>
+              <p className="text-xs text-emerald-600">Enhanced with Government Support</p>
             </div>
           </div>
           <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 ml-auto">
             <Award className="w-3 h-3 mr-1" />
-            Tier 1 Access
+            Premium Access
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -45,11 +45,11 @@ const NABDAPartnershipCard = () => {
             </div>
             <div>
               <h4 className="font-semibold text-sm text-gray-800 mb-1">
-                Nigeria's First AI-Powered Health Platform
+                Advanced AI-Powered Health Platform
               </h4>
               <p className="text-xs text-gray-600">
-                Your health data contributes to groundbreaking Nigerian medical research while giving you 
-                personalized insights powered by genomics and AI.
+                Get personalized health insights powered by advanced AI and genomics research, 
+                contributing to better healthcare outcomes.
               </p>
             </div>
           </div>
@@ -92,8 +92,8 @@ const NABDAPartnershipCard = () => {
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-blue-600" />
             <div>
-              <p className="text-xs font-medium text-blue-800">Government-Grade Security</p>
-              <p className="text-xs text-blue-600">NABDA Compliance Certified</p>
+              <p className="text-xs font-medium text-blue-800">Enterprise-Grade Security</p>
+              <p className="text-xs text-blue-600">Government Standards Certified</p>
             </div>
           </div>
           <Zap className="w-4 h-4 text-yellow-500" />
@@ -104,9 +104,10 @@ const NABDAPartnershipCard = () => {
           variant="outline" 
           size="sm" 
           className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400"
+          onClick={() => window.open('/health-insights', '_blank')}
         >
           <ExternalLink className="w-3 h-3 mr-2" />
-          Explore NABDA Portal
+          Explore Health Portal
           <ChevronRight className="w-3 h-3 ml-auto" />
         </Button>
 
