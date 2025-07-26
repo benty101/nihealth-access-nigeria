@@ -123,10 +123,10 @@ const Dashboard = () => {
         
         {/* Quick Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ModernCard variant="glass" hover={false}>
+          <ModernCard variant="glass-strong" hover={false}>
             <ProfileCompletion />
           </ModernCard>
-          <ModernCard variant="gradient" hover={false}>
+          <ModernCard variant="glass" hover={false}>
             <PremiumUpgradeCard />
           </ModernCard>
         </div>
@@ -135,38 +135,38 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
           {/* Primary Content - Health Overview */}
           <div className="xl:col-span-8 space-y-6">
-            <ModernCard variant="elevated" className="p-0 overflow-hidden">
+            <ModernCard variant="glass-strong" className="p-0 overflow-hidden">
               <PersonalizedInsights onboardingData={onboardingData} />
             </ModernCard>
             
-            <ModernCard variant="default">
+            <ModernCard variant="glass">
               <ProgressTracker onboardingData={onboardingData} />
             </ModernCard>
             
-            <ModernCard variant="glass">
+            <ModernCard variant="glass-strong">
               <HealthTimeline />
             </ModernCard>
             
-            <ModernCard variant="elevated" className="p-0">
+            <ModernCard variant="glass" className="p-0">
               <RealTimeHealthMetrics />
             </ModernCard>
             
-            <ModernCard variant="default">
+            <ModernCard variant="glass">
               <SmartRecommendations onboardingData={onboardingData} />
             </ModernCard>
             
-            <ModernCard variant="glass">
+            <ModernCard variant="glass-strong">
               <PersonalizedRecommendations 
                 recommendations={recommendations} 
                 onAppointmentBooked={handleAppointmentBooked}
               />
             </ModernCard>
             
-            <ModernCard variant="default">
+            <ModernCard variant="glass">
               <RealTimeUpcomingAppointments ref={appointmentsRef} />
             </ModernCard>
             
-            <ModernCard variant="default">
+            <ModernCard variant="glass">
               <RecentActivity />
             </ModernCard>
           </div>

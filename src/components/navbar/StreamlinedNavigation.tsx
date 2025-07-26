@@ -121,7 +121,7 @@ export const StreamlinedDesktopNavigation: React.FC<StreamlinedNavigationProps> 
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56 bg-white border shadow-lg z-50">
           <DropdownMenuItem asChild>
-            <Link to="/labs" className="flex items-center gap-3 w-full cursor-pointer hover:bg-teal-50">
+            <Link to="/book-lab-test" className="flex items-center gap-3 w-full cursor-pointer hover:bg-teal-50">
               <TestTube className="h-4 w-4 text-orange-600" />
               Book Lab Test
             </Link>

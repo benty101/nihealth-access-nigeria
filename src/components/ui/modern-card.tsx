@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface ModernCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'elevated' | 'glass' | 'gradient';
+  variant?: 'default' | 'elevated' | 'glass' | 'glass-strong' | 'gradient';
   hover?: boolean;
   children: React.ReactNode;
 }
@@ -20,7 +20,8 @@ const ModernCard = React.forwardRef<HTMLDivElement, ModernCardProps>(
           {
             'bg-card text-card-foreground border-border shadow-sm': variant === 'default',
             'bg-card-elevated text-card-foreground border-border shadow-lg': variant === 'elevated',
-            'bg-card/80 backdrop-blur-sm border-border/50 shadow-lg': variant === 'glass',
+            'glass-card': variant === 'glass',
+            'glass-card-strong': variant === 'glass-strong',
             'bg-gradient-subtle border-border/50 shadow-lg': variant === 'gradient',
           },
           
@@ -28,8 +29,7 @@ const ModernCard = React.forwardRef<HTMLDivElement, ModernCardProps>(
           hover && {
             'hover:shadow-md hover:bg-card-hover hover:-translate-y-0.5': variant === 'default',
             'hover:shadow-xl hover:bg-card-hover hover:-translate-y-1': variant === 'elevated',
-            'hover:bg-card/90 hover:shadow-xl hover:-translate-y-0.5': variant === 'glass',
-            'hover:shadow-xl hover:-translate-y-0.5': variant === 'gradient',
+            'hover:shadow-xl hover:-translate-y-0.5': variant === 'glass' || variant === 'glass-strong' || variant === 'gradient',
           },
           
           className

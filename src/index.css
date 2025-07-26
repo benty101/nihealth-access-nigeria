@@ -3,3 +3,40 @@
 @import './styles/animations.css';
 @import './styles/keyframes.css';
 @import './styles/components.css';
+
+/* Glass Design System */
+:root {
+  /* Glass backgrounds */
+  --glass-primary: hsla(var(--primary), 0.1);
+  --glass-secondary: hsla(var(--secondary), 0.08);
+  --glass-accent: hsla(var(--accent), 0.12);
+  --glass-muted: hsla(var(--muted), 0.6);
+  
+  /* Glass borders */
+  --glass-border: hsla(var(--border), 0.2);
+  --glass-border-strong: hsla(var(--border), 0.3);
+  
+  /* Glass shadows */
+  --glass-shadow: 0 8px 32px hsla(var(--primary), 0.15);
+  --glass-shadow-lg: 0 20px 40px hsla(var(--primary), 0.2);
+  
+  /* Blur values */
+  --glass-blur: blur(12px);
+  --glass-blur-lg: blur(16px);
+}
+
+.glass-card {
+  background: var(--glass-primary);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card-strong {
+  background: var(--glass-muted);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: var(--glass-blur-lg);
+  -webkit-backdrop-filter: var(--glass-blur-lg);
+  box-shadow: var(--glass-shadow-lg);
+}

@@ -83,7 +83,7 @@ function App() {
               {/* Legacy/Secondary Routes */}
               <Route path="/dashboard" element={
                 <OnboardingProtectedRoute>
-                  <HealthIntelligenceHub />
+                  <Dashboard />
                 </OnboardingProtectedRoute>
               } />
               
@@ -95,7 +95,7 @@ function App() {
               
               <Route path="/overview" element={
                 <OnboardingProtectedRoute>
-                  <Dashboard />
+                  <HealthIntelligenceHub />
                 </OnboardingProtectedRoute>
               } />
               
