@@ -7,18 +7,18 @@
 /* Glass Design System */
 :root {
   /* Glass backgrounds */
-  --glass-primary: hsla(var(--primary), 0.1);
-  --glass-secondary: hsla(var(--secondary), 0.08);
-  --glass-accent: hsla(var(--accent), 0.12);
-  --glass-muted: hsla(var(--muted), 0.6);
+  --glass-primary: hsl(var(--primary) / 0.1);
+  --glass-secondary: hsl(var(--secondary) / 0.08);
+  --glass-accent: hsl(var(--accent) / 0.12);
+  --glass-muted: hsl(var(--muted) / 0.8);
   
   /* Glass borders */
-  --glass-border: hsla(var(--border), 0.2);
-  --glass-border-strong: hsla(var(--border), 0.3);
+  --glass-border: hsl(var(--border) / 0.2);
+  --glass-border-strong: hsl(var(--border) / 0.4);
   
   /* Glass shadows */
-  --glass-shadow: 0 8px 32px hsla(var(--primary), 0.15);
-  --glass-shadow-lg: 0 20px 40px hsla(var(--primary), 0.2);
+  --glass-shadow: 0 8px 32px hsl(var(--primary) / 0.15);
+  --glass-shadow-lg: 0 20px 40px hsl(var(--primary) / 0.2);
   
   /* Blur values */
   --glass-blur: blur(12px);
