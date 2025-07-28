@@ -23,6 +23,10 @@
   /* Blur values */
   --glass-blur: blur(12px);
   --glass-blur-lg: blur(16px);
+  
+  /* Mobile-specific values */
+  --mobile-nav-height: 80px;
+  --mobile-safe-area: env(safe-area-inset-bottom, 0px);
 }
 
 .glass-card {

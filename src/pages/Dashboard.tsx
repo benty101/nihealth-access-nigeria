@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import BreadcrumbNavigation from '@/components/navigation/BreadcrumbNavigation';
+import ContextualHelp from '@/components/navigation/ContextualHelp';
 import RealTimeHealthMetrics from '@/components/dashboard/RealTimeHealthMetrics';
 import RealTimeUpcomingAppointments, { AppointmentsRef } from '@/components/dashboard/RealTimeUpcomingAppointments';
 import RealTimeHealthReminders from '@/components/dashboard/RealTimeHealthReminders';
@@ -119,6 +121,7 @@ const Dashboard = () => {
       <UserGuidance />
       
       <div className="space-y-8">
+        <BreadcrumbNavigation />
         <DashboardHeader onboardingData={onboardingData} greeting={greeting} />
         
         {/* Quick Status Cards */}
@@ -214,6 +217,9 @@ const Dashboard = () => {
       
       {/* Floating Emergency Button */}
       <FloatingEmergencyButton />
+      
+      {/* Contextual Help */}
+      <ContextualHelp />
     </AppLayout>
   );
 };
