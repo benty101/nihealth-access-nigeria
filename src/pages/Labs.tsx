@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import PageLayout from '@/components/layout/PageLayout';
+import StandardPageLayout from '@/components/layout/StandardPageLayout';
 import BackButton from '@/components/navigation/BackButton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -159,9 +159,10 @@ const Labs = () => {
   );
 
   return (
-    <PageLayout 
+    <StandardPageLayout 
       title="Laboratory Tests & Diagnostics" 
       subtitle="Book laboratory tests and diagnostic services with certified facilities across Nigeria, or order convenient home test kits"
+      backgroundVariant="gradient"
     >
       <div className="mb-6">
         <BackButton />
@@ -386,7 +387,7 @@ const Labs = () => {
           />
         )}
       </div>
-    </PageLayout>
+    </StandardPageLayout>
   );
 };
 

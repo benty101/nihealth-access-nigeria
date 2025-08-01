@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import PageLayout from '@/components/layout/PageLayout';
+import StandardPageLayout from '@/components/layout/StandardPageLayout';
 import BackButton from '@/components/navigation/BackButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -376,9 +376,10 @@ const Pharmacy = () => {
   };
 
   return (
-    <PageLayout 
+    <StandardPageLayout 
       title="MeddyPal Pharmacy" 
       subtitle="Your trusted online pharmacy for quality medications"
+      backgroundVariant="gradient"
     >
       <div className="mb-6">
         <BackButton />
@@ -571,7 +572,7 @@ const Pharmacy = () => {
       />
 
       <FloatingEmergencyButton />
-    </PageLayout>
+    </StandardPageLayout>
   );
 };
 

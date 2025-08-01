@@ -29,22 +29,24 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <SessionWarning show={showSessionWarning} />
 
-        <AuthHeader />
+        <div className="glass-card-strong rounded-2xl p-8">
+          <AuthHeader />
 
-        <AuthTabs
-          error={error}
-          success={success}
-          isLoading={isLoading}
-          setError={setError}
-          setSuccess={setSuccess}
-          setIsLoading={setIsLoading}
-        />
+          <AuthTabs
+            error={error}
+            success={success}
+            isLoading={isLoading}
+            setError={setError}
+            setSuccess={setSuccess}
+            setIsLoading={setIsLoading}
+          />
 
-        <AuthFooter />
+          <AuthFooter />
+        </div>
       </div>
     </div>
   );

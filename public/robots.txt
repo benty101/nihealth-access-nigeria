@@ -1,14 +1,22 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://meddypal.com/sitemap.xml
+
+# Specific crawl directives
+Disallow: /admin/
+Disallow: /api/
+Disallow: /.lovable/
+Disallow: /private/
+
+# Allow important health content
+Allow: /health-insurance
+Allow: /hospitals
+Allow: /pharmacy
+Allow: /labs
+Allow: /telemedicine
+Allow: /resources
+
+# Crawl delay for major search engines
+Crawl-delay: 1

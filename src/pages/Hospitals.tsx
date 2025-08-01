@@ -1,15 +1,16 @@
 
 import React from 'react';
-import PageLayout from '@/components/layout/PageLayout';
+import StandardPageLayout from '@/components/layout/StandardPageLayout';
 import BackButton from '@/components/navigation/BackButton';
 import HospitalDirectory from '@/components/HospitalDirectory';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Hospitals = () => {
   return (
-    <PageLayout 
+    <StandardPageLayout 
       title="Hospital Directory"
       subtitle="Find and connect with hospitals and healthcare facilities across Nigeria"
+      backgroundVariant="gradient"
     >
       <div className="mb-6">
         <BackButton />
@@ -19,7 +20,7 @@ const Hospitals = () => {
       
       {/* Floating Emergency Button */}
       <FloatingEmergencyButton />
-    </PageLayout>
+    </StandardPageLayout>
   );
 };
 

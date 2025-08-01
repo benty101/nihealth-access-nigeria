@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PageLayout from '@/components/layout/PageLayout';
+import StandardPageLayout from '@/components/layout/StandardPageLayout';
 import BackButton from '@/components/navigation/BackButton';
 import { enhancedInsurancePlans } from '@/data/enhancedInsurancePlans';
 import { insuranceService } from '@/services/InsuranceService';
@@ -130,9 +130,10 @@ const Insurance = () => {
   };
 
   return (
-    <PageLayout 
+    <StandardPageLayout 
       title="Health Insurance Plans"
       subtitle="Find and compare health insurance plans that fit your needs and budget"
+      backgroundVariant="gradient"
     >
       <div className="mb-6">
         <BackButton />
@@ -504,7 +505,7 @@ const Insurance = () => {
           </div>
         </div>
       </TooltipProvider>
-    </PageLayout>
+    </StandardPageLayout>
   );
 };
 

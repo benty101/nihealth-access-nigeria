@@ -1,18 +1,20 @@
 
 import React from 'react';
-import ContextualNavbar from '@/components/navbar/ContextualNavbar';
+import StandardPageLayout from '@/components/layout/StandardPageLayout';
 import ModernResourceCenter from '@/components/resources/ModernResourceCenter';
-import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
 
 const Resources = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <ContextualNavbar />
+    <StandardPageLayout
+      title="Health Resources & Education"
+      subtitle="Access trusted health information, educational content, and wellness resources"
+      backgroundVariant="gradient"
+      showBreadcrumbs={false}
+      showHelp={true}
+      showEmergencyButton={true}
+    >
       <ModernResourceCenter />
-      
-      {/* Floating Emergency Button */}
-      <FloatingEmergencyButton />
-    </div>
+    </StandardPageLayout>
   );
 };
 
