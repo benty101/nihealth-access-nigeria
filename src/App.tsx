@@ -34,6 +34,7 @@ import BookLabTest from './pages/BookLabTest';
 import Consultations from './pages/Consultations';
 import MyOrders from './pages/MyOrders';
 import HealthInsights from './pages/HealthInsights';
+import FramerTemplate from './pages/FramerTemplate';
 import NotFound from './pages/NotFound';
 
 // AI Components
@@ -221,6 +222,8 @@ function App() {
                   <HealthInsights />
                 </OnboardingProtectedRoute>
               } />
+              
+              <Route path="/framer-template" element={<FramerTemplate />} />
               
               {/* User Profile and Action Routes */}
               <Route path="/profile" element={
