@@ -20,245 +20,319 @@ import {
   Phone,
   Mail,
   MapPin,
-  Globe
+  Globe,
+  Search,
+  Baby,
+  Bone,
+  Eye,
+  Zap,
+  Play,
+  ChevronRight,
+  Calendar,
+  MessageCircle,
+  UserCheck,
+  Sparkles
 } from 'lucide-react';
 
 const FramerTemplate = () => {
-  const [email, setEmail] = useState('');
+  const [doctorSearch, setDoctorSearch] = useState('');
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleDoctorSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Subscribe:', email);
+    console.log('Search doctor:', doctorSearch);
   };
 
-  const healthInsights = [
-    {
-      id: '01',
-      title: 'AI-Powered Genomic Analysis',
-      description: 'Revolutionary precision medicine through genetic profiling and personalized treatment recommendations powered by advanced AI algorithms.',
-      date: 'Dec 20, 2024',
-      category: 'Genomics',
-      readTime: '8 min read',
-      featured: false,
-      icon: Microscope,
-      color: 'from-blue-500 to-purple-600'
-    },
-    {
-      id: '02', 
-      title: 'Preventive Care Revolution',
-      description: 'How early detection and personalized health monitoring are transforming healthcare outcomes across Nigeria.',
-      date: 'Dec 18, 2024',
-      category: 'Prevention',
-      readTime: '6 min read',
-      featured: false,
-      icon: Shield,
-      color: 'from-green-500 to-emerald-600'
-    },
-    {
-      id: '03',
-      title: 'Telemedicine Excellence',
-      description: 'Bridging healthcare gaps with world-class virtual consultations and remote patient monitoring systems.',
-      date: 'Dec 15, 2024',
-      category: 'Digital Health',
-      readTime: '5 min read',
-      featured: false,
-      icon: Stethoscope,
-      color: 'from-teal-500 to-cyan-600'
-    },
-    {
-      id: '04',
-      title: 'Mental Health Integration',
-      description: 'Comprehensive mental wellness support integrated with physical health tracking for holistic patient care.',
-      date: 'Dec 12, 2024',
-      category: 'Mental Health',
-      readTime: '7 min read',
-      featured: false,
-      icon: Brain,
-      color: 'from-violet-500 to-purple-600'
-    },
-    {
-      id: '05',
-      title: 'Community Health Impact',
-      description: 'Building healthier communities through data-driven insights and collaborative healthcare initiatives.',
-      date: 'Dec 10, 2024',
-      category: 'Public Health',
-      readTime: '6 min read',
-      featured: false,
-      icon: Users,
-      color: 'from-orange-500 to-red-600'
-    },
-    {
-      id: 'FEATURED',
-      title: 'The Future of Nigerian Healthcare',
-      description: 'How MeddyPal is revolutionizing healthcare delivery through AI, genomics, and comprehensive digital health solutions.',
-      date: 'Dec 22, 2024',
-      category: 'Innovation',
-      readTime: '12 min read',
-      featured: true,
-      icon: Heart,
-      color: 'from-rose-500 to-pink-600'
-    }
+  const stats = [
+    { number: '98%', label: 'Satisfaction rate' },
+    { number: '30+', label: 'Years of experience' },
+    { number: '1000+', label: 'Patients Treated' },
+    { number: '80', label: 'Expert Doctors' }
   ];
 
-  const stats = [
-    { number: '50,000+', label: 'Active Patients', icon: Users },
-    { number: '1,200+', label: 'Healthcare Providers', icon: Stethoscope },
-    { number: '98.5%', label: 'Patient Satisfaction', icon: Star },
-    { number: '24/7', label: 'Emergency Support', icon: Clock }
+  const visionPoints = [
+    {
+      title: 'Patient-Centered Care',
+      description: 'We prioritize patient needs and preferences, ensuring personalized treatment.',
+      icon: Heart
+    },
+    {
+      title: 'Innovative Health Solutions',
+      description: 'We leverage cutting-edge technology and research to deliver healthcare services.',
+      icon: Zap
+    },
+    {
+      title: 'Holistic Wellness',
+      description: 'We focus on care that nurtures both physical and mental well-being for a community.',
+      icon: Shield
+    }
   ];
 
   const services = [
     {
-      title: 'AI Health Assistant',
-      description: 'Personalized health insights powered by advanced artificial intelligence',
-      icon: Brain,
-      link: '/ai-chat'
+      title: 'Pediatrics',
+      description: 'Monitor your child\'s growth and development to ensure their health at every stage.',
+      icon: Baby,
+      color: 'from-pink-400 to-rose-500'
     },
     {
-      title: 'Genomic Analysis',
-      description: 'Comprehensive genetic testing and personalized medicine recommendations',
-      icon: Microscope,
-      link: '/insights'
+      title: 'Orthopedics',
+      description: 'We assess musculoskeletal health and provide comprehensive bone and joint care.',
+      icon: Bone,
+      color: 'from-blue-400 to-indigo-500'
     },
     {
-      title: 'Telemedicine',
-      description: 'Connect with certified healthcare professionals from anywhere',
-      icon: Stethoscope,
-      link: '/telemedicine'
+      title: 'Ophthalmology',
+      description: 'Comprehensive eye care services from routine check-ups to advanced surgical procedures.',
+      icon: Eye,
+      color: 'from-green-400 to-emerald-500'
     },
     {
-      title: 'Health Insurance',
-      description: 'Comprehensive coverage options tailored to your needs',
-      icon: Shield,
-      link: '/insurance'
-    },
-    {
-      title: 'Lab Testing',
-      description: 'Advanced diagnostic services with rapid result delivery',
-      icon: Activity,
-      link: '/labs'
-    },
-    {
-      title: 'Emergency Care',
-      description: '24/7 emergency response and critical care coordination',
+      title: 'Cardiology',
+      description: 'Advanced heart care with state-of-the-art diagnostic and treatment capabilities.',
       icon: Heart,
-      link: '/emergency'
+      color: 'from-red-400 to-pink-500'
+    },
+    {
+      title: 'Neurology',
+      description: 'Specialized care for neurological conditions with cutting-edge treatment options.',
+      icon: Brain,
+      color: 'from-purple-400 to-violet-500'
+    },
+    {
+      title: 'General Medicine',
+      description: 'Comprehensive primary care services for all your general health needs.',
+      icon: Stethoscope,
+      color: 'from-teal-400 to-cyan-500'
     }
   ];
 
-  const featuredEntry = healthInsights.find(entry => entry.featured);
-  const regularEntries = healthInsights.filter(entry => !entry.featured);
+  const doctors = [
+    {
+      name: 'Dr. Adebayo Johnson',
+      specialty: 'Gastroenterologist',
+      image: '/placeholder.svg',
+      experience: '15+ years'
+    },
+    {
+      name: 'Dr. Kemi Oladele',
+      specialty: 'Dermatologist',
+      image: '/placeholder.svg',
+      experience: '12+ years'
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: 'Sarah Mitchell',
+      role: 'Patient',
+      content: 'The care I received was exceptional. The doctors were thorough and compassionate.',
+      rating: 5
+    },
+    {
+      name: 'Michael Chen',
+      role: 'Patient',
+      content: 'Outstanding service and cutting-edge medical technology. Highly recommended.',
+      rating: 5
+    }
+  ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f6f7f2' }}>
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="flex items-center justify-between px-8 py-6 bg-white/60 backdrop-blur-md border-b border-white/20">
+      <nav className="flex items-center justify-between px-6 lg:px-20 py-6 bg-white">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <Heart className="w-6 h-6 text-white" />
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <Heart className="w-5 h-5 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gray-900">MeddyPal</span>
+          <span className="text-xl font-semibold text-gray-900">MeddyPal</span>
         </div>
         
         <div className="hidden md:flex items-center space-x-8">
-          <Link to="/insights" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-            Health Insights
-          </Link>
-          <Link to="/telemedicine" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-            Services
-          </Link>
-          <Link to="/about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+          <Link to="/about" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
             About
           </Link>
-          <Link to="/emergency" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-            Emergency
+          <Link to="/telemedicine" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+            Services
           </Link>
+          <Link to="/hospitals" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+            Doctors
+          </Link>
+          <Link to="/careers" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+            Careers
+          </Link>
+          <Search className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-700" />
         </div>
 
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" className="text-gray-700" asChild>
-            <Link to="/auth">Sign In</Link>
-          </Button>
-          <Button 
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-full shadow-lg"
-            asChild
-          >
-            <Link to="/dashboard">Get Started</Link>
-          </Button>
-        </div>
+        <Button 
+          className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 rounded-full"
+          asChild
+        >
+          <Link to="/dashboard">Get Started</Link>
+        </Button>
       </nav>
 
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-8 py-20">
-        <div className="text-center space-y-8">
-          <Badge className="bg-blue-100 text-blue-700 border-blue-200 px-4 py-2 text-sm font-medium">
-            🇳🇬 Powered by NABDA Partnership
-          </Badge>
-          
-          <h1 className="text-6xl md:text-8xl font-light leading-tight text-gray-900 tracking-tight">
-            Healthcare by day
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-medium">
-              and wellness by night.
-            </span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Your comprehensive digital health companion, powered by AI and genomics. 
-            Revolutionizing healthcare delivery across Nigeria with personalized medicine, 
-            preventive care, and world-class medical services.
-          </p>
+      <div className="px-6 lg:px-20 py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              {/* Rating */}
+              <div className="flex items-center space-x-2">
+                <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                <span className="text-gray-900 font-semibold">4.7</span>
+                <span className="text-gray-500">| 3,460 Reviews</span>
+              </div>
+              
+              {/* Hero Title */}
+              <div className="space-y-4">
+                <h1 className="text-5xl lg:text-7xl font-light leading-tight text-gray-900">
+                  A modern{' '}
+                  <span className="inline-flex items-center bg-blue-100 px-4 py-2 rounded-full">
+                    <Sparkles className="w-6 h-6 text-blue-600 mr-2" />
+                    <span className="text-blue-600 font-medium">safe</span>
+                  </span>{' '}
+                  and
+                </h1>
+                <h1 className="text-5xl lg:text-7xl font-light leading-tight text-gray-900">
+                  effective
+                </h1>
+                <h1 className="text-5xl lg:text-7xl font-light leading-tight text-gray-900">
+                  approach to{' '}
+                  <span className="inline-flex items-center bg-orange-100 px-4 py-2 rounded-full">
+                    <Heart className="w-6 h-6 text-orange-600 mr-2" />
+                    <span className="text-orange-600 font-medium">well being</span>
+                  </span>
+                </h1>
+              </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mt-16">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-white/80 rounded-xl mb-3">
-                  <stat.icon className="w-6 h-6 text-blue-600" />
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg"
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 rounded-full"
+                  asChild
+                >
+                  <Link to="/appointments">Book Now</Link>
+                </Button>
+                <Button 
+                  size="lg"
+                  variant="ghost"
+                  className="text-gray-700 hover:text-gray-900 px-8 py-4"
+                  asChild
+                >
+                  <Link to="/about">Learn more</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Hero Image & Doctor Cards */}
+            <div className="relative">
+              <div className="relative bg-gradient-to-br from-blue-100 to-blue-200 rounded-3xl p-8 lg:p-12">
+                <img 
+                  src="/placeholder.svg" 
+                  alt="Doctor with stethoscope"
+                  className="w-full h-96 object-cover rounded-2xl"
+                />
+                
+                {/* Available Doctors Card */}
+                <div className="absolute top-8 right-8 bg-white rounded-2xl p-4 shadow-lg max-w-xs">
+                  <h3 className="font-semibold text-gray-900 mb-3">Available Doctors</h3>
+                  <div className="space-y-3">
+                    {doctors.map((doctor, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <img 
+                          src={doctor.image} 
+                          alt={doctor.name}
+                          className="w-10 h-10 rounded-full bg-gray-200"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{doctor.name}</p>
+                          <p className="text-xs text-gray-500">{doctor.specialty}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Search Bar */}
+                  <form onSubmit={handleDoctorSearch} className="mt-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder="Search for a Doctor"
+                        value={doctorSearch}
+                        onChange={(e) => setDoctorSearch(e.target.value)}
+                        className="pl-10 bg-gray-50 border-0 rounded-lg"
+                      />
+                    </div>
+                  </form>
                 </div>
-                <div className="text-3xl font-bold text-gray-900">{stat.number}</div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="px-6 lg:px-20 py-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center space-y-2">
+                <div className="text-4xl lg:text-6xl font-bold text-gray-900">{stat.number}</div>
+                <div className="text-gray-600">{stat.label}</div>
               </div>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Newsletter Signup */}
-          <div className="max-w-md mx-auto mt-16 p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg">
-            <form onSubmit={handleSubscribe} className="space-y-4">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Stay Informed</h3>
-                <p className="text-sm text-gray-600">Get the latest health insights and platform updates</p>
-              </div>
-              <div className="flex gap-3">
-                <Input
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 rounded-full border-gray-200 bg-white focus:border-blue-500"
-                  required
-                />
+      {/* Vision Section */}
+      <div className="px-6 lg:px-20 py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-6">Our Vision</h2>
+                <h3 className="text-xl lg:text-2xl text-gray-700 mb-8">
+                  Finding health solutions with top Experts
+                </h3>
                 <Button 
-                  type="submit"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 rounded-full"
+                  variant="outline" 
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  asChild
                 >
-                  Subscribe
+                  <Link to="/about">About Us</Link>
                 </Button>
               </div>
-            </form>
+            </div>
+
+            <div className="space-y-8">
+              {visionPoints.map((point, index) => (
+                <div key={index} className="flex space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <point.icon className="w-6 h-6 text-blue-600" />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">{point.title}</h4>
+                    <p className="text-gray-600 leading-relaxed">{point.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Services Section */}
-      <div className="bg-white/40 backdrop-blur-sm border-y border-white/20 py-20">
-        <div className="max-w-7xl mx-auto px-8">
+      <div className="px-6 lg:px-20 py-24">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-              Comprehensive Healthcare Solutions
-            </h2>
+            <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Services</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From AI-powered diagnostics to genomic analysis, we provide end-to-end healthcare services
+              Different types of department we have for your healthcare
             </p>
           </div>
 
@@ -266,23 +340,18 @@ const FramerTemplate = () => {
             {services.map((service, index) => (
               <Card 
                 key={index}
-                className="overflow-hidden bg-white/60 backdrop-blur-sm border-white/20 hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group border-0 bg-white"
               >
-                <CardContent className="p-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl mb-6 group-hover:scale-110 transition-transform">
+                <CardContent className="p-8 text-center">
+                  <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl mb-6 group-hover:scale-110 transition-transform`}>
                     <service.icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
                     {service.title}
                   </h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed">
                     {service.description}
                   </p>
-                  <Button variant="ghost" className="text-blue-600 hover:text-blue-700 p-0" asChild>
-                    <Link to={service.link}>
-                      Learn more <ArrowRight className="w-4 h-4 ml-1" />
-                    </Link>
-                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -290,102 +359,110 @@ const FramerTemplate = () => {
         </div>
       </div>
 
-      {/* Content Sections */}
-      <div className="max-w-7xl mx-auto px-8 py-20">
-        {/* Featured Section */}
-        {featuredEntry && (
-          <div className="mb-20">
-            <div className="flex items-center gap-3 mb-8">
-              <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Featured Insight</span>
-              <Badge className="bg-gradient-to-r from-rose-500 to-pink-600 text-white">
-                ✨ Latest
-              </Badge>
-            </div>
-            
-            <Card className="overflow-hidden bg-white/60 backdrop-blur-sm border-white/20 hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-0">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="lg:w-1/3 h-64 lg:h-auto bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
-                    <featuredEntry.icon className="w-16 h-16 text-white" />
-                  </div>
-                  <div className="lg:w-2/3 p-8 lg:p-12">
-                    <div className="flex items-center gap-4 mb-4">
-                      <Badge variant="outline" className="bg-rose-50 text-rose-600 border-rose-200">
-                        {featuredEntry.category}
-                      </Badge>
-                      <span className="text-sm text-gray-500">{featuredEntry.readTime}</span>
-                    </div>
-                    <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                      {featuredEntry.title}
-                    </h3>
-                    <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                      {featuredEntry.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">{featuredEntry.date}</span>
-                      <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white">
-                        Read Full Article <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      {/* Testimonials Section */}
+      <div className="px-6 lg:px-20 py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4">What Our Patients Say</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Real experiences from real patients who trust MeddyPal with their healthcare
+            </p>
           </div>
-        )}
 
-        {/* Health Insights Grid */}
-        <div>
-          <div className="flex items-center gap-3 mb-12">
-            <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Health Insights</span>
-            <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-              {regularEntries.length} Articles
-            </Badge>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularEntries.map((entry) => (
-              <Card 
-                key={entry.id}
-                className="overflow-hidden bg-white/60 backdrop-blur-sm border-white/20 hover:shadow-xl transition-all duration-300 cursor-pointer group"
-              >
-                <CardContent className="p-0">
-                  <div className={`h-48 bg-gradient-to-br ${entry.color} flex items-center justify-center group-hover:scale-105 transition-transform`}>
-                    <entry.icon className="w-12 h-12 text-white" />
+          <div className="grid md:grid-cols-2 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="bg-white border-0 shadow-sm">
+                <CardContent className="p-8">
+                  <div className="flex items-center mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    ))}
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Badge variant="outline" className="text-xs">
-                        {entry.category}
-                      </Badge>
-                      <span className="text-xs text-gray-500">{entry.readTime}</span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {entry.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                      {entry.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">{entry.date}</span>
-                      <span className="text-sm text-blue-600 group-hover:text-blue-700 transition-colors font-medium">
-                        Read more →
-                      </span>
+                  <p className="text-gray-700 mb-6 leading-relaxed text-lg">
+                    "{testimonial.content}"
+                  </p>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-500">{testimonial.role}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
+        </div>
+      </div>
 
-          <div className="text-center mt-16">
+      {/* Blog/Insights Section */}
+      <div className="px-6 lg:px-20 py-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Latest Health Insights</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Stay informed with the latest in healthcare innovation and wellness tips
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "10 Essential Health Screenings Every Adult Should Have",
+                excerpt: "Learn about crucial health screenings that can help detect problems early and maintain optimal health.",
+                date: "Dec 15, 2024",
+                readTime: "5 min read",
+                image: "/placeholder.svg"
+              },
+              {
+                title: "The Future of Telemedicine in Nigeria",
+                excerpt: "Exploring how digital health solutions are transforming healthcare accessibility across Nigeria.",
+                date: "Dec 12, 2024",
+                readTime: "7 min read",
+                image: "/placeholder.svg"
+              },
+              {
+                title: "Mental Health Awareness: Breaking the Stigma",
+                excerpt: "Understanding mental health challenges and the importance of seeking professional help.",
+                date: "Dec 10, 2024",
+                readTime: "6 min read",
+                image: "/placeholder.svg"
+              }
+            ].map((article, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group border-0">
+                <div className="aspect-video bg-gray-200 overflow-hidden">
+                  <img 
+                    src={article.image} 
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
+                    <span>{article.date}</span>
+                    <span>•</span>
+                    <span>{article.readTime}</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {article.excerpt}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
             <Button 
+              variant="outline"
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-full shadow-lg"
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
               asChild
             >
               <Link to="/insights">
-                Explore All Health Insights <ArrowRight className="w-5 h-5 ml-2" />
+                View All Articles <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
           </div>
@@ -393,50 +470,50 @@ const FramerTemplate = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
-        <div className="max-w-4xl mx-auto px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Transform Your Health Journey?
+      <div className="px-6 lg:px-20 py-24 bg-gray-900 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl lg:text-5xl font-light mb-6">
+            Ready to Experience Better Healthcare?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join thousands of Nigerians who have already revolutionized their healthcare experience
+          <p className="text-xl mb-8 text-gray-300">
+            Join thousands of patients who trust MeddyPal with their health and wellness journey
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg"
-              className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-4 rounded-full font-semibold"
+              className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 rounded-full font-semibold"
               asChild
             >
-              <Link to="/dashboard">Start Your Journey</Link>
+              <Link to="/appointments">Book Appointment</Link>
             </Button>
             <Button 
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-full font-semibold"
+              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 rounded-full font-semibold"
               asChild
             >
-              <Link to="/telemedicine">Book Consultation</Link>
+              <Link to="/telemedicine">Start Consultation</Link>
             </Button>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-white/60 backdrop-blur-sm border-t border-white/20 py-16">
-        <div className="max-w-7xl mx-auto px-8">
+      <footer className="bg-white border-t border-gray-100 py-16">
+        <div className="max-w-7xl mx-auto px-6 lg:px-20">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Heart className="w-6 h-6 text-white" />
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-gray-900">MeddyPal</span>
+                <span className="text-xl font-semibold text-gray-900">MeddyPal</span>
               </div>
-              <p className="text-gray-600 mb-6 max-w-md">
-                Revolutionizing healthcare in Nigeria through AI-powered solutions, 
-                genomic analysis, and comprehensive digital health services.
+              <p className="text-gray-600 mb-6 max-w-md leading-relaxed">
+                Your trusted healthcare partner, providing comprehensive medical services 
+                with advanced technology and compassionate care across Nigeria.
               </p>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <div className="flex items-center text-sm text-gray-600">
                   <Award className="w-4 h-4 mr-2" />
                   NABDA Certified
@@ -449,41 +526,48 @@ const FramerTemplate = () => {
             </div>
             
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Services</h4>
-              <ul className="space-y-2 text-gray-600">
-                <li><Link to="/telemedicine" className="hover:text-blue-600 transition-colors">Telemedicine</Link></li>
-                <li><Link to="/labs" className="hover:text-blue-600 transition-colors">Lab Testing</Link></li>
-                <li><Link to="/pharmacy" className="hover:text-blue-600 transition-colors">Pharmacy</Link></li>
-                <li><Link to="/insurance" className="hover:text-blue-600 transition-colors">Health Insurance</Link></li>
-                <li><Link to="/emergency" className="hover:text-blue-600 transition-colors">Emergency Care</Link></li>
+              <h4 className="text-lg font-semibold text-gray-900 mb-6">Quick Links</h4>
+              <ul className="space-y-3 text-gray-600">
+                <li><Link to="/about" className="hover:text-gray-900 transition-colors">About Us</Link></li>
+                <li><Link to="/services" className="hover:text-gray-900 transition-colors">Our Services</Link></li>
+                <li><Link to="/doctors" className="hover:text-gray-900 transition-colors">Find a Doctor</Link></li>
+                <li><Link to="/appointments" className="hover:text-gray-900 transition-colors">Book Appointment</Link></li>
+                <li><Link to="/contact" className="hover:text-gray-900 transition-colors">Contact Us</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Contact</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-6">Support</h4>
               <ul className="space-y-3 text-gray-600">
                 <li className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  +234 800 MEDDY PAL
+                  <Phone className="w-4 h-4 mr-3" />
+                  <span>+234 800 MEDDY PAL</span>
                 </li>
                 <li className="flex items-center">
-                  <Mail className="w-4 h-4 mr-2" />
-                  hello@meddypal.ng
+                  <Mail className="w-4 h-4 mr-3" />
+                  <span>support@meddypal.ng</span>
                 </li>
                 <li className="flex items-center">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Lagos, Nigeria
+                  <MapPin className="w-4 h-4 mr-3" />
+                  <span>Lagos, Nigeria</span>
                 </li>
                 <li className="flex items-center">
-                  <Globe className="w-4 h-4 mr-2" />
-                  24/7 Support Available
+                  <Clock className="w-4 h-4 mr-3" />
+                  <span>24/7 Emergency Care</span>
                 </li>
               </ul>
             </div>
           </div>
           
-          <div className="border-t border-gray-200 mt-12 pt-8 text-center text-sm text-gray-500">
-            <p>© 2024 MeddyPal. All rights reserved. Powered by advanced AI and genomics technology.</p>
+          <div className="border-t border-gray-100 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-gray-500 mb-4 md:mb-0">
+              © 2024 MeddyPal. All rights reserved.
+            </p>
+            <div className="flex items-center space-x-6 text-sm text-gray-500">
+              <Link to="/privacy" className="hover:text-gray-700 transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-gray-700 transition-colors">Terms of Service</Link>
+              <Link to="/cookies" className="hover:text-gray-700 transition-colors">Cookie Policy</Link>
+            </div>
           </div>
         </div>
       </footer>
