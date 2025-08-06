@@ -3,6 +3,8 @@ import ContextualNavbar from '@/components/navbar/ContextualNavbar';
 import BreadcrumbNavigation from '@/components/navigation/BreadcrumbNavigation';
 import ContextualHelp from '@/components/navigation/ContextualHelp';
 import FloatingEmergencyButton from '@/components/dashboard/FloatingEmergencyButton';
+import { FlowProvider, SmartSuggestions, IntelligentBreadcrumbs } from '@/components/navigation/IntelligentFlowSystem';
+import { ContextualActions, QuickActionBar } from '@/components/navigation/ContextualActions';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
@@ -39,48 +41,61 @@ const StandardPageLayout: React.FC<StandardPageLayoutProps> = ({
   };
 
   return (
-    <div className={cn("min-h-screen", getBackgroundClass())}>
-      <ContextualNavbar />
-      
-      <main className={cn("container mx-auto px-4 py-6", className)}>
-        {showBreadcrumbs && (
-          <div className="mb-6">
-            <BreadcrumbNavigation />
-          </div>
-        )}
+    <FlowProvider>
+      <div className={cn("min-h-screen", getBackgroundClass())}>
+        <ContextualNavbar />
         
-        {(title || subtitle) && (
-          <div className="mb-8">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                {title && (
-                  <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
-                    {title}
-                  </h1>
-                )}
-                {subtitle && (
-                  <p className="text-lg text-muted-foreground">
-                    {subtitle}
-                  </p>
+        <main className={cn("container mx-auto px-4 py-6", className)}>
+          {showBreadcrumbs && (
+            <div className="mb-6">
+              <IntelligentBreadcrumbs />
+            </div>
+          )}
+          
+          {(title || subtitle) && (
+            <div className="mb-8">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  {title && (
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+                      {title}
+                    </h1>
+                  )}
+                  {subtitle && (
+                    <p className="text-lg text-muted-foreground">
+                      {subtitle}
+                    </p>
+                  )}
+                </div>
+                {showHelp && (
+                  <div className="ml-4">
+                    <ContextualHelp />
+                  </div>
                 )}
               </div>
-              {showHelp && (
-                <div className="ml-4">
-                  <ContextualHelp />
-                </div>
-              )}
+            </div>
+          )}
+          
+          {/* Smart suggestions and contextual actions */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+            <div className="lg:col-span-3">
+              <SmartSuggestions />
+            </div>
+            <div className="lg:col-span-1">
+              <ContextualActions compact />
             </div>
           </div>
-        )}
+          
+          <div className="glass-card rounded-xl border p-6">
+            {children}
+          </div>
+        </main>
         
-        <div className="glass-card rounded-xl border p-6">
-          {children}
-        </div>
-      </main>
-      
-      {showEmergencyButton && <FloatingEmergencyButton />}
-      <Toaster />
-    </div>
+        {showEmergencyButton && <FloatingEmergencyButton />}
+        <QuickActionBar />
+        <Toaster />
+      </div>
+    </FlowProvider>
   );
 };
 

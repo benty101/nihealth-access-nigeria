@@ -203,7 +203,7 @@ export const PsychologicalNavigation: React.FC<{ className?: string }> = ({ clas
 
   return (
     <TooltipProvider>
-      <nav className={`flex items-center gap-1 bg-white/80 backdrop-blur-sm px-4 py-2 border-b border-gray-100 ${className}`}>
+      <nav className={`flex items-center gap-1 bg-gradient-to-r from-background via-background to-muted/10 backdrop-blur-sm px-4 py-2 border-b border-border/50 ${className}`}>
         {/* Primary Navigation - Clean and Minimal */}
         {primaryNavigation.map((item) => {
           const Icon = item.icon;
@@ -215,18 +215,21 @@ export const PsychologicalNavigation: React.FC<{ className?: string }> = ({ clas
                 <Link
                   to={item.path}
                   className={`
-                    flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm font-medium
+                    flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-sm font-medium relative
                     ${active 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      ? 'bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-md shadow-primary/25' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted hover:to-muted/80'
                     }
                   `}
                 >
                   <Icon className="h-4 w-4" />
                   <span className="whitespace-nowrap">{item.label}</span>
+                  {active && (
+                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full" />
+                  )}
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-popover text-popover-foreground">
+              <TooltipContent side="bottom" className="bg-popover text-popover-foreground border shadow-lg">
                 <p className="text-sm">{item.description}</p>
               </TooltipContent>
             </Tooltip>
