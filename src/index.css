@@ -1,5 +1,6 @@
 
 @import './styles/base.css';
+@import './styles/enhanced-design-system.css';
 @import './styles/animations.css';
 @import './styles/keyframes.css';
 @import './styles/components.css';
